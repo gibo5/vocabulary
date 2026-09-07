@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EiM 10 - Unit 1: Vocabulary & Pronunciation</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter Font -->
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* 3D Flip Card Container & Engine */
+    .card-container {
+      perspective: 1000px;
+      height: 95px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+      border-radius: 0.75rem;
+    }
+
+    /* Triggered 180 degree flip */
+    .card-container.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+    }
+
+    /* Front Side */
+    .card-front {
+      transform: rotateY(0deg);
+      background-color: #ffffff;
+    }
+
+    /* Back Side */
+    .card-back {
+      transform: rotateY(180deg);
+      background-color: #0f172a;
+      color: #ffffff;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.05);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.15);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+  <!-- Application Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-6xl mx-auto px-4 py-3 sm:px-6">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        
+        <!-- App Title & Unit Selector -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🗣️</span>
+            <div>
+              <h1 class="text-lg sm:text-xl font-bold tracking-tight text-slate-900 leading-tight">EiM 10 - Unit 1: Vocabulary & Pronunciation</h1>
+              <p class="text-xs text-slate-500">Interactive Pronunciation & Memory Cards</p>
+            </div>
+          </div>
+
+          <!-- Unit Selector Dropdown -->
+          <div class="sm:ml-2">
+            <select id="unitSelect" onchange="switchUnit(this.value)" class="py-1 px-2.5 bg-indigo-50 border border-indigo-200 text-indigo-800 text-xs font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+              <option value="unit1" selected>EiM 10 - Unit 1</option>
+              <option value="unit2" disabled>EiM 10 - Unit 2 (Coming Soon)</option>
+              <option value="unit3" disabled>EiM 10 - Unit 3 (Coming Soon)</option>
+              <option value="unit4" disabled>EiM 10 - Unit 4 (Coming Soon)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Default Face Display Selector Mode -->
+        <div class="bg-slate-100 p-1.5 rounded-xl border border-slate-200 flex items-center justify-between sm:justify-start gap-2 self-start md:self-auto">
+          <span class="text-xs font-semibold text-slate-600 pl-2">Default Front:</span>
+          <div class="inline-flex rounded-lg bg-slate-200/70 p-0.5" role="group">
+            <button id="modeEnBtn" onclick="setDefaultMode('en')" 
+                    class="px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs">
+              🇺🇸/🇬🇧 English
+            </button>
+            <button id="modeFrBtn" onclick="setDefaultMode('fr')" 
+                    class="px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900">
+              🇫🇷 Français
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-6xl mx-auto px-4 py-5 sm:px-6 flex-grow w-full">
+    
+    <!-- Controls Toolbar -->
+    <section class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs mb-5 space-y-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 items-center">
+        
+        <!-- Live Search Bar -->
+        <div class="relative lg:col-span-4">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <input type="text" id="searchInput" oninput="applyFiltersAndSort()" placeholder="Search word or translation..." 
+                 class="w-full pl-9 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+          <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+            &times;
+          </button>
+        </div>
+
+        <!-- Sorting Selector -->
+        <div class="flex items-center gap-1.5 lg:col-span-3">
+          <label for="sortSelect" class="text-xs font-medium text-slate-500 whitespace-nowrap">Sort:</label>
+          <select id="sortSelect" onchange="applyFiltersAndSort()" class="w-full py-1.5 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="original" selected>Original order</option>
+            <option value="alpha-asc">Alphabetical (A ➔ Z)</option>
+            <option value="diff-desc">Difficulty (Hardest First)</option>
+            <option value="diff-asc">Difficulty (Easiest First)</option>
+          </select>
+        </div>
+
+        <!-- Accent Selector -->
+        <div class="flex items-center gap-1.5 lg:col-span-2">
+          <label for="accentSelect" class="text-xs font-medium text-slate-500 whitespace-nowrap">Accent:</label>
+          <select id="accentSelect" class="w-full py-1.5 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="en-GB" selected>🇬🇧 UK</option>
+            <option value="en-US">🇺🇸 US</option>
+            <option value="en-AU">🇦🇺 AU</option>
+          </select>
+        </div>
+
+        <!-- Audio Speed & Actions -->
+        <div class="flex items-center gap-2 sm:col-span-2 lg:col-span-3 justify-end">
+          <div class="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200 flex-1">
+            <label for="speedRate" class="text-xs font-medium text-slate-600 whitespace-nowrap">Speed:</label>
+            <input type="range" id="speedRate" min="0.5" max="1.2" step="0.05" value="0.85" oninput="updateSpeedLabel(this.value)"
+                   class="w-full accent-indigo-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg">
+            <span id="speedValue" class="text-xs font-mono text-indigo-600 font-semibold w-7 text-right">0.85x</span>
+          </div>
+
+          <button onclick="shuffleCards()" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium text-xs rounded-xl transition-colors flex items-center justify-center gap-1.5 shrink-0">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            Shuffle
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Status Bar -->
+    <div class="flex justify-between items-center mb-3 px-1">
+      <span class="text-xs font-semibold uppercase tracking-wider text-slate-500" id="cardCounter">Showing 67 Words</span>
+      <span class="text-xs text-indigo-600 font-medium bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-100/80" id="currentFaceIndicator">Default Mode: English Front</span>
+    </div>
+
+    <!-- Cards Grid Container -->
+    <div id="vocabGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <!-- Cards dynamically inserted here -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200 my-4">
+      <span class="text-4xl block mb-2">🔍</span>
+      <h3 class="text-slate-700 font-semibold text-lg">No matching vocabulary found</h3>
+      <p class="text-slate-500 text-sm mt-1">Try searching for a different keyword.</p>
+      <button onclick="clearSearch()" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-medium hover:bg-indigo-700 transition">
+        Clear Search Filter
+      </button>
+    </div>
+
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400 mt-auto">
+    <div class="max-w-6xl mx-auto px-4">
+      <p>Interactive EiM 10 English-French Vocabulary Practice • Powered by Web Speech API • Zero Adverts • No Account Required • Kindly made available by Gilou</p>
+    </div>
+  </footer>
+
+  <script>
+    const rawVocabularyData = [
+      { id: 1, english: "Chinese", french: "chinois" },
+      { id: 2, english: "English", french: "anglais" },
+      { id: 3, english: "French", french: "français" },
+      { id: 4, english: "German", french: "allemand" },
+      { id: 5, english: "Greek", french: "grec" },
+      { id: 6, english: "Italian", french: "italien" },
+      { id: 7, english: "Japanese", french: "japonais" },
+      { id: 8, english: "Portuguese", french: "portugais" },
+      { id: 9, english: "Russian", french: "russe" },
+      { id: 10, english: "Spanish", french: "espagnol" },
+      { id: 11, english: "to forget", french: "oublier" },
+      { id: 12, english: "to guess", french: "deviner" },
+      { id: 13, english: "to know", french: "savoir, connaitre" },
+      { id: 14, english: "to learn", french: "apprendre" },
+      { id: 15, english: "to make a mistake", french: "faire une erreur" },
+      { id: 16, english: "to mean", french: "vouloir dire, signifier" },
+      { id: 17, english: "to practise", french: "s'entrainer (exercer)" },
+      { id: 18, english: "to remember", french: "se souvenir de" },
+      { id: 19, english: "to translate", french: "traduire" },
+      { id: 20, english: "to understand", french: "comprendre" },
+      { id: 21, english: "the advert", french: "la publicité" },
+      { id: 22, english: "the certificate", french: "le certificat" },
+      { id: 23, english: "the dictionary", french: "le dictionnaire" },
+      { id: 24, english: "the ebook", french: "l'ebook" },
+      { id: 25, english: "the email", french: "l'e-mail" },
+      { id: 26, english: "the form", french: "le formulaire" },
+      { id: 27, english: "the instructions", french: "les consignes" },
+      { id: 28, english: "the letter", french: "la lettre" },
+      { id: 29, english: "the newspaper", french: "le journal" },
+      { id: 30, english: "amazing", french: "surprenant, incroyable" },
+      { id: 31, english: "to ask", french: "demander à" },
+      { id: 32, english: "to be fluent", french: "parler couramment" },
+      { id: 33, english: "to explain", french: "expliquer" },
+      { id: 34, english: "the first language", french: "la langue d'origine" },
+      { id: 35, english: "the grammar", french: "la grammaire" },
+      { id: 36, english: "hard", french: "dur, difficile" },
+      { id: 37, english: "the letter (ABC)", french: "la lettre" },
+      { id: 38, english: "the listening", french: "l'écoute" },
+      { id: 39, english: "the meaning", french: "la signification, le sens" },
+      { id: 40, english: "the pronunciation", french: "la prononciation" },
+      { id: 41, english: "the reading", french: "la lecture" },
+      { id: 42, english: "to repeat", french: "répéter" },
+      { id: 43, english: "to speak", french: "parler" },
+      { id: 44, english: "the speaker", french: "le locuteur" },
+      { id: 45, english: "the speaking", french: "l'expression orale" },
+      { id: 46, english: "the spelling", french: "l'orthographe" },
+      { id: 47, english: "the vocabulary", french: "le vocabulaire" },
+      { id: 48, english: "the word", french: "le mot" },
+      { id: 49, english: "the writing", french: "l'expression écrite" },
+      { id: 50, english: "I don't think it's good to ...", french: "Je pense que ce n'est pas bien de ..." },
+      { id: 51, english: "It's a good idea to ...", french: "C'est une bonne idée de ..." },
+      { id: 52, english: "It's useful to ...", french: "Il est utile de ..." },
+      { id: 53, english: "Remember (to + infinitive)", french: "Rappelle-toi de ..." },
+      { id: 54, english: "Try (to + infinitive)", french: "Essaie de ..." },
+      { id: 55, english: "Why don't you ... ?", french: "Et si tu ... ?" },
+      { id: 56, english: "adult", french: "adulte" },
+      { id: 57, english: "depend on", french: "dépendre de" },
+      { id: 58, english: "different", french: "différent" },
+      { id: 59, english: "to invent", french: "inventer" },
+      { id: 60, english: "the teenager (teen)", french: "l'adolescent (l'ado)" },
+      { id: 61, english: "the same", french: "le, la, les même(s)" },
+      { id: 62, english: "AD", french: "après Jésus Christ" },
+      { id: 63, english: "to change", french: "changer" },
+      { id: 64, english: "the conqueror", french: "le conquérant" },
+      { id: 65, english: "in the 5th century", french: "au 5ème siècle" },
+      { id: 66, english: "to invade", french: "envahir" },
+      { id: 67, english: "the mother tongue", french: "la langue maternelle" }
+    ];
+
+    const RATINGS_STORAGE_KEY = 'vocab_app_ratings_v1';
+    
+    function getStoredRatings() {
+      try {
+        const saved = localStorage.getItem(RATINGS_STORAGE_KEY);
+        return saved ? JSON.parse(saved) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveStoredRating(cardId, rating) {
+      try {
+        const ratings = getStoredRatings();
+        ratings[cardId] = rating;
+        localStorage.setItem(RATINGS_STORAGE_KEY, JSON.stringify(ratings));
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+    }
+
+    // State Variables
+    let ratingsMap = getStoredRatings();
+    let currentCards = [...rawVocabularyData];
+    let defaultFace = 'en'; // 'en' or 'fr'
+
+    // DOM Elements
+    const gridEl = document.getElementById('vocabGrid');
+    const emptyStateEl = document.getElementById('emptyState');
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const sortSelect = document.getElementById('sortSelect');
+    const accentSelect = document.getElementById('accentSelect');
+    const cardCounter = document.getElementById('cardCounter');
+    const currentFaceIndicator = document.getElementById('currentFaceIndicator');
+    const modeEnBtn = document.getElementById('modeEnBtn');
+    const modeFrBtn = document.getElementById('modeFrBtn');
+
+    function renderCards() {
+      gridEl.innerHTML = '';
+
+      if (currentCards.length === 0) {
+        emptyStateEl.classList.remove('hidden');
+        cardCounter.innerText = '0 Words Found';
+        return;
+      }
+
+      emptyStateEl.classList.add('hidden');
+      cardCounter.innerText = `Showing ${currentCards.length} Word${currentCards.length > 1 ? 's' : ''}`;
+
+      const selectedEnglishAccent = accentSelect ? accentSelect.value : 'en-GB';
+
+      currentCards.forEach(item => {
+        const isEnglishDefault = defaultFace === 'en';
+        const rating = ratingsMap[item.id] || 0; // 0: Unrated, 1: Easy, 2: Medium, 3: Hard
+
+        const frontLangBadge = isEnglishDefault ? '[En]' : '[Fr]';
+        const backLangBadge = isEnglishDefault ? '[Fr]' : '[En]';
+
+        const frontWord = isEnglishDefault ? item.english : item.french;
+        const frontAudioText = isEnglishDefault ? item.english : item.french;
+        const frontAudioLang = isEnglishDefault ? selectedEnglishAccent : 'fr-FR';
+
+        const backWord = isEnglishDefault ? item.french : item.english;
+        const backAudioText = isEnglishDefault ? item.french : item.english;
+        const backAudioLang = isEnglishDefault ? 'fr-FR' : selectedEnglishAccent;
+
+        const cardHTML = `
+          <div class="card-container" onclick="toggleCardFlip(this)">
+            <div class="card-inner shadow-xs hover:shadow-md transition-shadow duration-300 rounded-xl border border-slate-200">
+              
+              <!-- CARD FRONT -->
+              <div class="card-front border border-slate-200/90">
+                <div class="flex items-start justify-between gap-1 w-full">
+                  <h3 class="text-sm font-bold text-slate-800 leading-tight line-clamp-2 pr-1">${frontWord}</h3>
+                  <span class="text-[10px] font-extrabold tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100/80 px-1.5 py-0.5 rounded-md uppercase shrink-0">${frontLangBadge}</span>
+                </div>
+
+                <div class="flex items-center justify-between pt-1 border-t border-slate-100 mt-auto">
+                  <!-- Difficulty Rating Controls -->
+                  <div class="flex items-center gap-1 bg-slate-50 p-0.5 rounded-lg border border-slate-200/60" title="Rate difficulty" onclick="event.stopPropagation()">
+                    <button onclick="setCardRating(${item.id}, 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}">🟢</button>
+                    <button onclick="setCardRating(${item.id}, 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'}">🟡</button>
+                    <button onclick="setCardRating(${item.id}, 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white shadow-xs' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}">🔴</button>
+                  </div>
+
+                  <!-- Audio Pronunciation Button -->
+                  <button title="Listen Pronunciation" 
+                          onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(frontAudioText)}', '${frontAudioLang}');"
+                          class="w-7 h-7 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white flex items-center justify-center transition-all duration-200 transform active:scale-95 border border-indigo-100 hover:border-transparent group">
+                    <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- CARD BACK -->
+              <div class="card-back border border-slate-800">
+                <div class="flex items-start justify-between gap-1 w-full">
+                  <h3 class="text-sm font-bold text-sky-300 leading-tight line-clamp-2 pr-1">${backWord}</h3>
+                  <span class="text-[10px] font-extrabold tracking-wider text-sky-400 bg-sky-950 border border-sky-800/60 px-1.5 py-0.5 rounded-md uppercase shrink-0">${backLangBadge}</span>
+                </div>
+
+                <div class="flex items-center justify-between pt-1 border-t border-slate-800 mt-auto">
+                  <!-- Difficulty Rating Controls -->
+                  <div class="flex items-center gap-1 bg-slate-800/80 p-0.5 rounded-lg border border-slate-700/60" title="Rate difficulty" onclick="event.stopPropagation()">
+                    <button onclick="setCardRating(${item.id}, 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-400 hover:text-emerald-400 hover:bg-slate-700'}">🟢</button>
+                    <button onclick="setCardRating(${item.id}, 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-400 hover:text-amber-400 hover:bg-slate-700'}">🟡</button>
+                    <button onclick="setCardRating(${item.id}, 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white shadow-xs' : 'text-slate-400 hover:text-rose-400 hover:bg-slate-700'}">🔴</button>
+                  </div>
+
+                  <!-- Audio Pronunciation Button -->
+                  <button title="Listen Pronunciation" 
+                          onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(backAudioText)}', '${backAudioLang}');"
+                          class="w-7 h-7 rounded-lg bg-sky-950 hover:bg-sky-500 text-sky-400 hover:text-white flex items-center justify-center transition-all duration-200 transform active:scale-95 border border-sky-800 hover:border-transparent group">
+                    <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        `;
+
+        gridEl.insertAdjacentHTML('beforeend', cardHTML);
+      });
+    }
+
+    // Helper functions
+    function escapeSingleQuotes(str) {
+      return str.replace(/'/g, "\\'");
+    }
+
+    // Toggle 3D flip class
+    function toggleCardFlip(cardElement) {
+      cardElement.classList.toggle('flipped');
+    }
+
+    function switchUnit(unitVal) {
+      if (unitVal !== 'unit1') {
+        alert("Selected unit is not yet available.");
+      }
+    }
+
+    function setDefaultMode(mode) {
+      defaultFace = mode;
+
+      if (mode === 'en') {
+        modeEnBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs";
+        modeFrBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
+        currentFaceIndicator.innerText = "Default Mode: English Front";
+      } else {
+        modeFrBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs";
+        modeEnBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
+        currentFaceIndicator.innerText = "Default Mode: French Front";
+      }
+
+      applyFiltersAndSort();
+    }
+
+    function setCardRating(cardId, newRating) {
+      if (ratingsMap[cardId] === newRating) {
+        delete ratingsMap[cardId];
+        saveStoredRating(cardId, 0);
+      } else {
+        ratingsMap[cardId] = newRating;
+        saveStoredRating(cardId, newRating);
+      }
+      applyFiltersAndSort();
+    }
+
+    function applyFiltersAndSort() {
+      const query = searchInput.value.toLowerCase().trim();
+      const sortVal = sortSelect.value;
+
+      if (query.length > 0) {
+        clearSearchBtn.classList.remove('hidden');
+      } else {
+        clearSearchBtn.classList.add('hidden');
+      }
+
+      // Filter by search query
+      let filtered = rawVocabularyData.filter(item => 
+        item.english.toLowerCase().includes(query) ||
+        item.french.toLowerCase().includes(query)
+      );
+
+      // Sort cards
+      filtered.sort((a, b) => {
+        const ratingA = ratingsMap[a.id] || 0;
+        const ratingB = ratingsMap[b.id] || 0;
+        const langKey = defaultFace === 'en' ? 'english' : 'french';
+
+        if (sortVal === 'original') {
+          return a.id - b.id; // Sort by original sequence 1..67
+        } else if (sortVal === 'alpha-asc') {
+          return a[langKey].localeCompare(b[langKey]);
+        } else if (sortVal === 'diff-desc') {
+          return ratingB - ratingA || a.id - b.id;
+        } else if (sortVal === 'diff-asc') {
+          return ratingA - ratingB || a.id - b.id;
+        }
+        return 0;
+      });
+
+      currentCards = filtered;
+      renderCards();
+    }
+
+    function shuffleCards() {
+      for (let i = currentCards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
+      }
+      renderCards();
+    }
+
+    function clearSearch() {
+      searchInput.value = '';
+      applyFiltersAndSort();
+    }
+
+    function updateSpeedLabel(val) {
+      document.getElementById('speedValue').innerText = `${val}x`;
+    }
+
+    // Speech Synthesis Engine
+    function speakText(text, lang) {
+      if (!('speechSynthesis' in window)) {
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      
+      const rateVal = parseFloat(document.getElementById('speedRate').value) || 0.85;
+      utterance.rate = rateVal;
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    window.onload = function() {
+      if (accentSelect) {
+        accentSelect.addEventListener('change', renderCards);
+      }
+      applyFiltersAndSort();
+    };
+  </script>
+</body>
+</html>
