@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Listen & Point - Entraînement Orale</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      background: #f0f4f8;
+      color: #333;
+      padding: 20px;
+    }
+    .controls {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: 0 auto 20px auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    select, button.action-btn {
+      padding: 8px 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .audio-section {
+      margin: 20px 0;
+    }
+    button.listen-btn {
+      font-size: 1.4rem;
+      padding: 15px 30px;
+      border-radius: 50px;
+      border: none;
+      background: #4a90e2;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+      transition: transform 0.1s, background 0.2s;
+    }
+    button.listen-btn:hover {
+      background: #357abd;
+      transform: scale(1.03);
+    }
+    .score-board {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-top: 10px;
+    }
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      max-width: 900px;
+      margin: 20px auto;
+    }
+    .card {
+      background: white;
+      padding: 20px 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 500;
+      width: 180px;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      border: 2px solid transparent;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      border-color: #4a90e2;
+    }
+    .card.correct {
+      background: #2ed573 !important;
+      color: white;
+      border-color: #2ed573;
+      animation: pulse 0.4s;
+    }
+    .card.wrong {
+      background: #ff4757 !important;
+      color: white;
+      border-color: #ff4757;
+    }
+    .card.disabled {
+      pointer-events: none;
+      opacity: 0.3;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>👂 Listen & Point</h1>
+  
+  <div class="controls">
+    <label for="mode-select"><strong>Niveau :</strong></label>
+    <select id="mode-select" onchange="resetGame()">
+      <option value="easy">Facile (Sons ➔ Anglais)</option>
+      <option value="medium">Moyen (Sons ➔ Français)</option>
+    </select>
+    
+    <button class="action-btn" onclick="resetGame()">🔄 Nouvelle série</button>
+  </div>
+
+  <div class="audio-section">
+    <button class="listen-btn" onclick="playSecretWord()">🔊 Écouter le mot</button>
+    <div class="score-board">Score : <span id="score">0</span> / <span id="total">0</span></div>
+  </div>
+
+  <div id="word-grid" class="grid"></div>
+
+  <script>
+    // Exemple de données tirées de vos JSONs (à charger dynamiquement selon l'unité)
+    const vocabularyList = [
+      { "id": 1, "en": "the adult", "fr": "l'adulte" },
+      { "id": 6, "en": "the teenager", "fr": "l'adolescent" },
+      { "id": 7, "en": "the toddler", "fr": "le petit enfant" },
+      { "id": 16, "en": "annoyed", "fr": "énervé, agacé" },
+      { "id": 20, "en": "exhausted", "fr": "épuisé" },
+      { "id": 26, "en": "the satellite dish", "fr": "l'antenne parabolique" },
+      { "id": 30, "en": "crispy", "fr": "croustillant" },
+      { "id": 39, "en": "the fan", "fr": "le fan" }
+    ];
+
+    let currentTargetWord = null;
+    let score = 0;
+    let totalAttempts = 0;
+    let activeWords = [];
+
+    // Réinitialise le jeu et génère une nouvelle grille
+    function resetGame() {
+      score = 0;
+      totalAttempts = 0;
+      updateScoreboard();
+      
+      // Sélectionne 6 mots au hasard dans la liste
+      activeWords = [...vocabularyList].sort(() => 0.5 - Math.random()).slice(0, 6);
+      
+      const grid = document.getElementById('word-grid');
+      grid.innerHTML = '';
+      
+      const mode = document.getElementById('mode-select').value;
+
+      // Mélange l'affichage des cartes
+      const displayWords = [...activeWords].sort(() => 0.5 - Math.random());
+
+      displayWords.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        // Mode Facile = Mot écrit en Anglais | Mode Moyen = Traduction en Français
+        card.innerText = mode === 'easy' ? item.en : item.fr;
+        card.onclick = () => checkAnswer(item, card);
+        grid.appendChild(card);
+      });
+
+      pickNewSecretWord();
+    }
+
+    // Choisit le mot cible parmi ceux encore actifs sur la grille
+    function pickNewSecretWord() {
+      if (activeWords.length === 0) {
+        alert("🎉 Bravo ! Tu as trouvé tous les mots de cette série !");
+        return;
+      }
+      const randomIndex = Math.floor(Math.random() * activeWords.length);
+      currentTargetWord = activeWords[randomIndex];
+      playSecretWord();
+    }
+
+    // Lit le mot mystère via la synthèse vocale
+    function playSecretWord() {
+      if (!currentTargetWord) return;
+      
+      window.speechSynthesis.cancel(); // Stoppe la lecture en cours si l'élève clique vite
+      const utterance = new SpeechSynthesisUtterance(currentTargetWord.en);
+      utterance.lang = 'en-GB';
+      utterance.rate = 0.85; // Vitesse adaptée
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Vérification de la réponse
+    function checkAnswer(selectedItem, cardElement) {
+      if (!currentTargetWord || cardElement.classList.contains('disabled')) return;
+
+      totalAttempts++;
+
+      if (selectedItem.id === currentTargetWord.id) {
+        cardElement.classList.add('correct', 'disabled');
+        score++;
+        updateScoreboard();
+        
+        // Retirer le mot de la liste des mots restants
+        activeWords = activeWords.filter(w => w.id !== currentTargetWord.id);
+        
+        setTimeout(() => {
+          pickNewSecretWord();
+        }, 800);
+      } else {
+        cardElement.classList.add('wrong');
+        updateScoreboard();
+        setTimeout(() => cardElement.classList.remove('wrong'), 600);
+      }
+    }
+
+    function updateScoreboard() {
+      document.getElementById('score').innerText = score;
+      document.getElementById('total').innerText = totalAttempts;
+    }
+
+    // Lancement au démarrage
+    window.onload = resetGame;
+  </script>
+</body>
+</html>
