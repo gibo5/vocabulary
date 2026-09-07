@@ -113,27 +113,29 @@
       pointer-events: none;
       opacity: 0.3;
     }
-    /* Fun Victory Banner Popup Styling */
+    /* Festive Gold/Trophy Victory Banner Popup Styling */
     #victory-banner {
       display: none;
-      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-      border: 3px dashed #ff6b6b;
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      border: 3px solid #f39c12;
       border-radius: 16px;
       max-width: 500px;
       margin: 30px auto;
       padding: 30px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     #victory-banner h2 {
-      color: #d63031;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.15);
       font-size: 2.2rem;
       margin-top: 0;
       margin-bottom: 10px;
     }
     #victory-banner p {
       font-size: 1.2rem;
-      color: #2d3436;
+      color: #2c3e50;
+      font-weight: 600;
       margin-bottom: 20px;
     }
     @keyframes popIn {
@@ -213,9 +215,9 @@
     <div class="score-board">Score : <span id="score">0</span> / <span id="total">0</span></div>
   </div>
 
-  <!-- Fun Celebration Victory Banner -->
+  <!-- Festive Gold/Trophy Victory Banner Popup -->
   <div id="victory-banner">
-    <h2>🎉 AMAZING JOB! 🌟</h2>
+    <h2>🏆 AMAZING JOB! 🌟</h2>
     <p>You matched all the words successfully like a pro!</p>
     <button class="start-btn" onclick="startGame()">Play Again 🚀</button>
   </div>
@@ -334,7 +336,6 @@
 
     function pickAndPlayNewWord() {
       if (activeWords.length === 0) {
-        // Hide grid and show fun victory popup banner instead of a dry alert
         document.getElementById('word-grid').style.display = 'none';
         document.getElementById('victory-banner').style.display = 'block';
         playSound('win');
