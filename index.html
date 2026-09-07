@@ -142,8 +142,8 @@
           </button>
         </div>
 
-        <!-- Sorting Selector -->
-        <div class="flex items-center gap-1.5 lg:col-span-3">
+        <!-- Sorting Selector + Shuffle Button -->
+        <div class="flex items-center gap-1.5 lg:col-span-4">
           <label for="sortSelect" class="text-xs font-medium text-slate-500 whitespace-nowrap">Sort:</label>
           <select id="sortSelect" onchange="applyFiltersAndSort()" class="w-full py-1.5 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
             <option value="original" selected>Original order</option>
@@ -151,31 +151,36 @@
             <option value="diff-desc">Difficulty (Hardest First)</option>
             <option value="diff-asc">Difficulty (Easiest First)</option>
           </select>
-        </div>
-
-        <!-- Accent Selector -->
-        <div class="flex items-center gap-1.5 lg:col-span-2">
-          <label for="accentSelect" class="text-xs font-medium text-slate-500 whitespace-nowrap">Accent:</label>
-          <select id="accentSelect" class="w-full py-1.5 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <option value="en-GB" selected>🇬🇧 UK</option>
-            <option value="en-US">🇺🇸 US</option>
-            <option value="en-AU">🇦🇺 AU</option>
-          </select>
-        </div>
-
-        <!-- Audio Speed & Actions -->
-        <div class="flex items-center gap-2 sm:col-span-2 lg:col-span-3 justify-end">
-          <div class="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200 flex-1">
-            <label for="speedRate" class="text-xs font-medium text-slate-600 whitespace-nowrap">Speed:</label>
-            <input type="range" id="speedRate" min="0.5" max="1.2" step="0.05" value="0.85" oninput="updateSpeedLabel(this.value)"
-                   class="w-full accent-indigo-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg">
-            <span id="speedValue" class="text-xs font-mono text-indigo-600 font-semibold w-7 text-right">0.85x</span>
-          </div>
-
-          <button onclick="shuffleCards()" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium text-xs rounded-xl transition-colors flex items-center justify-center gap-1.5 shrink-0">
+          <button onclick="shuffleCards()" title="Shuffle cards" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium text-xs rounded-xl transition-colors flex items-center justify-center gap-1 shrink-0">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
             Shuffle
           </button>
+        </div>
+
+        <!-- Accent & IPA Options -->
+        <div class="flex items-center gap-3 lg:col-span-4 justify-between sm:justify-end">
+          <!-- Option Checkbox for Phonetic -->
+          <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-600 select-none bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 transition-colors">
+            <input type="checkbox" id="showIpaCheckbox" onchange="toggleIpaVisibility()" class="rounded text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5">
+            <span>Show IPA</span>
+          </label>
+
+          <!-- Accent Selector -->
+          <div class="flex items-center gap-1.5">
+            <label for="accentSelect" class="text-xs font-medium text-slate-500 whitespace-nowrap">Accent:</label>
+            <select id="accentSelect" class="py-1.5 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="en-GB" selected>🇬🇧 UK</option>
+              <option value="en-US">🇺🇸 US</option>
+              <option value="en-AU">🇦🇺 AU</option>
+            </select>
+          </div>
+
+          <!-- Speed Slider -->
+          <div class="flex items-center gap-1 bg-slate-50 px-2 py-1.5 rounded-xl border border-slate-200">
+            <input type="range" id="speedRate" min="0.5" max="1.2" step="0.05" value="0.85" oninput="updateSpeedLabel(this.value)"
+                   class="w-14 accent-indigo-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg">
+            <span id="speedValue" class="text-xs font-mono text-indigo-600 font-semibold w-7 text-right">0.85x</span>
+          </div>
         </div>
 
       </div>
@@ -217,6 +222,7 @@
 
   <script>
     const RATINGS_STORAGE_KEY = 'vocab_app_ratings_v1';
+    const SHOW_IPA_STORAGE_KEY = 'vocab_app_show_ipa';
 
     function getStoredRatings() {
       try {
@@ -241,8 +247,9 @@
     let rawVocabularyData = [];
     let currentCards = [];
     let ratingsMap = getStoredRatings();
-    let defaultFace = 'en'; // 'en' or 'fr'
+    let defaultFace = 'en';
     let currentUnitKey = 'eim11_u1';
+    let showIpa = localStorage.getItem(SHOW_IPA_STORAGE_KEY) !== 'false'; // Par défaut : true
 
     // DOM Elements
     const gridEl = document.getElementById('vocabGrid');
@@ -252,6 +259,7 @@
     const clearSearchBtn = document.getElementById('clearSearchBtn');
     const sortSelect = document.getElementById('sortSelect');
     const accentSelect = document.getElementById('accentSelect');
+    const showIpaCheckbox = document.getElementById('showIpaCheckbox');
     const cardCounter = document.getElementById('cardCounter');
     const currentFaceIndicator = document.getElementById('currentFaceIndicator');
     const modeEnBtn = document.getElementById('modeEnBtn');
@@ -309,7 +317,7 @@
       currentCards.forEach(item => {
         const isEnglishDefault = defaultFace === 'en';
         const rating = ratingsMap[item.id] || 0;
-        const ipaText = item.ipa ? `/${item.ipa}/` : '';
+        const ipaText = (showIpa && item.ipa) ? `/${item.ipa}/` : '';
 
         const frontLangBadge = isEnglishDefault ? '[En]' : '[Fr]';
         const backLangBadge = isEnglishDefault ? '[Fr]' : '[En]';
@@ -333,7 +341,7 @@
                     <h3 class="text-sm font-bold text-slate-800 leading-tight truncate">${frontWord}</h3>
                     ${isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-indigo-500 block truncate">${ipaText}</span>` : ''}
                   </div>
-                  <!-- De-emphasized Language Indicator -->
+                  <!-- Discretised Language Tag -->
                   <span class="text-[11px] font-semibold tracking-wider text-slate-400 uppercase shrink-0 select-none">${frontLangBadge}</span>
                 </div>
 
@@ -360,7 +368,7 @@
                     <h3 class="text-sm font-bold text-sky-300 leading-tight truncate">${backWord}</h3>
                     ${!isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-sky-400 block truncate">${ipaText}</span>` : ''}
                   </div>
-                  <!-- De-emphasized Language Indicator -->
+                  <!-- Discretised Language Tag -->
                   <span class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase shrink-0 select-none">${backLangBadge}</span>
                 </div>
 
@@ -386,6 +394,12 @@
 
         gridEl.insertAdjacentHTML('beforeend', cardHTML);
       });
+    }
+
+    function toggleIpaVisibility() {
+      showIpa = showIpaCheckbox.checked;
+      localStorage.setItem(SHOW_IPA_STORAGE_KEY, showIpa);
+      renderCards();
     }
 
     function escapeSingleQuotes(str) {
@@ -494,6 +508,9 @@
     }
 
     window.onload = function() {
+      if (showIpaCheckbox) {
+        showIpaCheckbox.checked = showIpa;
+      }
       if (accentSelect) {
         accentSelect.addEventListener('change', renderCards);
       }
