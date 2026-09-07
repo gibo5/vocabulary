@@ -57,7 +57,7 @@
       color: white;
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
-      display: none; /* Hidden until game starts */
+      display: none; 
     }
     button.replay-btn:hover {
       background: #357abd;
@@ -68,12 +68,13 @@
       color: #2c3e50;
       margin-top: 10px;
     }
+    /* Perfect 3-column grid to prevent misalignments */
     .grid {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(180px, 1fr));
       gap: 15px;
       justify-content: center;
-      max-width: 1000px;
+      max-width: 600px;
       margin: 20px auto;
     }
     .card {
@@ -84,7 +85,6 @@
       cursor: pointer;
       font-size: 1.1rem;
       font-weight: 500;
-      width: 180px;
       min-height: 60px;
       display: flex;
       align-items: center;
@@ -112,6 +112,33 @@
     .card.disabled {
       pointer-events: none;
       opacity: 0.3;
+    }
+    /* Fun Victory Banner Popup Styling */
+    #victory-banner {
+      display: none;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+      border: 3px dashed #ff6b6b;
+      border-radius: 16px;
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    #victory-banner h2 {
+      color: #d63031;
+      font-size: 2.2rem;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    #victory-banner p {
+      font-size: 1.2rem;
+      color: #2d3436;
+      margin-bottom: 20px;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
     @keyframes pulse {
       0% { transform: scale(1); }
@@ -152,8 +179,8 @@
           <option value="data/eim11_u1.json">EiM 11 - Unit 1</option>
           <option value="data/eim11_u2.json">EiM 11 - Unit 2</option>
           <option value="data/eim11_u3.json">EiM 11 - Unit 3</option>
-          <option value="data/eim11_u4.json" selected>EiM 11 - Unit 4</option>
-          <option value="data/eim11_u5.json">EiM 11 - Unit 5</option>
+          <option value="data/eim11_u4.json">EiM 11 - Unit 4</option>
+          <option value="data/eim11_u5.json" selected>EiM 11 - Unit 5</option>
           <option value="data/eim11_u6.json">EiM 11 - Unit 6</option>
         </optgroup>
       </select>
@@ -177,13 +204,20 @@
       </select>
     </div>
     
-    <button class="action-btn" onclick="resetGame()">🔄 Reset</button>
+    <button class="action-btn" onclick="resetGame()">🔄 New Cards</button>
   </div>
 
   <div class="audio-section">
     <button id="start-game-btn" class="start-btn" onclick="startGame()">▶️ Start Game</button>
     <button id="replay-btn" class="replay-btn" onclick="playSecretWord()">🔊 Listen again</button>
     <div class="score-board">Score : <span id="score">0</span> / <span id="total">0</span></div>
+  </div>
+
+  <!-- Fun Celebration Victory Banner -->
+  <div id="victory-banner">
+    <h2>🎉 AMAZING JOB! 🌟</h2>
+    <p>You matched all the words successfully like a pro!</p>
+    <button class="start-btn" onclick="startGame()">Play Again 🚀</button>
   </div>
 
   <div id="word-grid" class="grid"></div>
@@ -196,7 +230,6 @@
     let totalAttempts = 0;
     let gameStarted = false;
 
-    // Load JSON data dynamically based on selected unit
     async function loadSelectedUnit() {
       const fileUrl = document.getElementById('unitSelect').value;
       try {
@@ -207,7 +240,6 @@
         resetGame();
       } catch (error) {
         console.warn("Could not load " + fileUrl + ", using fallback dummy data.");
-        // Fallback dummy data if file isn't uploaded yet
         currentVocabulary = [
           { "id": 1, "en": "the adult", "fr": "l'adulte" },
           { "id": 6, "en": "the teenager", "fr": "l'adolescent" },
@@ -222,7 +254,6 @@
       }
     }
 
-    // Sound effects using Web Audio API
     function playSound(type) {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -241,9 +272,9 @@
             osc.start(startTime);
             osc.stop(startTime + duration);
           };
-          playTone(523.25, now, 0.15);       // C5
-          playTone(659.25, now + 0.12, 0.15); // E5
-          playTone(783.99, now + 0.24, 0.3);  // G5
+          playTone(523.25, now, 0.15);       
+          playTone(659.25, now + 0.12, 0.15); 
+          playTone(783.99, now + 0.24, 0.3);  
         } else if (type === 'fail') {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
@@ -264,15 +295,18 @@
       gameStarted = true;
       document.getElementById('start-game-btn').style.display = 'none';
       document.getElementById('replay-btn').style.display = 'inline-block';
+      document.getElementById('victory-banner').style.display = 'none';
+      document.getElementById('word-grid').style.display = 'grid';
       resetGame();
     }
 
-    // Reset and initialize a new round
     function resetGame() {
       score = 0;
       totalAttempts = 0;
       updateScoreboard();
       currentTargetWord = null;
+      document.getElementById('victory-banner').style.display = 'none';
+      document.getElementById('word-grid').style.display = 'grid';
 
       const requestedSize = parseInt(document.getElementById('grid-size').value);
       const poolSize = Math.min(requestedSize, currentVocabulary.length);
@@ -300,7 +334,10 @@
 
     function pickAndPlayNewWord() {
       if (activeWords.length === 0) {
-        alert("🎉 Awesome job! You found all the words in this set!");
+        // Hide grid and show fun victory popup banner instead of a dry alert
+        document.getElementById('word-grid').style.display = 'none';
+        document.getElementById('victory-banner').style.display = 'block';
+        playSound('win');
         return;
       }
       const randomIndex = Math.floor(Math.random() * activeWords.length);
@@ -335,7 +372,6 @@
         
         activeWords = activeWords.filter(w => w.id !== currentTargetWord.id);
         
-        // Automatically play next word after win sound delay
         setTimeout(() => {
           pickAndPlayNewWord();
         }, 700);
@@ -346,7 +382,6 @@
         
         setTimeout(() => {
           cardElement.classList.remove('wrong');
-          // Replay current target word automatically after a mistake so they can try again
           playSecretWord();
         }, 600);
       }
@@ -357,7 +392,6 @@
       document.getElementById('total').innerText = totalAttempts;
     }
 
-    // Initial load on page startup
     window.onload = loadSelectedUnit;
   </script>
 </body>
