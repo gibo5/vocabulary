@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Listen & Point - Entraînement Orale</title>
+  <title>Listen & Point - Vocabulary Game</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -15,7 +15,7 @@
       background: white;
       padding: 15px;
       border-radius: 12px;
-      max-width: 600px;
+      max-width: 800px;
       margin: 0 auto 20px auto;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       display: flex;
@@ -34,8 +34,8 @@
       margin: 20px 0;
     }
     button.listen-btn {
-      font-size: 1.4rem;
-      padding: 15px 30px;
+      font-size: 1.3rem;
+      padding: 14px 28px;
       border-radius: 50px;
       border: none;
       background: #4a90e2;
@@ -59,7 +59,7 @@
       flex-wrap: wrap;
       gap: 15px;
       justify-content: center;
-      max-width: 900px;
+      max-width: 1000px;
       margin: 20px auto;
     }
     .card {
@@ -77,6 +77,7 @@
       justify-content: center;
       transition: all 0.2s ease;
       border: 2px solid transparent;
+      user-select: none;
     }
     .card:hover {
       transform: translateY(-3px);
@@ -110,92 +111,161 @@
   <h1>👂 Listen & Point</h1>
   
   <div class="controls">
-    <label for="mode-select"><strong>Niveau :</strong></label>
-    <select id="mode-select" onchange="resetGame()">
-      <option value="easy">Facile (Sons ➔ Anglais)</option>
-      <option value="medium">Moyen (Sons ➔ Français)</option>
-    </select>
+    <div>
+      <label for="unit-select"><strong>Unit :</strong></label>
+      <select id="unit-select" onchange="loadUnitData()">
+        <option value="data/eim11_u4.json">Unit 4: Growing Up</option>
+        <option value="data/eim11_u5.json">Unit 5: Great Idea!</option>
+        <option value="data/eim11_u6.json">Unit 6: Crazy World!</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="mode-select"><strong>Level :</strong></label>
+      <select id="mode-select" onchange="resetGame()">
+        <option value="easy">Easy (Sound ➔ English)</option>
+        <option value="medium">Medium (Sound ➔ French)</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="grid-size"><strong>Cards :</strong></label>
+      <select id="grid-size" onchange="resetGame()">
+        <option value="6">6 cards</option>
+        <option value="9">9 cards</option>
+        <option value="12">12 cards</option>
+        <option value="15">15 cards</option>
+      </select>
+    </div>
     
-    <button class="action-btn" onclick="resetGame()">🔄 Nouvelle série</button>
+    <button class="action-btn" onclick="resetGame()">🔄 Restart</button>
   </div>
 
   <div class="audio-section">
-    <button class="listen-btn" onclick="playSecretWord()">🔊 Écouter le mot</button>
+    <button class="listen-btn" onclick="playSecretWord()">🔊 Listen to the mystery word</button>
     <div class="score-board">Score : <span id="score">0</span> / <span id="total">0</span></div>
   </div>
 
   <div id="word-grid" class="grid"></div>
 
   <script>
-    // Exemple de données tirées de vos JSONs (à charger dynamiquement selon l'unité)
-    const vocabularyList = [
-      { "id": 1, "en": "the adult", "fr": "l'adulte" },
-      { "id": 6, "en": "the teenager", "fr": "l'adolescent" },
-      { "id": 7, "en": "the toddler", "fr": "le petit enfant" },
-      { "id": 16, "en": "annoyed", "fr": "énervé, agacé" },
-      { "id": 20, "en": "exhausted", "fr": "épuisé" },
-      { "id": 26, "en": "the satellite dish", "fr": "l'antenne parabolique" },
-      { "id": 30, "en": "crispy", "fr": "croustillant" },
-      { "id": 39, "en": "the fan", "fr": "le fan" }
-    ];
-
+    let currentVocabulary = [];
+    let activeWords = [];
     let currentTargetWord = null;
     let score = 0;
     let totalAttempts = 0;
-    let activeWords = [];
 
-    // Réinitialise le jeu et génère une nouvelle grille
+    // Load JSON data dynamically based on selected unit
+    async function loadUnitData() {
+      const fileUrl = document.getElementById('unit-select').value;
+      try {
+        const response = await fetch(fileUrl);
+        const data = await response.json();
+        currentVocabulary = data.words;
+        resetGame();
+      } catch (error) {
+        console.error("Error loading JSON file:", error);
+        // Fallback dummy data if files aren't found locally during testing
+        currentVocabulary = [
+          { "id": 1, "en": "the adult", "fr": "l'adulte" },
+          { "id": 6, "en": "the teenager", "fr": "l'adolescent" },
+          { "id": 7, "en": "the toddler", "fr": "le petit enfant" },
+          { "id": 16, "en": "annoyed", "fr": "énervé, agacé" },
+          { "id": 20, "en": "exhausted", "fr": "épuisé" },
+          { "id": 26, "en": "the satellite dish", "fr": "l'antenne parabolique" },
+          { "id": 30, "en": "crispy", "fr": "croustillant" },
+          { "id": 39, "en": "the fan", "fr": "le fan" }
+        ];
+        resetGame();
+      }
+    }
+
+    // Play a satisfying success sound using Web Audio API
+    function playSuccessSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const now = audioCtx.currentTime;
+        
+        const playTone = (freq, startTime, duration) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, startTime);
+          
+          gain.gain.setValueAtTime(0.15, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+          
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          
+          osc.start(startTime);
+          osc.stop(startTime + duration);
+        };
+
+        playTone(523.25, now, 0.15);       // C5
+        playTone(659.25, now + 0.12, 0.15); // E5
+        playTone(783.99, now + 0.24, 0.3);  // G5
+      } catch (e) {
+        // Fallback if AudioContext is blocked by browser policies
+      }
+    }
+
+    // Reset and initialize a new round
     function resetGame() {
       score = 0;
       totalAttempts = 0;
       updateScoreboard();
-      
-      // Sélectionne 6 mots au hasard dans la liste
-      activeWords = [...vocabularyList].sort(() => 0.5 - Math.random()).slice(0, 6);
+      currentTargetWord = null;
+
+      const requestedSize = parseInt(document.getElementById('grid-size').value);
+      const poolSize = Math.min(requestedSize, currentVocabulary.length);
+
+      // Randomly pick words for the grid based on requested size
+      activeWords = [...currentVocabulary].sort(() => 0.5 - Math.random()).slice(0, poolSize);
       
       const grid = document.getElementById('word-grid');
       grid.innerHTML = '';
       
       const mode = document.getElementById('mode-select').value;
-
-      // Mélange l'affichage des cartes
       const displayWords = [...activeWords].sort(() => 0.5 - Math.random());
 
       displayWords.forEach(item => {
         const card = document.createElement('div');
         card.className = 'card';
-        // Mode Facile = Mot écrit en Anglais | Mode Moyen = Traduction en Français
         card.innerText = mode === 'easy' ? item.en : item.fr;
         card.onclick = () => checkAnswer(item, card);
         grid.appendChild(card);
       });
 
-      pickNewSecretWord();
+      // Pick the first target word, but do NOT autoplay it.
+      pickNewSecretWordTargetOnly();
     }
 
-    // Choisit le mot cible parmi ceux encore actifs sur la grille
-    function pickNewSecretWord() {
+    // Selects the target word silently (without playing sound automatically)
+    function pickNewSecretWordTargetOnly() {
       if (activeWords.length === 0) {
-        alert("🎉 Bravo ! Tu as trouvé tous les mots de cette série !");
+        alert("🎉 Awesome job! You found all the words in this set!");
         return;
       }
       const randomIndex = Math.floor(Math.random() * activeWords.length);
       currentTargetWord = activeWords[randomIndex];
-      playSecretWord();
     }
 
-    // Lit le mot mystère via la synthèse vocale
+    // Triggered when student clicks the "Listen" button
     function playSecretWord() {
+      if (!currentTargetWord) {
+        pickNewSecretWordTargetOnly();
+      }
       if (!currentTargetWord) return;
-      
-      window.speechSynthesis.cancel(); // Stoppe la lecture en cours si l'élève clique vite
+
+      window.speechSynthesis.cancel(); 
       const utterance = new SpeechSynthesisUtterance(currentTargetWord.en);
       utterance.lang = 'en-GB';
-      utterance.rate = 0.85; // Vitesse adaptée
+      utterance.rate = 0.85;
       window.speechSynthesis.speak(utterance);
     }
 
-    // Vérification de la réponse
+    // Check student's answer selection
     function checkAnswer(selectedItem, cardElement) {
       if (!currentTargetWord || cardElement.classList.contains('disabled')) return;
 
@@ -205,17 +275,18 @@
         cardElement.classList.add('correct', 'disabled');
         score++;
         updateScoreboard();
+        playSuccessSound();
         
-        // Retirer le mot de la liste des mots restants
+        // Remove from active pool so it won't be repeated
         activeWords = activeWords.filter(w => w.id !== currentTargetWord.id);
         
         setTimeout(() => {
-          pickNewSecretWord();
-        }, 800);
+          pickNewSecretWordTargetOnly();
+        }, 600);
       } else {
         cardElement.classList.add('wrong');
         updateScoreboard();
-        setTimeout(() => cardElement.classList.remove('wrong'), 600);
+        setTimeout(() => cardElement.classList.remove('wrong'), 500);
       }
     }
 
@@ -224,8 +295,8 @@
       document.getElementById('total').innerText = totalAttempts;
     }
 
-    // Lancement au démarrage
-    window.onload = resetGame;
+    // Initial load on page startup
+    window.onload = loadUnitData;
   </script>
 </body>
 </html>
