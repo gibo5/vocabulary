@@ -7,28 +7,43 @@
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
-      background: #f0f4f8;
-      color: #333;
+      /* Cooler background: Modern dark-indigo gradient with soft depth */
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #1e293b 100%);
+      color: #f8fafc;
       padding: 20px;
+      min-height: 100vh;
+      margin: 0;
+      box-sizing: border-box;
+    }
+    h1 {
+      color: #f8fafc;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
     .controls {
-      background: white;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
       padding: 15px;
       border-radius: 12px;
       max-width: 900px;
       margin: 0 auto 20px auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
       display: flex;
       gap: 15px;
       justify-content: center;
       align-items: center;
       flex-wrap: wrap;
+      color: #1e293b;
+    }
+    .controls label {
+      color: #334155;
     }
     select, button.action-btn {
       padding: 8px 12px;
       font-size: 0.9rem;
       border-radius: 6px;
-      border: 1px solid #ccc;
+      border: 1px solid #cbd5e1;
+      background: white;
+      color: #1e293b;
     }
     .audio-section {
       margin: 20px 0;
@@ -38,14 +53,14 @@
       padding: 12px 24px;
       border-radius: 50px;
       border: none;
-      background: #2ed573;
+      background: #10b981;
       color: white;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(46, 213, 115, 0.3);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
       transition: transform 0.1s, background 0.2s;
     }
     button.start-btn:hover {
-      background: #26af5f;
+      background: #059669;
       transform: scale(1.03);
     }
     button.replay-btn {
@@ -53,20 +68,21 @@
       padding: 10px 20px;
       border-radius: 50px;
       border: none;
-      background: #4a90e2;
+      background: #3b82f6;
       color: white;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
       display: none; 
     }
     button.replay-btn:hover {
-      background: #357abd;
+      background: #2563eb;
     }
     .score-board {
       font-size: 1.2rem;
       font-weight: bold;
-      color: #2c3e50;
+      color: #e2e8f0;
       margin-top: 10px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
     }
     /* Perfect 3-column grid to prevent misalignments */
     .grid {
@@ -78,13 +94,14 @@
       margin: 20px auto;
     }
     .card {
-      background: white;
+      background: rgba(255, 255, 255, 0.95);
+      color: #1e293b;
       padding: 20px 15px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
       cursor: pointer;
       font-size: 1.1rem;
-      font-weight: 500;
+      font-weight: 600;
       min-height: 60px;
       display: flex;
       align-items: center;
@@ -94,47 +111,47 @@
       user-select: none;
     }
     .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-      border-color: #4a90e2;
+      transform: translateY(-4px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+      border-color: #6366f1;
     }
     .card.correct {
-      background: #2ed573 !important;
+      background: #10b981 !important;
       color: white;
-      border-color: #2ed573;
+      border-color: #10b981;
       animation: pulse 0.4s;
     }
     .card.wrong {
-      background: #ff4757 !important;
+      background: #ef4444 !important;
       color: white;
-      border-color: #ff4757;
+      border-color: #ef4444;
     }
     .card.disabled {
       pointer-events: none;
       opacity: 0.3;
     }
-    /* Festive Gold/Trophy Victory Banner Popup Styling */
+    /* Festive Gold/Trophy Victory Banner Popup */
     #victory-banner {
       display: none;
       background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-      border: 3px solid #f39c12;
+      border: 3px solid #f59e0b;
       border-radius: 16px;
       max-width: 500px;
       margin: 30px auto;
       padding: 30px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
       animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     #victory-banner h2 {
       color: #ffffff;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
       font-size: 2.2rem;
       margin-top: 0;
       margin-bottom: 10px;
     }
     #victory-banner p {
       font-size: 1.2rem;
-      color: #2c3e50;
+      color: #1e293b;
       font-weight: 600;
       margin-bottom: 20px;
     }
