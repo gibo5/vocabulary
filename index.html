@@ -4,134 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EiM Vocabulary & Pronunciation</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter Font -->
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
   <style>
-    :root {
-      --primary: #4f46e5;
-      --primary-hover: #4338ca;
-      --bg-body: #f8fafc;
-      --card-bg-front: #ffffff;
-      --card-bg-back: #0f172a;
-      --text-front: #1e293b;
-      --text-back: #f8fafc;
-      --accent-blue: #38bdf8;
-      --easy-color: #22c55e;
-      --medium-color: #eab308;
-      --hard-color: #ef4444;
-      --unrated-color: #cbd5e1;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg-body);
-      color: var(--text-front);
-      padding: 16px;
-      max-width: 800px;
-      margin: 0 auto;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
     }
 
-    /* HEADER & SELECTOR */
-    header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid #e2e8f0;
-    }
-
-    .title-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    h1 {
-      font-size: 1.35rem;
-      color: #1e293b;
-      font-weight: 700;
-    }
-
-    select.unit-select {
-      background-color: #ffffff;
-      border: 2px solid var(--primary);
-      color: var(--primary);
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
-
-    /* CONTROLS TOOLBAR */
-    .toolbar {
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      align-items: center;
-    }
-
-    .control-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .control-group label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: #64748b;
-      letter-spacing: 0.05em;
-    }
-
-    input, select, button {
-      font-family: inherit;
-      font-size: 0.9rem;
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid #cbd5e1;
-      background: #ffffff;
-    }
-
-    .btn-action {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      padding: 8px 12px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-    .btn-action:hover { background-color: var(--primary-hover); }
-
-    .counter {
-      font-size: 0.85rem;
-      color: #64748b;
-      font-weight: 600;
-      text-align: right;
-    }
-
-    /* GRID & FLIP CARDS */
-    .vocab-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
+    /* 3D Flip Card Container & Engine */
     .card-container {
       perspective: 1000px;
       height: 95px;
@@ -144,217 +26,266 @@
       height: 100%;
       transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
       transform-style: preserve-3d;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+      border-radius: 0.75rem;
     }
 
-    .card-container.is-flipped .card-inner {
+    /* Triggered 180 degree flip */
+    .card-container.flipped .card-inner {
       transform: rotateY(180deg);
     }
 
     .card-front, .card-back {
       position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
-      border-radius: 10px;
-      padding: 10px 14px;
+      border-radius: 0.75rem;
+      padding: 0.65rem 0.85rem;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: space-between;
-      border: 1px solid #e2e8f0;
       box-sizing: border-box;
     }
 
+    /* Front Side */
     .card-front {
-      background-color: var(--card-bg-front);
-      color: var(--text-front);
+      transform: rotateY(0deg);
+      background-color: #ffffff;
     }
 
+    /* Back Side */
     .card-back {
-      background-color: var(--card-bg-back);
-      color: var(--text-back);
       transform: rotateY(180deg);
-      border-color: #1e293b;
+      background-color: #0f172a;
+      color: #ffffff;
     }
 
-    .lang-tag {
-      position: absolute;
-      top: 6px;
-      right: 10px;
-      font-size: 0.7rem;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      opacity: 0.5;
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
     }
-    .card-back .lang-tag { color: var(--accent-blue); opacity: 0.8; }
-
-    .word-text {
-      font-size: 1.15rem;
-      font-weight: 600;
-      max-width: 78%;
-      line-height: 1.25;
+    ::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.05);
     }
-    .card-back .word-text { color: var(--accent-blue); }
-
-    .actions-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* RATING BUTTONS */
-    .rating-group {
-      display: flex;
-      gap: 3px;
-      background: rgba(0,0,0,0.04);
-      padding: 2px;
-      border-radius: 16px;
-    }
-    .card-back .rating-group { background: rgba(255,255,255,0.1); }
-
-    .rate-btn {
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      font-size: 0.8rem;
-      padding: 2px 4px;
-      border-radius: 50%;
-      opacity: 0.3;
-      transition: opacity 0.15s, transform 0.15s;
-    }
-    .rate-btn:hover { opacity: 0.8; transform: scale(1.2); }
-    .rate-btn.active { opacity: 1; transform: scale(1.15); }
-
-    /* AUDIO BUTTON */
-    .btn-audio {
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 38px;
-      height: 38px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1rem;
-      flex-shrink: 0;
-      transition: transform 0.1s, background-color 0.15s;
-    }
-    .btn-audio:hover { transform: scale(1.08); background-color: var(--primary-hover); }
-
-    #loadingMessage {
-      text-align: center;
-      padding: 40px;
-      font-size: 1.1rem;
-      color: #64748b;
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.15);
+      border-radius: 3px;
     }
   </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
 
-  <header>
-    <div class="title-group">
-      <h1 id="unitTitle">EiM Vocabulary</h1>
-      <select id="unitSelect" class="unit-select" onchange="loadSelectedUnit()">
-        <optgroup label="EiM 9">
-          <option value="eim9_u1.json">Unit 1</option>
-          <option value="eim9_u2.json">Unit 2</option>
-          <option value="eim9_u3.json">Unit 3</option>
-          <option value="eim9_u4.json">Unit 4</option>
-          <option value="eim9_u5.json">Unit 5</option>
-          <option value="eim9_u6.json">Unit 6</option>
-          <option value="eim9_u7.json">Unit 7</option>
-        </optgroup>
-        <optgroup label="EiM 10">
-          <option value="eim10_u1.json" selected>Unit 1</option>
-          <option value="eim10_u2.json">Unit 2</option>
-          <option value="eim10_u3.json">Unit 3</option>
-          <option value="eim10_u4.json">Unit 4</option>
-          <option value="eim10_u5.json">Unit 5</option>
-          <option value="eim10_u6.json">Unit 6</option>
-          <option value="eim10_u7.json">Unit 7</option>
-        </optgroup>
-        <optgroup label="EiM 11">
-          <option value="eim11_u1.json">Unit 1</option>
-          <option value="eim11_u2.json">Unit 2</option>
-          <option value="eim11_u3.json">Unit 3</option>
-          <option value="eim11_u4.json">Unit 4</option>
-          <option value="eim11_u5.json">Unit 5</option>
-          <option value="eim11_u6.json">Unit 6</option>
-          <option value="eim11_u7.json">Unit 7</option>
-        </optgroup>
-      </select>
+  <!-- Application Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-6xl mx-auto px-4 py-3 sm:px-6">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        
+        <!-- App Title & Unit Selector -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🗣️</span>
+            <div>
+              <h1 id="unitTitle" class="text-lg sm:text-xl font-bold tracking-tight text-slate-900 leading-tight">EiM 10 - Unit 1: Vocabulary & Pronunciation</h1>
+              <p class="text-xs text-slate-500">Interactive Pronunciation & Memory Cards</p>
+            </div>
+          </div>
+
+          <!-- Unit Selector Dropdown -->
+          <div class="sm:ml-2">
+            <select id="unitSelect" onchange="loadSelectedUnit()" class="py-1 px-2.5 bg-indigo-50 border border-indigo-200 text-indigo-800 text-xs font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+              <optgroup label="EiM 9">
+                <option value="eim9_u1.json">EiM 9 - Unit 1</option>
+                <option value="eim9_u2.json">EiM 9 - Unit 2</option>
+                <option value="eim9_u3.json">EiM 9 - Unit 3</option>
+                <option value="eim9_u4.json">EiM 9 - Unit 4</option>
+                <option value="eim9_u5.json">EiM 9 - Unit 5</option>
+                <option value="eim9_u6.json">EiM 9 - Unit 6</option>
+                <option value="eim9_u7.json">EiM 9 - Unit 7</option>
+              </optgroup>
+              <optgroup label="EiM 10">
+                <option value="eim10_u1.json" selected>EiM 10 - Unit 1</option>
+                <option value="eim10_u2.json">EiM 10 - Unit 2</option>
+                <option value="eim10_u3.json">EiM 10 - Unit 3</option>
+                <option value="eim10_u4.json">EiM 10 - Unit 4</option>
+                <option value="eim10_u5.json">EiM 10 - Unit 5</option>
+                <option value="eim10_u6.json">EiM 10 - Unit 6</option>
+                <option value="eim10_u7.json">EiM 10 - Unit 7</option>
+              </optgroup>
+              <optgroup label="EiM 11">
+                <option value="eim11_u1.json">EiM 11 - Unit 1</option>
+                <option value="eim11_u2.json">EiM 11 - Unit 2</option>
+                <option value="eim11_u3.json">EiM 11 - Unit 3</option>
+                <option value="eim11_u4.json">EiM 11 - Unit 4</option>
+                <option value="eim11_u5.json">EiM 11 - Unit 5</option>
+                <option value="eim11_u6.json">EiM 11 - Unit 6</option>
+                <option value="eim11_u7.json">EiM 11 - Unit 7</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
+        <!-- Default Face Display Selector Mode -->
+        <div class="bg-slate-100 p-1.5 rounded-xl border border-slate-200 flex items-center justify-between sm:justify-start gap-2 self-start md:self-auto">
+          <span class="text-xs font-semibold text-slate-600 pl-2">Default Front:</span>
+          <div class="inline-flex rounded-lg bg-slate-200/70 p-0.5" role="group">
+            <button id="modeEnBtn" onclick="setDefaultMode('en')" 
+                    class="px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs">
+              🇺🇸/🇬🇧 English
+            </button>
+            <button id="modeFrBtn" onclick="setDefaultMode('fr')" 
+                    class="px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900">
+              🇫🇷 Français
+            </button>
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div class="counter" id="cardCounter">0 cards</div>
   </header>
 
-  <!-- CONTROLS -->
-  <div class="toolbar">
-    <div class="control-group">
-      <label for="searchInput">Search</label>
-      <input type="text" id="searchInput" placeholder="Filter words..." oninput="renderCards()">
+  <!-- Main Content Layout -->
+  <main class="max-w-6xl mx-auto px-4 py-5 sm:px-6 flex-grow w-full">
+    
+    <!-- Controls Toolbar -->
+    <section class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs mb-5 space-y-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 items-center">
+        
+        <!-- Live Search Bar -->
+        <div class="relative lg:col-span-4">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <input type="text" id="searchInput" oninput="applyFiltersAndSort()" placeholder="Search word or translation..." 
+                 class="w-full pl-9 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+          <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+            &times;
+          </button>
+        </div>
+
+        <!-- Sorting Selector -->
+        <div class="flex items-center gap-1.5 lg:col-span-3">
+          <label for="sortSelect" class="text-xs font-medium text-slate-500 whitespace-nowrap">Sort:</label>
+          <select id="sortSelect" onchange="applyFiltersAndSort()" class="w-full py-1.5 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="original" selected>Original order</option>
+            <option value="alpha-asc">Alphabetical (A ➔ Z)</option>
+            <option value="diff-desc">Difficulty (Hardest First)</option>
+            <option value="diff-asc">Difficulty (Easiest First)</option>
+          </select>
+        </div>
+
+        <!-- Accent Selector -->
+        <div class="flex items-center gap-1.5 lg:col-span-2">
+          <label for="accentSelect" class="text-xs font-medium text-slate-500 whitespace-nowrap">Accent:</label>
+          <select id="accentSelect" class="w-full py-1.5 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="en-GB" selected>🇬🇧 UK</option>
+            <option value="en-US">🇺🇸 US</option>
+            <option value="en-AU">🇦🇺 AU</option>
+          </select>
+        </div>
+
+        <!-- Audio Speed & Actions -->
+        <div class="flex items-center gap-2 sm:col-span-2 lg:col-span-3 justify-end">
+          <div class="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200 flex-1">
+            <label for="speedRate" class="text-xs font-medium text-slate-600 whitespace-nowrap">Speed:</label>
+            <input type="range" id="speedRate" min="0.5" max="1.2" step="0.05" value="0.85" oninput="updateSpeedLabel(this.value)"
+                   class="w-full accent-indigo-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg">
+            <span id="speedValue" class="text-xs font-mono text-indigo-600 font-semibold w-7 text-right">0.85x</span>
+          </div>
+
+          <button onclick="shuffleCards()" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium text-xs rounded-xl transition-colors flex items-center justify-center gap-1.5 shrink-0">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            Shuffle
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Status Bar -->
+    <div class="flex justify-between items-center mb-3 px-1">
+      <span class="text-xs font-semibold uppercase tracking-wider text-slate-500" id="cardCounter">Showing 0 Words</span>
+      <span class="text-xs text-indigo-600 font-medium bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-100/80" id="currentFaceIndicator">Default Mode: English Front</span>
     </div>
 
-    <div class="control-group">
-      <label for="sortSelect">Sort By</label>
-      <select id="sortSelect" onchange="renderCards()">
-        <option value="id">Original order</option>
-        <option value="alpha">Alphabetical (A ➔ Z)</option>
-        <option value="hardest">Difficulty (Hardest First)</option>
-        <option value="easiest">Difficulty (Easiest First)</option>
-      </select>
+    <!-- Loading State -->
+    <div id="loadingMessage" class="text-center py-12 bg-white rounded-2xl border border-slate-200 my-4 text-slate-500 font-medium text-sm">
+      Loading unit data...
     </div>
 
-    <div class="control-group">
-      <label for="faceSelect">Default Front Face</label>
-      <select id="faceSelect" onchange="renderCards()">
-        <option value="en" selected>English Front [En]</option>
-        <option value="fr">French Front [Fr]</option>
-      </select>
+    <!-- Cards Grid Container -->
+    <div id="vocabGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <!-- Cards dynamically inserted here -->
     </div>
 
-    <div class="control-group">
-      <label for="accentSelect">English Accent</label>
-      <select id="accentSelect">
-        <option value="en-GB" selected>🇬🇧 UK English</option>
-        <option value="en-US">🇺🇸 US English</option>
-        <option value="en-AU">🇦🇺 AU English</option>
-      </select>
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200 my-4">
+      <span class="text-4xl block mb-2">🔍</span>
+      <h3 class="text-slate-700 font-semibold text-lg">No matching vocabulary found</h3>
+      <p class="text-slate-500 text-sm mt-1">Try searching for a different keyword.</p>
+      <button onclick="clearSearch()" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-medium hover:bg-indigo-700 transition">
+        Clear Search Filter
+      </button>
     </div>
 
-    <div class="control-group">
-      <label for="speedSelect">Audio Speed</label>
-      <select id="speedSelect">
-        <option value="0.75">0.75x (Slow)</option>
-        <option value="0.85" selected>0.85x (Default)</option>
-        <option value="1.0">1.0x (Normal)</option>
-      </select>
-    </div>
+  </main>
 
-    <div class="control-group" style="justify-content: flex-end;">
-      <button class="btn-action" onclick="shuffleCards()">🔀 Shuffle Cards</button>
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400 mt-auto">
+    <div class="max-w-6xl mx-auto px-4">
+      <p>Interactive EiM English-French Vocabulary Practice • Powered by Web Speech API • Zero Adverts • No Account Required</p>
     </div>
-  </div>
-
-  <div id="loadingMessage">Loading unit data...</div>
-  <div class="vocab-grid" id="vocabGrid"></div>
+  </footer>
 
   <script>
-    let currentUnitData = [];
-    let userRatings = JSON.parse(localStorage.getItem('eim_vocab_ratings') || '{}');
+    const RATINGS_STORAGE_KEY = 'vocab_app_ratings_v1';
 
-    // 1. Fetch JSON file for the selected unit
+    function getStoredRatings() {
+      try {
+        const saved = localStorage.getItem(RATINGS_STORAGE_KEY);
+        return saved ? JSON.parse(saved) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveStoredRating(cardId, rating) {
+      try {
+        const ratings = getStoredRatings();
+        ratings[cardId] = rating;
+        localStorage.setItem(RATINGS_STORAGE_KEY, JSON.stringify(ratings));
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+    }
+
+    // State Variables
+    let rawVocabularyData = [];
+    let currentCards = [];
+    let ratingsMap = getStoredRatings();
+    let defaultFace = 'en'; // 'en' or 'fr'
+
+    // DOM Elements
+    const gridEl = document.getElementById('vocabGrid');
+    const emptyStateEl = document.getElementById('emptyState');
+    const loadingEl = document.getElementById('loadingMessage');
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const sortSelect = document.getElementById('sortSelect');
+    const accentSelect = document.getElementById('accentSelect');
+    const cardCounter = document.getElementById('cardCounter');
+    const currentFaceIndicator = document.getElementById('currentFaceIndicator');
+    const modeEnBtn = document.getElementById('modeEnBtn');
+    const modeFrBtn = document.getElementById('modeFrBtn');
+
+    // Fetch JSON file dynamically
     async function loadSelectedUnit() {
       const file = document.getElementById('unitSelect').value;
-      const grid = document.getElementById('vocabGrid');
-      const loading = document.getElementById('loadingMessage');
-      
-      grid.innerHTML = '';
-      loading.style.display = 'block';
-      loading.textContent = 'Loading unit data...';
+      gridEl.innerHTML = '';
+      emptyStateEl.classList.add('hidden');
+      loadingEl.classList.remove('hidden');
+      loadingEl.textContent = 'Loading unit data...';
 
       try {
         const response = await fetch(`data/${file}`);
@@ -362,141 +293,224 @@
         
         const json = await response.json();
         document.getElementById('unitTitle').textContent = json.title || 'Vocabulary';
-        currentUnitData = json.words || [];
         
-        loading.style.display = 'none';
-        renderCards();
+        // Adapt input data structure (en/fr -> english/french)
+        rawVocabularyData = (json.words || []).map(item => ({
+          id: item.id,
+          english: item.en || item.english || '',
+          french: item.fr || item.french || ''
+        }));
+
+        loadingEl.classList.add('hidden');
+        applyFiltersAndSort();
       } catch (err) {
-        loading.textContent = `⚠️ Unable to load unit file (data/${file}). Make sure the JSON file exists on GitHub.`;
+        loadingEl.textContent = `⚠️ Unable to load unit file (data/${file}). Please ensure the JSON file exists.`;
       }
     }
 
-    // 2. Render Cards based on active filters and sort order
     function renderCards() {
-      const grid = document.getElementById('vocabGrid');
-      grid.innerHTML = '';
+      gridEl.innerHTML = '';
 
-      const search = document.getElementById('searchInput').value.toLowerCase().trim();
-      const sortBy = document.getElementById('sortSelect').value;
-      const defaultFace = document.getElementById('faceSelect').value;
-
-      // Filter
-      let filtered = currentUnitData.filter(item => 
-        item.en.toLowerCase().includes(search) || item.fr.toLowerCase().includes(search)
-      );
-
-      // Sort
-      const weight = { hard: 3, medium: 2, easy: 1, unrated: 0 };
-      if (sortBy === 'alpha') {
-        filtered.sort((a, b) => a.en.localeCompare(b.en));
-      } else if (sortBy === 'hardest') {
-        filtered.sort((a, b) => (weight[userRatings[b.id] || 'unrated']) - (weight[userRatings[a.id] || 'unrated']));
-      } else if (sortBy === 'easiest') {
-        filtered.sort((a, b) => (weight[userRatings[a.id] || 'unrated']) - (weight[userRatings[b.id] || 'unrated']));
-      } else if (sortBy === 'id') {
-        filtered.sort((a, b) => a.id - b.id);
+      if (currentCards.length === 0) {
+        emptyStateEl.classList.remove('hidden');
+        cardCounter.innerText = '0 Words Found';
+        return;
       }
 
-      document.getElementById('cardCounter').textContent = `${filtered.length} / ${currentUnitData.length} cards`;
+      emptyStateEl.classList.add('hidden');
+      cardCounter.innerText = `Showing ${currentCards.length} Word${currentCards.length > 1 ? 's' : ''}`;
 
-      filtered.forEach(item => {
-        const cardHtml = createCardElement(item, defaultFace);
-        grid.appendChild(cardHtml);
+      const selectedEnglishAccent = accentSelect ? accentSelect.value : 'en-GB';
+
+      currentCards.forEach(item => {
+        const isEnglishDefault = defaultFace === 'en';
+        const rating = ratingsMap[item.id] || 0; // 0: Unrated, 1: Easy, 2: Medium, 3: Hard
+
+        const frontLangBadge = isEnglishDefault ? '[En]' : '[Fr]';
+        const backLangBadge = isEnglishDefault ? '[Fr]' : '[En]';
+
+        const frontWord = isEnglishDefault ? item.english : item.french;
+        const frontAudioText = isEnglishDefault ? item.english : item.french;
+        const frontAudioLang = isEnglishDefault ? selectedEnglishAccent : 'fr-FR';
+
+        const backWord = isEnglishDefault ? item.french : item.english;
+        const backAudioText = isEnglishDefault ? item.french : item.english;
+        const backAudioLang = isEnglishDefault ? 'fr-FR' : selectedEnglishAccent;
+
+        const cardHTML = `
+          <div class="card-container" onclick="toggleCardFlip(this)">
+            <div class="card-inner shadow-xs hover:shadow-md transition-shadow duration-300 rounded-xl border border-slate-200">
+              
+              <!-- CARD FRONT -->
+              <div class="card-front border border-slate-200/90">
+                <div class="flex items-start justify-between gap-1 w-full">
+                  <h3 class="text-sm font-bold text-slate-800 leading-tight line-clamp-2 pr-1">${frontWord}</h3>
+                  <span class="text-[10px] font-extrabold tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100/80 px-1.5 py-0.5 rounded-md uppercase shrink-0">${frontLangBadge}</span>
+                </div>
+
+                <div class="flex items-center justify-between pt-1 border-t border-slate-100 mt-auto">
+                  <!-- Difficulty Rating Controls -->
+                  <div class="flex items-center gap-1 bg-slate-50 p-0.5 rounded-lg border border-slate-200/60" title="Rate difficulty" onclick="event.stopPropagation()">
+                    <button onclick="setCardRating(${item.id}, 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}">🟢</button>
+                    <button onclick="setCardRating(${item.id}, 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'}">🟡</button>
+                    <button onclick="setCardRating(${item.id}, 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white shadow-xs' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}">🔴</button>
+                  </div>
+
+                  <!-- Audio Pronunciation Button -->
+                  <button title="Listen Pronunciation" 
+                          onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(frontAudioText)}', '${frontAudioLang}');"
+                          class="w-7 h-7 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white flex items-center justify-center transition-all duration-200 transform active:scale-95 border border-indigo-100 hover:border-transparent group">
+                    <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- CARD BACK -->
+              <div class="card-back border border-slate-800">
+                <div class="flex items-start justify-between gap-1 w-full">
+                  <h3 class="text-sm font-bold text-sky-300 leading-tight line-clamp-2 pr-1">${backWord}</h3>
+                  <span class="text-[10px] font-extrabold tracking-wider text-sky-400 bg-sky-950 border border-sky-800/60 px-1.5 py-0.5 rounded-md uppercase shrink-0">${backLangBadge}</span>
+                </div>
+
+                <div class="flex items-center justify-between pt-1 border-t border-slate-800 mt-auto">
+                  <!-- Difficulty Rating Controls -->
+                  <div class="flex items-center gap-1 bg-slate-800/80 p-0.5 rounded-lg border border-slate-700/60" title="Rate difficulty" onclick="event.stopPropagation()">
+                    <button onclick="setCardRating(${item.id}, 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-400 hover:text-emerald-400 hover:bg-slate-700'}">🟢</button>
+                    <button onclick="setCardRating(${item.id}, 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-400 hover:text-amber-400 hover:bg-slate-700'}">🟡</button>
+                    <button onclick="setCardRating(${item.id}, 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white shadow-xs' : 'text-slate-400 hover:text-rose-400 hover:bg-slate-700'}">🔴</button>
+                  </div>
+
+                  <!-- Audio Pronunciation Button -->
+                  <button title="Listen Pronunciation" 
+                          onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(backAudioText)}', '${backAudioLang}');"
+                          class="w-7 h-7 rounded-lg bg-sky-950 hover:bg-sky-500 text-sky-400 hover:text-white flex items-center justify-center transition-all duration-200 transform active:scale-95 border border-sky-800 hover:border-transparent group">
+                    <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        `;
+
+        gridEl.insertAdjacentHTML('beforeend', cardHTML);
       });
     }
 
-    // 3. Construct individual card DOM element
-    function createCardElement(item, defaultFace) {
-      const card = document.createElement('div');
-      card.className = 'card-container';
-      card.onclick = () => card.classList.toggle('is-flipped');
-
-      const frontIsEn = (defaultFace === 'en');
-      const textFront = frontIsEn ? item.en : item.fr;
-      const textBack = frontIsEn ? item.fr : item.en;
-      const tagFront = frontIsEn ? '[En]' : '[Fr]';
-      const tagBack = frontIsEn ? '[Fr]' : '[En]';
-      const langFront = frontIsEn ? 'en' : 'fr';
-      const langBack = frontIsEn ? 'fr' : 'en';
-
-      const currentRating = userRatings[item.id] || 'unrated';
-
-      card.innerHTML = `
-        <div class="card-inner">
-          <!-- FRONT FACE -->
-          <div class="card-front">
-            <span class="lang-tag">${tagFront}</span>
-            <div class="word-text">${textFront}</div>
-            <div class="actions-group">
-              ${renderRatingButtons(item.id, currentRating)}
-              <button class="btn-audio" title="Listen" onclick="event.stopPropagation(); speak('${escapeQuotes(textFront)}', '${langFront}')">🔊</button>
-            </div>
-          </div>
-          <!-- BACK FACE -->
-          <div class="card-back">
-            <span class="lang-tag">${tagBack}</span>
-            <div class="word-text">${textBack}</div>
-            <div class="actions-group">
-              ${renderRatingButtons(item.id, currentRating)}
-              <button class="btn-audio" title="Listen" onclick="event.stopPropagation(); speak('${escapeQuotes(textBack)}', '${langBack}')">🔊</button>
-            </div>
-          </div>
-        </div>
-      `;
-      return card;
+    // Helper functions
+    function escapeSingleQuotes(str) {
+      return str.replace(/'/g, "\\'");
     }
 
-    // 4. Rating buttons HTML generator
-    function renderRatingButtons(itemId, currentRating) {
-      return `
-        <div class="rating-group" onclick="event.stopPropagation()">
-          <button class="rate-btn ${currentRating === 'easy' ? 'active' : ''}" title="Easy" onclick="setRating(${itemId}, 'easy')">🟢</button>
-          <button class="rate-btn ${currentRating === 'medium' ? 'active' : ''}" title="Medium" onclick="setRating(${itemId}, 'medium')">🟡</button>
-          <button class="rate-btn ${currentRating === 'hard' ? 'active' : ''}" title="Hard" onclick="setRating(${itemId}, 'hard')">🔴</button>
-        </div>
-      `;
+    function toggleCardFlip(cardElement) {
+      cardElement.classList.toggle('flipped');
     }
 
-    function setRating(itemId, rating) {
-      if (userRatings[itemId] === rating) {
-        delete userRatings[itemId]; // Toggle off if clicked again
+    function setDefaultMode(mode) {
+      defaultFace = mode;
+
+      if (mode === 'en') {
+        modeEnBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs";
+        modeFrBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
+        currentFaceIndicator.innerText = "Default Mode: English Front";
       } else {
-        userRatings[itemId] = rating;
+        modeFrBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs";
+        modeEnBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
+        currentFaceIndicator.innerText = "Default Mode: French Front";
       }
-      localStorage.setItem('eim_vocab_ratings', JSON.stringify(userRatings));
+
+      applyFiltersAndSort();
+    }
+
+    function setCardRating(cardId, newRating) {
+      if (ratingsMap[cardId] === newRating) {
+        delete ratingsMap[cardId];
+        saveStoredRating(cardId, 0);
+      } else {
+        ratingsMap[cardId] = newRating;
+        saveStoredRating(cardId, newRating);
+      }
+      applyFiltersAndSort();
+    }
+
+    function applyFiltersAndSort() {
+      const query = searchInput.value.toLowerCase().trim();
+      const sortVal = sortSelect.value;
+
+      if (query.length > 0) {
+        clearSearchBtn.classList.remove('hidden');
+      } else {
+        clearSearchBtn.classList.add('hidden');
+      }
+
+      // Filter by search query
+      let filtered = rawVocabularyData.filter(item => 
+        item.english.toLowerCase().includes(query) ||
+        item.french.toLowerCase().includes(query)
+      );
+
+      // Sort cards
+      filtered.sort((a, b) => {
+        const ratingA = ratingsMap[a.id] || 0;
+        const ratingB = ratingsMap[b.id] || 0;
+        const langKey = defaultFace === 'en' ? 'english' : 'french';
+
+        if (sortVal === 'original') {
+          return a.id - b.id;
+        } else if (sortVal === 'alpha-asc') {
+          return a[langKey].localeCompare(b[langKey]);
+        } else if (sortVal === 'diff-desc') {
+          return ratingB - ratingA || a.id - b.id;
+        } else if (sortVal === 'diff-asc') {
+          return ratingA - ratingB || a.id - b.id;
+        }
+        return 0;
+      });
+
+      currentCards = filtered;
       renderCards();
     }
 
-    // 5. Speech Synthesis Trigger
-    function speak(text, langType) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = parseFloat(document.getElementById('speedSelect').value);
-
-      if (langType === 'en') {
-        utterance.lang = document.getElementById('accentSelect').value;
-      } else {
-        utterance.lang = 'fr-FR';
+    function shuffleCards() {
+      for (let i = currentCards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
       }
+      renderCards();
+    }
+
+    function clearSearch() {
+      searchInput.value = '';
+      applyFiltersAndSort();
+    }
+
+    function updateSpeedLabel(val) {
+      document.getElementById('speedValue').innerText = `${val}x`;
+    }
+
+    // Speech Synthesis Engine
+    function speakText(text, lang) {
+      if (!('speechSynthesis' in window)) {
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      
+      const rateVal = parseFloat(document.getElementById('speedRate').value) || 0.85;
+      utterance.rate = rateVal;
+
       window.speechSynthesis.speak(utterance);
     }
 
-    // Helpers
-    function shuffleCards() {
-      for (let i = currentUnitData.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [currentUnitData[i], currentUnitData[j]] = [currentUnitData[j], currentUnitData[i]];
+    window.onload = function() {
+      if (accentSelect) {
+        accentSelect.addEventListener('change', renderCards);
       }
-      document.getElementById('sortSelect').value = 'custom';
-      renderCards();
-    }
-
-    function escapeQuotes(str) {
-      return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    }
-
-    // Initial load
-    loadSelectedUnit();
+      loadSelectedUnit();
+    };
   </script>
 </body>
 </html>
