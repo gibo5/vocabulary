@@ -15,7 +15,7 @@
       background: white;
       padding: 15px;
       border-radius: 12px;
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto 20px auto;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       display: flex;
@@ -26,27 +26,41 @@
     }
     select, button.action-btn {
       padding: 8px 12px;
-      font-size: 1rem;
+      font-size: 0.9rem;
       border-radius: 6px;
       border: 1px solid #ccc;
     }
     .audio-section {
       margin: 20px 0;
     }
-    button.listen-btn {
-      font-size: 1.3rem;
-      padding: 14px 28px;
+    button.start-btn {
+      font-size: 1.2rem;
+      padding: 12px 24px;
+      border-radius: 50px;
+      border: none;
+      background: #2ed573;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(46, 213, 115, 0.3);
+      transition: transform 0.1s, background 0.2s;
+    }
+    button.start-btn:hover {
+      background: #26af5f;
+      transform: scale(1.03);
+    }
+    button.replay-btn {
+      font-size: 1rem;
+      padding: 10px 20px;
       border-radius: 50px;
       border: none;
       background: #4a90e2;
       color: white;
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
-      transition: transform 0.1s, background 0.2s;
+      display: none; /* Hidden until game starts */
     }
-    button.listen-btn:hover {
+    button.replay-btn:hover {
       background: #357abd;
-      transform: scale(1.03);
     }
     .score-board {
       font-size: 1.2rem;
@@ -112,11 +126,36 @@
   
   <div class="controls">
     <div>
-      <label for="unit-select"><strong>Unit :</strong></label>
-      <select id="unit-select" onchange="loadUnitData()">
-        <option value="data/eim11_u4.json">Unit 4: Growing Up</option>
-        <option value="data/eim11_u5.json">Unit 5: Great Idea!</option>
-        <option value="data/eim11_u6.json">Unit 6: Crazy World!</option>
+      <label for="unitSelect"><strong>Unit :</strong></label>
+      <select id="unitSelect" onchange="loadSelectedUnit()" class="py-1 px-2.5 bg-indigo-50 border border-indigo-200 text-indigo-800 text-xs font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+        <optgroup label="EiM 9">
+          <option value="data/eim9_u1.json">EiM 9 - Unit 1</option>
+          <option value="data/eim9_u2.json">EiM 9 - Unit 2</option>
+          <option value="data/eim9_u3.json">EiM 9 - Unit 3</option>
+          <option value="data/eim9_u4.json">EiM 9 - Unit 4</option>
+          <option value="data/eim9_u5.json">EiM 9 - Unit 5</option>
+          <option value="data/eim9_u6.json">EiM 9 - Unit 6</option>
+          <option value="data/eim9_u7.json">EiM 9 - Unit 7</option>
+          <option value="data/eim9_u8.json">EiM 9 - Unit 8</option>
+        </optgroup>
+        <optgroup label="EiM 10">
+          <option value="data/eim10_u1.json">EiM 10 - Unit 1</option>
+          <option value="data/eim10_u2.json">EiM 10 - Unit 2</option>
+          <option value="data/eim10_u3.json">EiM 10 - Unit 3</option>
+          <option value="data/eim10_u4.json">EiM 10 - Unit 4</option>
+          <option value="data/eim10_u5.json">EiM 10 - Unit 5</option>
+          <option value="data/eim10_u6.json">EiM 10 - Unit 6</option>
+          <option value="data/eim10_u7.json">EiM 10 - Unit 7</option>
+          <option value="data/eim10_u8.json">EiM 10 - Unit 8</option>
+        </optgroup>
+        <optgroup label="EiM 11">
+          <option value="data/eim11_u1.json">EiM 11 - Unit 1</option>
+          <option value="data/eim11_u2.json">EiM 11 - Unit 2</option>
+          <option value="data/eim11_u3.json">EiM 11 - Unit 3</option>
+          <option value="data/eim11_u4.json" selected>EiM 11 - Unit 4</option>
+          <option value="data/eim11_u5.json">EiM 11 - Unit 5</option>
+          <option value="data/eim11_u6.json">EiM 11 - Unit 6</option>
+        </optgroup>
       </select>
     </div>
 
@@ -138,11 +177,12 @@
       </select>
     </div>
     
-    <button class="action-btn" onclick="resetGame()">🔄 Restart</button>
+    <button class="action-btn" onclick="resetGame()">🔄 Reset</button>
   </div>
 
   <div class="audio-section">
-    <button class="listen-btn" onclick="playSecretWord()">🔊 Listen to the mystery word</button>
+    <button id="start-game-btn" class="start-btn" onclick="startGame()">▶️ Start Game</button>
+    <button id="replay-btn" class="replay-btn" onclick="playSecretWord()">🔊 Listen again</button>
     <div class="score-board">Score : <span id="score">0</span> / <span id="total">0</span></div>
   </div>
 
@@ -154,18 +194,20 @@
     let currentTargetWord = null;
     let score = 0;
     let totalAttempts = 0;
+    let gameStarted = false;
 
     // Load JSON data dynamically based on selected unit
-    async function loadUnitData() {
-      const fileUrl = document.getElementById('unit-select').value;
+    async function loadSelectedUnit() {
+      const fileUrl = document.getElementById('unitSelect').value;
       try {
         const response = await fetch(fileUrl);
+        if (!response.ok) throw new Error("File not found");
         const data = await response.json();
         currentVocabulary = data.words;
         resetGame();
       } catch (error) {
-        console.error("Error loading JSON file:", error);
-        // Fallback dummy data if files aren't found locally during testing
+        console.warn("Could not load " + fileUrl + ", using fallback dummy data.");
+        // Fallback dummy data if file isn't uploaded yet
         currentVocabulary = [
           { "id": 1, "en": "the adult", "fr": "l'adulte" },
           { "id": 6, "en": "the teenager", "fr": "l'adolescent" },
@@ -180,34 +222,49 @@
       }
     }
 
-    // Play a satisfying success sound using Web Audio API
-    function playSuccessSound() {
+    // Sound effects using Web Audio API
+    function playSound(type) {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const now = audioCtx.currentTime;
         
-        const playTone = (freq, startTime, duration) => {
+        if (type === 'win') {
+          const playTone = (freq, startTime, duration) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(0.15, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+          };
+          playTone(523.25, now, 0.15);       // C5
+          playTone(659.25, now + 0.12, 0.15); // E5
+          playTone(783.99, now + 0.24, 0.3);  // G5
+        } else if (type === 'fail') {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(freq, startTime);
-          
-          gain.gain.setValueAtTime(0.15, startTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-          
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(200, now);
+          osc.frequency.linearRampToValueAtTime(120, now + 0.2);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
-          
-          osc.start(startTime);
-          osc.stop(startTime + duration);
-        };
+          osc.start(now);
+          osc.stop(now + 0.2);
+        }
+      } catch (e) {}
+    }
 
-        playTone(523.25, now, 0.15);       // C5
-        playTone(659.25, now + 0.12, 0.15); // E5
-        playTone(783.99, now + 0.24, 0.3);  // G5
-      } catch (e) {
-        // Fallback if AudioContext is blocked by browser policies
-      }
+    function startGame() {
+      gameStarted = true;
+      document.getElementById('start-game-btn').style.display = 'none';
+      document.getElementById('replay-btn').style.display = 'inline-block';
+      resetGame();
     }
 
     // Reset and initialize a new round
@@ -220,7 +277,6 @@
       const requestedSize = parseInt(document.getElementById('grid-size').value);
       const poolSize = Math.min(requestedSize, currentVocabulary.length);
 
-      // Randomly pick words for the grid based on requested size
       activeWords = [...currentVocabulary].sort(() => 0.5 - Math.random()).slice(0, poolSize);
       
       const grid = document.getElementById('word-grid');
@@ -237,24 +293,25 @@
         grid.appendChild(card);
       });
 
-      // Pick the first target word, but do NOT autoplay it.
-      pickNewSecretWordTargetOnly();
+      if (gameStarted) {
+        pickAndPlayNewWord();
+      }
     }
 
-    // Selects the target word silently (without playing sound automatically)
-    function pickNewSecretWordTargetOnly() {
+    function pickAndPlayNewWord() {
       if (activeWords.length === 0) {
         alert("🎉 Awesome job! You found all the words in this set!");
         return;
       }
       const randomIndex = Math.floor(Math.random() * activeWords.length);
       currentTargetWord = activeWords[randomIndex];
+      playSecretWord();
     }
 
-    // Triggered when student clicks the "Listen" button
     function playSecretWord() {
-      if (!currentTargetWord) {
-        pickNewSecretWordTargetOnly();
+      if (!currentTargetWord && activeWords.length > 0) {
+        pickAndPlayNewWord();
+        return;
       }
       if (!currentTargetWord) return;
 
@@ -265,9 +322,8 @@
       window.speechSynthesis.speak(utterance);
     }
 
-    // Check student's answer selection
     function checkAnswer(selectedItem, cardElement) {
-      if (!currentTargetWord || cardElement.classList.contains('disabled')) return;
+      if (!gameStarted || !currentTargetWord || cardElement.classList.contains('disabled')) return;
 
       totalAttempts++;
 
@@ -275,18 +331,24 @@
         cardElement.classList.add('correct', 'disabled');
         score++;
         updateScoreboard();
-        playSuccessSound();
+        playSound('win');
         
-        // Remove from active pool so it won't be repeated
         activeWords = activeWords.filter(w => w.id !== currentTargetWord.id);
         
+        // Automatically play next word after win sound delay
         setTimeout(() => {
-          pickNewSecretWordTargetOnly();
-        }, 600);
+          pickAndPlayNewWord();
+        }, 700);
       } else {
         cardElement.classList.add('wrong');
         updateScoreboard();
-        setTimeout(() => cardElement.classList.remove('wrong'), 500);
+        playSound('fail');
+        
+        setTimeout(() => {
+          cardElement.classList.remove('wrong');
+          // Replay current target word automatically after a mistake so they can try again
+          playSecretWord();
+        }, 600);
       }
     }
 
@@ -296,7 +358,7 @@
     }
 
     // Initial load on page startup
-    window.onload = loadUnitData;
+    window.onload = loadSelectedUnit;
   </script>
 </body>
 </html>
