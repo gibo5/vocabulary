@@ -13,15 +13,44 @@
       min-height: 100vh;
       margin: 0;
       box-sizing: border-box;
+      position: relative;
+    }
+    /* Fixed top-left floating navigation button */
+    .top-left-nav {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+    }
+    a.home-btn {
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      color: #334155;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      transition: all 0.2s;
+    }
+    a.home-btn:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+      transform: translateY(-1px);
     }
     h1 {
       color: #2c3e50;
+      margin-top: 10px;
     }
     .controls {
       background: white;
       padding: 15px;
       border-radius: 12px;
-      max-width: 950px;
+      max-width: 800px;
       margin: 0 auto 20px auto;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       display: flex;
@@ -33,22 +62,15 @@
     .controls label {
       color: #333;
     }
-    select, button.action-btn, a.home-btn {
+    select, button.action-btn {
       padding: 8px 12px;
       font-size: 0.9rem;
       border-radius: 6px;
       border: 1px solid #ccc;
       background: white;
       color: #333;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
       cursor: pointer;
       font-weight: 500;
-    }
-    a.home-btn:hover {
-      background: #f1f5f9;
-      border-color: #94a3b8;
     }
     .audio-section {
       margin: 20px 0;
@@ -172,14 +194,17 @@
 </head>
 <body>
 
+  <!-- Top-left Navigation Button -->
+  <div class="top-left-nav">
+    <a href="index.html" class="home-btn">🏠 Back to Lists</a>
+  </div>
+
   <h1>👂 Listen & Point</h1>
   
   <div class="controls">
-    <a href="index.html" class="home-btn">🏠 Back to Lists</a>
-
     <div>
       <label for="unitSelect"><strong>Unit :</strong></label>
-      <select id="unitSelect" onchange="loadSelectedUnit()" class="py-1 px-2.5 bg-indigo-50 border border-indigo-200 text-indigo-800 text-xs font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+      <select id="unitSelect" onchange="loadSelectedUnit()">
         <optgroup label="EiM 9">
           <option value="data/eim9_u1.json">EiM 9 - Unit 1</option>
           <option value="data/eim9_u2.json">EiM 9 - Unit 2</option>
