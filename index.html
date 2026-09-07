@@ -333,7 +333,8 @@
                     <h3 class="text-sm font-bold text-slate-800 leading-tight truncate">${frontWord}</h3>
                     ${isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-indigo-500 block truncate">${ipaText}</span>` : ''}
                   </div>
-                  <span class="text-[10px] font-extrabold tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100/80 px-1.5 py-0.5 rounded-md uppercase shrink-0">${frontLangBadge}</span>
+                  <!-- De-emphasized Language Indicator -->
+                  <span class="text-[11px] font-semibold tracking-wider text-slate-400 uppercase shrink-0 select-none">${frontLangBadge}</span>
                 </div>
 
                 <div class="flex items-center justify-between pt-1 border-t border-slate-100 mt-auto">
@@ -359,7 +360,8 @@
                     <h3 class="text-sm font-bold text-sky-300 leading-tight truncate">${backWord}</h3>
                     ${!isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-sky-400 block truncate">${ipaText}</span>` : ''}
                   </div>
-                  <span class="text-[10px] font-extrabold tracking-wider text-sky-400 bg-sky-950 border border-sky-800/60 px-1.5 py-0.5 rounded-md uppercase shrink-0">${backLangBadge}</span>
+                  <!-- De-emphasized Language Indicator -->
+                  <span class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase shrink-0 select-none">${backLangBadge}</span>
                 </div>
 
                 <div class="flex items-center justify-between pt-1 border-t border-slate-800 mt-auto">
