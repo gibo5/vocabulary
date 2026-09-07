@@ -13,42 +13,48 @@
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
     }
 
-    /* Moteur de rotation 3D de la carte */
+    /* 1. Zone de perspective 3D */
     .perspective-1000 {
       perspective: 1000px;
+      -webkit-perspective: 1000px;
     }
 
-    .transform-style-3d {
-      transform-style: preserve-3d;
-      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    /* 2. Style du conteneur tournant */
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1) !important;
+      transform-style: preserve-3d !important;
+      -webkit-transform-style: preserve-3d !important;
     }
 
-    .backface-hidden {
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-    }
-
-    /* Rotation à 180° au clic */
+    /* 3. Déclencheur de rotation au clic */
     .card-container.flipped .card-inner {
-      transform: rotateY(180deg);
+      transform: rotateY(180deg) !important;
+      -webkit-transform: rotateY(180deg) !important;
     }
 
-    /* Face arrière inversée par défaut */
-    .rotate-y-180 {
-      transform: rotateY(180deg);
+    /* 4. Masquer le dos des faces pendant la rotation */
+    .card-front, .card-back {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden !important;
+      backface-visibility: hidden !important;
+    }
+
+    /* 5. Face arrière orientée à 180° au départ */
+    .card-back {
+      transform: rotateY(180deg) !important;
+      -webkit-transform: rotateY(180deg) !important;
     }
 
     /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: rgba(0,0,0,0.05);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(0,0,0,0.15);
-      border-radius: 3px;
-    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
