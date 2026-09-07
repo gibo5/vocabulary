@@ -238,7 +238,7 @@
     </div>
   </footer>
 
-  <script>
+<script>
     const RATINGS_STORAGE_KEY = 'vocab_app_ratings_v1';
 
     function getStoredRatings() {
@@ -265,6 +265,7 @@
     let currentCards = [];
     let ratingsMap = getStoredRatings();
     let defaultFace = 'en'; // 'en' or 'fr'
+    let currentUnitKey = 'eim10_u1'; // Keeps track of current unit prefix
 
     // DOM Elements
     const gridEl = document.getElementById('vocabGrid');
@@ -282,6 +283,9 @@
     // Fetch JSON file dynamically
     async function loadSelectedUnit() {
       const file = document.getElementById('unitSelect').value;
+      // Strip .json to create a unique prefix for this unit (e.g., "eim10_u1")
+      currentUnitKey = file.replace('.json', '');
+
       gridEl.innerHTML = '';
       emptyStateEl.classList.add('hidden');
       loadingEl.classList.remove('hidden');
@@ -294,9 +298,10 @@
         const json = await response.json();
         document.getElementById('unitTitle').textContent = json.title || 'Vocabulary';
         
-        // Adapt input data structure (en/fr -> english/french)
+        // Prefix item ID with unit key so ID #1 in Unit 1 is unique from ID #1 in Unit 2
         rawVocabularyData = (json.words || []).map(item => ({
-          id: item.id,
+          id: `${currentUnitKey}_${item.id}`,
+          originalId: item.id,
           english: item.en || item.english || '',
           french: item.fr || item.french || ''
         }));
@@ -351,9 +356,9 @@
                 <div class="flex items-center justify-between pt-1 border-t border-slate-100 mt-auto">
                   <!-- Difficulty Rating Controls -->
                   <div class="flex items-center gap-1 bg-slate-50 p-0.5 rounded-lg border border-slate-200/60" title="Rate difficulty" onclick="event.stopPropagation()">
-                    <button onclick="setCardRating(${item.id}, 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}">🟢</button>
-                    <button onclick="setCardRating(${item.id}, 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'}">🟡</button>
-                    <button onclick="setCardRating(${item.id}, 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white shadow-xs' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}">🔴</button>
+                    <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}">🟢</button>
+                    <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'}">🟡</button>
+                    <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white shadow-xs' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}">🔴</button>
                   </div>
 
                   <!-- Audio Pronunciation Button -->
@@ -375,9 +380,9 @@
                 <div class="flex items-center justify-between pt-1 border-t border-slate-800 mt-auto">
                   <!-- Difficulty Rating Controls -->
                   <div class="flex items-center gap-1 bg-slate-800/80 p-0.5 rounded-lg border border-slate-700/60" title="Rate difficulty" onclick="event.stopPropagation()">
-                    <button onclick="setCardRating(${item.id}, 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-400 hover:text-emerald-400 hover:bg-slate-700'}">🟢</button>
-                    <button onclick="setCardRating(${item.id}, 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-400 hover:text-amber-400 hover:bg-slate-700'}">🟡</button>
-                    <button onclick="setCardRating(${item.id}, 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white shadow-xs' : 'text-slate-400 hover:text-rose-400 hover:bg-slate-700'}">🔴</button>
+                    <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-400 hover:text-emerald-400 hover:bg-slate-700'}">🟢</button>
+                    <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-400 hover:text-amber-400 hover:bg-slate-700'}">🟡</button>
+                    <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white shadow-xs' : 'text-slate-400 hover:text-rose-400 hover:bg-slate-700'}">🔴</button>
                   </div>
 
                   <!-- Audio Pronunciation Button -->
@@ -456,13 +461,13 @@
         const langKey = defaultFace === 'en' ? 'english' : 'french';
 
         if (sortVal === 'original') {
-          return a.id - b.id;
+          return a.originalId - b.originalId;
         } else if (sortVal === 'alpha-asc') {
           return a[langKey].localeCompare(b[langKey]);
         } else if (sortVal === 'diff-desc') {
-          return ratingB - ratingA || a.id - b.id;
+          return ratingB - ratingA || a.originalId - b.originalId;
         } else if (sortVal === 'diff-asc') {
-          return ratingA - ratingB || a.id - b.id;
+          return ratingA - ratingB || a.originalId - b.originalId;
         }
         return 0;
       });
