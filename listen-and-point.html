@@ -7,7 +7,6 @@
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
-      /* Restored the clean, bright, friendly original background */
       background: #f0f4f8;
       color: #333;
       padding: 20px;
@@ -22,7 +21,7 @@
       background: white;
       padding: 15px;
       border-radius: 12px;
-      max-width: 900px;
+      max-width: 950px;
       margin: 0 auto 20px auto;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       display: flex;
@@ -34,13 +33,22 @@
     .controls label {
       color: #333;
     }
-    select, button.action-btn {
+    select, button.action-btn, a.home-btn {
       padding: 8px 12px;
       font-size: 0.9rem;
       border-radius: 6px;
       border: 1px solid #ccc;
       background: white;
       color: #333;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    a.home-btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
     }
     .audio-section {
       margin: 20px 0;
@@ -167,6 +175,8 @@
   <h1>👂 Listen & Point</h1>
   
   <div class="controls">
+    <a href="index.html" class="home-btn">🏠 Back to Lists</a>
+
     <div>
       <label for="unitSelect"><strong>Unit :</strong></label>
       <select id="unitSelect" onchange="loadSelectedUnit()" class="py-1 px-2.5 bg-indigo-50 border border-indigo-200 text-indigo-800 text-xs font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
