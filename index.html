@@ -11,15 +11,17 @@
   <style>
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      position: relative; /* Fixed: allows absolute children to anchor properly */
     }
     .top-left-nav {
-    position: absolute;
-    top: 20px;
-    left: 20px;
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      z-index: 40; /* Ensures it stays above the header */
     }
     a.nav-btn {
-      padding: 8px 14px;
-      font-size: 0.9rem;
+      padding: 6px 12px;
+      font-size: 0.85rem;
       border-radius: 8px;
       border: 1px solid #cbd5e1;
       background: white;
@@ -80,9 +82,12 @@
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
-<div class="top-left-nav">
-  <a href="listen-and-point.html" class="nav-btn">🎮 Play Game</a>
-</div>
+
+  <!-- Floating Top-Left Game Button -->
+  <div class="top-left-nav">
+    <a href="listen-and-point.html" class="nav-btn">🎮 Play Game</a>
+  </div>
+
   <!-- Application Header -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
     <div class="max-w-6xl mx-auto px-4 py-3 sm:px-6">
@@ -162,7 +167,7 @@
         <!-- Live Search Bar -->
         <div class="relative lg:col-span-4">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
           </div>
           <input type="text" id="searchInput" oninput="applyFiltersAndSort()" placeholder="Search word, phonetic or translation..." 
                  class="w-full pl-9 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
@@ -278,7 +283,7 @@
     let ratingsMap = getStoredRatings();
     let defaultFace = 'en';
     let currentUnitKey = 'eim11_u1';
-    let showIpa = localStorage.getItem(SHOW_IPA_STORAGE_KEY) !== 'false'; // Par défaut : true
+    let showIpa = localStorage.getItem(SHOW_IPA_STORAGE_KEY) !== 'false';
 
     // DOM Elements
     const gridEl = document.getElementById('vocabGrid');
@@ -370,7 +375,6 @@
                     <h3 class="text-sm font-bold text-slate-800 leading-tight truncate">${frontWord}</h3>
                     ${isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-indigo-500 block truncate">${ipaText}</span>` : ''}
                   </div>
-                  <!-- Discretised Language Tag -->
                   <span class="text-[11px] font-semibold tracking-wider text-slate-400 uppercase shrink-0 select-none">${frontLangBadge}</span>
                 </div>
 
@@ -397,7 +401,6 @@
                     <h3 class="text-sm font-bold text-sky-300 leading-tight truncate">${backWord}</h3>
                     ${!isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-sky-400 block truncate">${ipaText}</span>` : ''}
                   </div>
-                  <!-- Discretised Language Tag -->
                   <span class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase shrink-0 select-none">${backLangBadge}</span>
                 </div>
 
