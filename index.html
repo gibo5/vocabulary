@@ -13,29 +13,26 @@
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
     }
 
-    /* 1. Zone de perspective 3D */
+    /* Animation Flip 3D Robuste & Strictement forcée */
     .perspective-1000 {
       perspective: 1000px;
       -webkit-perspective: 1000px;
     }
 
-    /* 2. Style du conteneur tournant */
     .card-inner {
       position: relative;
       width: 100%;
       height: 100%;
-      transition: transform 0.4s cubic-bezier(0.4, 0.2, 0.2, 1) !important;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1) !important;
       transform-style: preserve-3d !important;
       -webkit-transform-style: preserve-3d !important;
     }
 
-    /* 3. Déclencheur de rotation au clic */
     .card-container.flipped .card-inner {
       transform: rotateY(180deg) !important;
       -webkit-transform: rotateY(180deg) !important;
     }
 
-    /* 4. Masquer le dos des faces pendant la rotation */
     .card-front, .card-back {
       position: absolute;
       inset: 0;
@@ -45,7 +42,6 @@
       backface-visibility: hidden !important;
     }
 
-    /* 5. Face arrière orientée à 180° au départ */
     .card-back {
       transform: rotateY(180deg) !important;
       -webkit-transform: rotateY(180deg) !important;
@@ -87,7 +83,7 @@
                 <option value="eim9_u7.json">EiM 9 - Unit 7</option>
               </optgroup>
               <optgroup label="EiM 10">
-                <option value="eim10_u1.json" selected>EiM 10 - Unit 1</option>
+                <option value="eim10_u1.json">EiM 10 - Unit 1</option>
                 <option value="eim10_u2.json">EiM 10 - Unit 2</option>
                 <option value="eim10_u3.json">EiM 10 - Unit 3</option>
                 <option value="eim10_u4.json">EiM 10 - Unit 4</option>
@@ -96,7 +92,7 @@
                 <option value="eim10_u7.json">EiM 10 - Unit 7</option>
               </optgroup>
               <optgroup label="EiM 11">
-                <option value="eim11_u1.json">EiM 11 - Unit 1</option>
+                <option value="eim11_u1.json" selected>EiM 11 - Unit 1</option>
                 <option value="eim11_u2.json">EiM 11 - Unit 2</option>
                 <option value="eim11_u3.json">EiM 11 - Unit 3</option>
                 <option value="eim11_u4.json">EiM 11 - Unit 4</option>
@@ -139,7 +135,7 @@
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
           </div>
-          <input type="text" id="searchInput" oninput="applyFiltersAndSort()" placeholder="Search word or translation..." 
+          <input type="text" id="searchInput" oninput="applyFiltersAndSort()" placeholder="Search word, phonetic or translation..." 
                  class="w-full pl-9 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
           <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
             &times;
@@ -246,7 +242,7 @@
     let currentCards = [];
     let ratingsMap = getStoredRatings();
     let defaultFace = 'en'; // 'en' or 'fr'
-    let currentUnitKey = 'eim10_u1';
+    let currentUnitKey = 'eim11_u1';
 
     // DOM Elements
     const gridEl = document.getElementById('vocabGrid');
@@ -277,7 +273,6 @@
         
         const json = await response.json();
         
-        // Met à jour dynamiquement le titre de la page et de l'en-tête
         const pageTitle = json.title || 'EiM Vocabulary Practice';
         document.getElementById('unitTitle').textContent = pageTitle;
         document.title = pageTitle;
@@ -286,7 +281,8 @@
           id: `${currentUnitKey}_${item.id}`,
           originalId: item.id,
           english: item.en || item.english || '',
-          french: item.fr || item.french || ''
+          french: item.fr || item.french || '',
+          ipa: item.ipa || ''
         }));
 
         loadingEl.classList.add('hidden');
@@ -313,6 +309,7 @@
       currentCards.forEach(item => {
         const isEnglishDefault = defaultFace === 'en';
         const rating = ratingsMap[item.id] || 0;
+        const ipaText = item.ipa ? `/${item.ipa}/` : '';
 
         const frontLangBadge = isEnglishDefault ? '[En]' : '[Fr]';
         const backLangBadge = isEnglishDefault ? '[Fr]' : '[En]';
@@ -326,49 +323,57 @@
         const backAudioLang = isEnglishDefault ? 'fr-FR' : selectedEnglishAccent;
 
         const cardHTML = `
-          <div class="card-container perspective-1000 h-[95px] cursor-pointer" onclick="toggleCardFlip(this)">
-            <div class="card-inner relative w-full h-full transform-style-3d rounded-xl border border-slate-200 shadow-xs hover:shadow-md transition-shadow duration-300">
+          <div class="card-container perspective-1000 h-[105px] cursor-pointer" onclick="toggleCardFlip(this)">
+            <div class="card-inner">
               
               <!-- CARD FRONT -->
-              <div class="card-front absolute inset-0 w-full h-full backface-hidden rounded-xl p-3 flex flex-col justify-between bg-white border border-slate-200/90 box-border">
+              <div class="card-front rounded-xl p-3 flex flex-col justify-between bg-white border border-slate-200/90 box-border">
                 <div class="flex items-start justify-between gap-1 w-full">
-                  <h3 class="text-sm font-bold text-slate-800 leading-tight line-clamp-2 pr-1">${frontWord}</h3>
+                  <div class="min-w-0 flex-1 pr-1">
+                    <h3 class="text-sm font-bold text-slate-800 leading-tight truncate">${frontWord}</h3>
+                    ${isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-indigo-500 block truncate">${ipaText}</span>` : ''}
+                  </div>
                   <span class="text-[10px] font-extrabold tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100/80 px-1.5 py-0.5 rounded-md uppercase shrink-0">${frontLangBadge}</span>
                 </div>
 
                 <div class="flex items-center justify-between pt-1 border-t border-slate-100 mt-auto">
                   <div class="flex items-center gap-1 bg-slate-50 p-0.5 rounded-lg border border-slate-200/60" title="Rate difficulty" onclick="event.stopPropagation()">
-                    <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}">🟢</button>
-                    <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'}">🟡</button>
-                    <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white shadow-xs' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}">🔴</button>
+                    <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}">🟢</button>
+                    <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'}">🟡</button>
+                    <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}">🔴</button>
                   </div>
 
                   <button title="Listen Pronunciation" 
                           onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(frontAudioText)}', '${frontAudioLang}');"
-                          class="w-7 h-7 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white flex items-center justify-center transition-all duration-200 transform active:scale-95 border border-indigo-100 hover:border-transparent group">
+                          class="h-7 px-2.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white flex items-center gap-1.5 transition-all duration-200 border border-indigo-100 hover:border-transparent group">
                     <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
+                    <span class="font-sans font-semibold text-[11px]">Listen</span>
                   </button>
                 </div>
               </div>
 
               <!-- CARD BACK -->
-              <div class="card-back absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-xl p-3 flex flex-col justify-between bg-slate-900 text-white border border-slate-800 box-border">
+              <div class="card-back rounded-xl p-3 flex flex-col justify-between bg-slate-900 text-white border border-slate-800 box-border">
                 <div class="flex items-start justify-between gap-1 w-full">
-                  <h3 class="text-sm font-bold text-sky-300 leading-tight line-clamp-2 pr-1">${backWord}</h3>
+                  <div class="min-w-0 flex-1 pr-1">
+                    <h3 class="text-sm font-bold text-sky-300 leading-tight truncate">${backWord}</h3>
+                    ${!isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-sky-400 block truncate">${ipaText}</span>` : ''}
+                  </div>
                   <span class="text-[10px] font-extrabold tracking-wider text-sky-400 bg-sky-950 border border-sky-800/60 px-1.5 py-0.5 rounded-md uppercase shrink-0">${backLangBadge}</span>
                 </div>
 
                 <div class="flex items-center justify-between pt-1 border-t border-slate-800 mt-auto">
                   <div class="flex items-center gap-1 bg-slate-800/80 p-0.5 rounded-lg border border-slate-700/60" title="Rate difficulty" onclick="event.stopPropagation()">
-                    <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-400 hover:text-emerald-400 hover:bg-slate-700'}">🟢</button>
-                    <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-400 hover:text-amber-400 hover:bg-slate-700'}">🟡</button>
-                    <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white shadow-xs' : 'text-slate-400 hover:text-rose-400 hover:bg-slate-700'}">🔴</button>
+                    <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white' : 'text-slate-400 hover:text-emerald-400 hover:bg-slate-700'}">🟢</button>
+                    <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white' : 'text-slate-400 hover:text-amber-400 hover:bg-slate-700'}">🟡</button>
+                    <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white' : 'text-slate-400 hover:text-rose-400 hover:bg-slate-700'}">🔴</button>
                   </div>
 
                   <button title="Listen Pronunciation" 
                           onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(backAudioText)}', '${backAudioLang}');"
-                          class="w-7 h-7 rounded-lg bg-sky-950 hover:bg-sky-500 text-sky-400 hover:text-white flex items-center justify-center transition-all duration-200 transform active:scale-95 border border-sky-800 hover:border-transparent group">
+                          class="h-7 px-2.5 rounded-lg bg-sky-950 hover:bg-sky-500 text-sky-400 hover:text-white flex items-center gap-1.5 transition-all duration-200 border border-sky-800 hover:border-transparent group">
                     <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
+                    <span class="font-sans font-semibold text-[11px]">Listen</span>
                   </button>
                 </div>
               </div>
@@ -381,7 +386,6 @@
       });
     }
 
-    // Helper functions
     function escapeSingleQuotes(str) {
       return str.replace(/'/g, "\\'");
     }
@@ -429,7 +433,8 @@
 
       let filtered = rawVocabularyData.filter(item => 
         item.english.toLowerCase().includes(query) ||
-        item.french.toLowerCase().includes(query)
+        item.french.toLowerCase().includes(query) ||
+        item.ipa.toLowerCase().includes(query)
       );
 
       filtered.sort((a, b) => {
