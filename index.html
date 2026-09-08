@@ -1,306 +1,387 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">EiM Vocabulary & Pronunciation</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Inter Font -->
-  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <title>Listen & Point - English Vocabulary</title>
   <style>
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-purple: #c084fc;
+      --accent-green: #34d399;
+      --accent-red: #f87171;
+      --accent-amber: #f59e0b;
+      --border-color: #334155;
     }
-    a.nav-btn {
-      padding: 6px 12px;
-      font-size: 0.85rem;
-      border-radius: 8px;
-      border: 1px solid #cbd5e1;
-      background: white;
-      color: #334155;
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Floating Navigation Button */
+    .top-left-nav {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+    }
+
+    a.home-btn {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       cursor: pointer;
-      font-weight: 600;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      transition: all 0.2s;
+      font-weight: 500;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
     }
-    a.nav-btn:hover {
-      background: #f8fafc;
-      border-color: #94a3b8;
+
+    a.home-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--accent-blue);
       transform: translateY(-1px);
     }
 
-    /* Animation Flip 3D */
-    .perspective-1000 {
-      perspective: 1000px;
-      -webkit-perspective: 1000px;
+    /* Header styling styled like index.html */
+    header {
+      text-align: center;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
     }
 
-    .card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1) !important;
-      transform-style: preserve-3d !important;
-      -webkit-transform-style: preserve-3d !important;
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
     }
 
-    .card-container.flipped .card-inner {
-      transform: rotateY(180deg) !important;
-      -webkit-transform: rotateY(180deg) !important;
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
     }
 
-    .card-front, .card-back {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      -webkit-backface-visibility: hidden !important;
-      backface-visibility: hidden !important;
+    /* Controls block matching index.html card style */
+    .controls {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(12px);
+      padding: 1.25rem 1.5rem;
+      border-radius: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      display: flex;
+      gap: 1.25rem;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
-    .card-back {
-      transform: rotateY(180deg) !important;
-      -webkit-transform: rotateY(180deg) !important;
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
-    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+    .control-group label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    select, button.action-btn {
+      padding: 0.5rem 0.85rem;
+      font-size: 0.9rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border-color);
+      background: var(--bg-color);
+      color: var(--text-main);
+      cursor: pointer;
+      font-weight: 500;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    select:focus, select:hover, button.action-btn:hover {
+      border-color: var(--accent-blue);
+    }
+
+    button.action-btn {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    button.action-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Star Mode Indicator Badge */
+    .starred-badge {
+      display: none;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--accent-amber);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* Game controls / Audio section */
+    .audio-section {
+      text-align: center;
+      margin: 1.5rem 0;
+    }
+
+    button.start-btn {
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 0.8rem 2rem;
+      border-radius: 9999px;
+      border: none;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button.start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+    }
+
+    button.replay-btn {
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      border: none;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+      display: none; 
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button.replay-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
+    }
+
+    .score-board {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 1rem;
+    }
+
+    .score-board span {
+      color: var(--accent-blue);
+    }
+
+    /* Cards Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(160px, 1fr));
+      gap: 1rem;
+      justify-content: center;
+      max-width: 650px;
+      margin: 1.5rem auto;
+    }
+
+    .card {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 1.25rem 1rem;
+      border-radius: 0.85rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      font-size: 1.05rem;
+      font-weight: 500;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: all 0.2s ease;
+      user-select: none;
+      backdrop-filter: blur(8px);
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent-blue);
+      box-shadow: 0 8px 15px -3px rgba(56, 189, 248, 0.15);
+    }
+
+    .card.correct {
+      background: rgba(52, 211, 153, 0.2) !important;
+      border-color: var(--accent-green) !important;
+      color: #6ee7b7;
+      animation: pulse 0.4s;
+    }
+
+    .card.wrong {
+      background: rgba(248, 113, 113, 0.2) !important;
+      border-color: var(--accent-red) !important;
+      color: #fca5a5;
+    }
+
+    .card.disabled {
+      pointer-events: none;
+      opacity: 0.35;
+    }
+
+    /* Festive Gold / Victory Banner */
+    #victory-banner {
+      display: none;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.25));
+      border: 2px solid #f59e0b;
+      border-radius: 1.25rem;
+      max-width: 500px;
+      margin: 2rem auto;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);
+      backdrop-filter: blur(12px);
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-align: center;
+    }
+
+    #victory-banner h2 {
+      color: #fbbf24;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    #victory-banner p {
+      font-size: 1.1rem;
+      color: var(--text-main);
+      margin-bottom: 1.5rem;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .top-left-nav {
+        position: static;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: flex-start;
+      }
+    }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body>
 
-  <!-- Application Header -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
-    <div class="max-w-6xl mx-auto px-4 py-3 sm:px-6">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        
-        <!-- App Title, Unit Selector & Play Game Button -->
-        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-          <div class="flex items-center gap-2">
-            <span class="text-2xl">🗣️</span>
-            <div>
-              <h1 id="unitTitle" class="text-lg sm:text-xl font-bold tracking-tight text-slate-900 leading-tight">Chargement...</h1>
-              <p class="text-xs text-slate-500">Interactive Pronunciation & Memory Cards</p>
-            </div>
-          </div>
+  <!-- Top-left Navigation Button -->
+  <div class="top-left-nav">
+    <a href="index.html" class="home-btn">← Back to Lists</a>
+  </div>
 
-          <!-- Unit Selector Dropdown -->
-          <div class="sm:ml-2">
-            <select id="unitSelect" onchange="loadSelectedUnit()" class="py-1 px-2.5 bg-indigo-50 border border-indigo-200 text-indigo-800 text-xs font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
-              <optgroup label="EiM 9">
-                <option value="eim9_u1.json" selected>EiM 9 - Unit 1</option>
-                <option value="eim9_u2.json">EiM 9 - Unit 2</option>
-                <option value="eim9_u3.json">EiM 9 - Unit 3</option>
-                <option value="eim9_u4.json">EiM 9 - Unit 4</option>
-                <option value="eim9_u5.json">EiM 9 - Unit 5</option>
-                <option value="eim9_u6.json">EiM 9 - Unit 6</option>
-                <option value="eim9_u7.json">EiM 9 - Unit 7</option>
-                <option value="eim9_u8.json">EiM 9 - Unit 8</option>
-              </optgroup>
-              <optgroup label="EiM 10">
-                <option value="eim10_u1.json">EiM 10 - Unit 1</option>
-                <option value="eim10_u2.json">EiM 10 - Unit 2</option>
-                <option value="eim10_u3.json">EiM 10 - Unit 3</option>
-                <option value="eim10_u4.json">EiM 10 - Unit 4</option>
-                <option value="eim10_u5.json">EiM 10 - Unit 5</option>
-                <option value="eim10_u6.json">EiM 10 - Unit 6</option>
-                <option value="eim10_u7.json">EiM 10 - Unit 7</option>
-                <option value="eim10_u8.json">EiM 10 - Unit 8</option>
-                <option value="eim10_irrVerbs.json">EiM 10 - Irregular Verbs</option>
-              </optgroup>
-              <optgroup label="EiM 11">
-                <option value="eim11_u1.json">EiM 11 - Unit 1</option>
-                <option value="eim11_u2.json">EiM 11 - Unit 2</option>
-                <option value="eim11_u3.json">EiM 11 - Unit 3</option>
-                <option value="eim11_u4.json">EiM 11 - Unit 4</option>
-                <option value="eim11_u5.json">EiM 11 - Unit 5</option>
-                <option value="eim11_u6.json">EiM 11 - Unit 6</option>
-                <option value="eim11_irrVerbs.json">EiM 11 - Irregular Verbs</option>
-              </optgroup>
-            </select>
-          </div>
+  <div class="container">
+    <header>
+      <h1>🎮 Listen & Point</h1>
+      <p class="subtitle">Listen carefully to the audio and click on the matching word</p>
+    </header>
 
-          <!-- Play Game Button -->
-          <div>
-            <a id="playGameBtn" href="listen-and-point.html?unit=eim9_u1.json" class="nav-btn">🎮 Play Game</a>
-          </div>
-        </div>
-
-        <!-- Default Face Display Selector Mode -->
-        <div class="bg-slate-100 p-1.5 rounded-xl border border-slate-200 flex items-center justify-between sm:justify-start gap-2 self-start md:self-auto">
-          <span class="text-xs font-semibold text-slate-600 pl-2">Default Front:</span>
-          <div class="inline-flex rounded-lg bg-slate-200/70 p-0.5" role="group">
-            <button id="modeEnBtn" onclick="setDefaultMode('en')" 
-                    class="px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs">
-              🇺🇸/🇬🇧 English
-            </button>
-            <button id="modeFrBtn" onclick="setDefaultMode('fr')" 
-                    class="px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900">
-              🇫🇷 Français
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Content Layout -->
-  <main class="max-w-6xl mx-auto px-4 py-5 sm:px-6 flex-grow w-full">
-    
-    <!-- Controls Toolbar -->
-    <section class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs mb-5 space-y-3">
-      
-      <!-- ROW 1: Search, Sorting & Star Filter -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 items-center">
-        
-        <!-- Live Search Bar -->
-        <div class="relative lg:col-span-4">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          </div>
-          <input type="text" id="searchInput" oninput="applyFiltersAndSort()" placeholder="Search word, phonetic or translation..." 
-                 class="w-full pl-9 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
-          <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
-            &times;
-          </button>
-        </div>
-
-        <!-- Sorting Selector + Shuffle Button -->
-        <div class="flex items-center gap-1.5 lg:col-span-5">
-          <label for="sortSelect" class="text-xs font-medium text-slate-500 whitespace-nowrap">Sort:</label>
-          <select id="sortSelect" onchange="applyFiltersAndSort()" class="w-full py-1.5 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <option value="original" selected>Original order</option>
-            <option value="alpha-asc">Alphabetical (A ➔ Z)</option>
-            <option value="diff-desc">Difficulty (Hardest First)</option>
-            <option value="diff-asc">Difficulty (Easiest First)</option>
-          </select>
-          <button onclick="shuffleCards()" title="Shuffle cards" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium text-xs rounded-xl transition-colors flex items-center justify-center gap-1 shrink-0">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-            Shuffle
-          </button>
-        </div>
-
-        <!-- Star Filter Toggle -->
-        <div class="lg:col-span-3 flex items-center justify-start">
-          <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 w-full" role="group">
-            <button id="filterAllBtn" onclick="setStarFilter('all')" class="flex-1 py-1 px-2 text-xs font-semibold rounded-lg transition-all bg-white text-indigo-600 shadow-xs text-center">
-              All Words
-            </button>
-            <button id="filterStarredBtn" onclick="setStarFilter('starred')" class="flex-1 py-1 px-2 text-xs font-semibold rounded-lg transition-all text-slate-600 hover:text-amber-600 text-center flex items-center justify-center gap-1">
-              <span>⭐</span> Starred
-            </button>
-          </div>
-        </div>
-
+    <div class="controls">
+      <div id="starredBadge" class="starred-badge">
+        <span>⭐</span> Starred Words Only
       </div>
 
-      <!-- ROW 2: View Controls, Accent, Speed & Phonetic Checkbox -->
-      <div class="flex flex-wrap items-center justify-between gap-3 pt-2.5 border-t border-slate-100">
-        
-        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-          <!-- View Mode Toggle (Cards Grid vs List) -->
-          <div class="bg-slate-100 p-0.5 rounded-xl border border-slate-200 flex items-center">
-            <button id="viewGridBtn" onclick="setViewMode('grid')" title="Flashcard View" class="px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-white text-indigo-600 shadow-xs flex items-center gap-1">
-              <span>🎴</span> Cards
-            </button>
-            <button id="viewListBtn" onclick="setViewMode('list')" title="Compact List View" class="px-2.5 py-1 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1">
-              <span>📋</span> List
-            </button>
-          </div>
-
-          <!-- Accent Selector -->
-          <div class="flex items-center gap-1">
-            <select id="accentSelect" class="py-1.5 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option value="en-GB" selected>🇬🇧 UK</option>
-              <option value="en-US">🇺🇸 US</option>
-              <option value="en-AU">🇦🇺 AU</option>
-            </select>
-          </div>
-
-          <!-- Speed Slider -->
-          <div class="flex items-center gap-1 bg-slate-50 px-2 py-1.5 rounded-xl border border-slate-200">
-            <input type="range" id="speedRate" min="0.5" max="1.2" step="0.05" value="0.85" oninput="updateSpeedLabel(this.value)"
-                   class="w-12 accent-indigo-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg">
-            <span id="speedValue" class="text-xs font-mono text-indigo-600 font-semibold w-6 text-right">0.85x</span>
-          </div>
-        </div>
-
-        <!-- IPA Option Checkbox -->
-        <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-600 select-none">
-          <input type="checkbox" id="showIpaCheckbox" onchange="toggleIpaVisibility()" class="rounded text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5">
-          <span>Show Phonetic (IPA)</span>
-        </label>
-
+      <div class="control-group">
+        <label for="mode-select">Level :</label>
+        <select id="mode-select" onchange="resetGame()">
+          <option value="easy">Easy (Sound ➔ English)</option>
+          <option value="medium" selected>Medium (Sound ➔ French)</option>
+        </select>
       </div>
 
-    </section>
+      <div class="control-group">
+        <label for="grid-size">Cards :</label>
+        <select id="grid-size" onchange="resetGame()">
+          <option value="6">6 cards</option>
+          <option value="9" selected>9 cards</option>
+          <option value="12">12 cards</option>
+          <option value="15">15 cards</option>
+        </select>
+      </div>
 
-    <!-- Status Bar -->
-    <div class="flex justify-between items-center mb-3 px-1">
-      <span class="text-xs font-semibold uppercase tracking-wider text-slate-500" id="cardCounter">Showing 0 Words</span>
-      <span class="text-xs text-indigo-600 font-medium bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-100/80" id="currentFaceIndicator">Default Mode: English Front</span>
+      <button class="action-btn" onclick="resetGame()">🔄 New Cards</button>
     </div>
 
-    <!-- Loading State -->
-    <div id="loadingMessage" class="text-center py-12 bg-white rounded-2xl border border-slate-200 my-4 text-slate-500 font-medium text-sm">
-      Loading unit data...
+    <div class="audio-section">
+      <button id="start-game-btn" class="start-btn" onclick="startGame()">▶️ Start Game</button>
+      <button id="replay-btn" class="replay-btn" onclick="playSecretWord()">🔊 Listen again</button>
+      <div class="score-board">Score : <span id="score">0</span> / <span id="total">0</span></div>
     </div>
 
-    <!-- Cards Container -->
-    <div id="vocabGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <!-- Cards dynamically inserted here -->
+    <!-- Victory Banner Popup -->
+    <div id="victory-banner">
+      <h2>🏆 AMAZING JOB! 🌟</h2>
+      <p>You matched all the words successfully!</p>
+      <button class="start-btn" onclick="startGame()">Play Again 🚀</button>
     </div>
 
-    <!-- Empty State -->
-    <div id="emptyState" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200 my-4">
-      <span class="text-4xl block mb-2" id="emptyStateIcon">🔍</span>
-      <h3 class="text-slate-700 font-semibold text-lg" id="emptyStateTitle">No matching vocabulary found</h3>
-      <p class="text-slate-500 text-sm mt-1" id="emptyStateSubtext">Try searching for a different keyword.</p>
-      <button id="emptyStateBtn" onclick="clearSearch()" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-medium hover:bg-indigo-700 transition">
-        Clear Search Filter
-      </button>
-    </div>
-
-  </main>
-
-  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400 mt-auto">
-    <div class="max-w-6xl mx-auto px-4">
-      <p>Interactive English-French Vocabulary Practice • Powered by Web Speech API • No Ads • No Account • CO ERVEO • GB</p>
-    </div>
-  </footer>
+    <div id="word-grid" class="grid"></div>
+  </div>
 
   <script>
-    const RATINGS_STORAGE_KEY = 'vocab_app_ratings_v1';
     const STARRED_STORAGE_KEY = 'vocab_app_starred_v1';
-    const SHOW_IPA_STORAGE_KEY = 'vocab_app_show_ipa';
-    const VIEW_MODE_STORAGE_KEY = 'vocab_app_view_mode';
 
-    function getStoredRatings() {
-      try {
-        const saved = localStorage.getItem(RATINGS_STORAGE_KEY);
-        return saved ? JSON.parse(saved) : {};
-      } catch (e) {
-        return {};
-      }
-    }
-
-    function saveStoredRating(cardId, rating) {
-      try {
-        const ratings = getStoredRatings();
-        ratings[cardId] = rating;
-        localStorage.setItem(RATINGS_STORAGE_KEY, JSON.stringify(ratings));
-      } catch (e) {
-        console.warn('LocalStorage error:', e);
-      }
-    }
+    let currentVocabulary = [];
+    let activeWords = [];
+    let currentTargetWord = null;
+    let score = 0;
+    let totalAttempts = 0;
+    let gameStarted = false;
 
     function getStoredStarred() {
       try {
@@ -311,426 +392,211 @@
       }
     }
 
-    function saveStoredStarred(cardId, isStarred) {
+    // Load unit automatically based on URL parameters ?unit=... & ?starred=true
+    async function loadUnitFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let unitParam = urlParams.get('unit') || 'eim9_u1.json';
+      const isStarredOnly = urlParams.get('starred') === 'true';
+
+      // Clean unit name and form data path
+      const cleanUnitName = unitParam.replace(/^data\//, '');
+      const unitKey = cleanUnitName.replace('.json', '');
+      const fileUrl = `data/${cleanUnitName}`;
+
+      if (isStarredOnly) {
+        const badge = document.getElementById('starredBadge');
+        if (badge) badge.style.display = 'inline-flex';
+      }
+
       try {
+        const response = await fetch(fileUrl);
+        if (!response.ok) throw new Error("File not found");
+        const data = await response.json();
+
         const starredMap = getStoredStarred();
-        if (isStarred) {
-          starredMap[cardId] = true;
-        } else {
-          delete starredMap[cardId];
+
+        // Map items with composite IDs matching index.html format
+        let loadedWords = (data.words || []).map(item => {
+          const rawId = item.id;
+          const fullId = `${unitKey}_${rawId}`;
+          return {
+            id: fullId,
+            originalId: rawId,
+            en: item.en || item.english || '',
+            fr: item.fr || item.french || '',
+            spoken: item.spoken || item.en || item.english || ''
+          };
+        });
+
+        // Filter starred words if requested
+        if (isStarredOnly) {
+          const starredWords = loadedWords.filter(w => !!starredMap[w.id]);
+          if (starredWords.length > 0) {
+            loadedWords = starredWords;
+          } else {
+            alert("No starred words found in this unit! Loading all unit words instead.");
+            document.getElementById('starredBadge').style.display = 'none';
+          }
         }
-        localStorage.setItem(STARRED_STORAGE_KEY, JSON.stringify(starredMap));
-      } catch (e) {
-        console.warn('LocalStorage error:', e);
+
+        currentVocabulary = loadedWords;
+        resetGame();
+      } catch (error) {
+        console.warn("Could not load " + fileUrl + ", using fallback dummy data.");
+        currentVocabulary = [
+          { "id": "fallback_1", "en": "the adult", "fr": "l'adulte", "spoken": "the adult" },
+          { "id": "fallback_6", "en": "the teenager", "fr": "l'adolescent", "spoken": "the teenager" },
+          { "id": "fallback_7", "en": "the toddler", "fr": "le petit enfant", "spoken": "the toddler" },
+          { "id": "fallback_16", "en": "annoyed", "fr": "énervé, agacé", "spoken": "annoyed" },
+          { "id": "fallback_20", "en": "exhausted", "fr": "épuisé", "spoken": "exhausted" },
+          { "id": "fallback_26", "en": "the satellite dish", "fr": "l'antenne parabolique", "spoken": "the satellite dish" },
+          { "id": "fallback_30", "en": "crispy", "fr": "croustillant", "spoken": "crispy" },
+          { "id": "fallback_39", "en": "the fan", "fr": "le fan", "spoken": "the fan" }
+        ];
+        resetGame();
       }
     }
 
-    // State Variables
-    let rawVocabularyData = [];
-    let currentCards = [];
-    let ratingsMap = getStoredRatings();
-    let starredMap = getStoredStarred();
-    let starFilter = 'all'; // 'all' or 'starred'
-    let defaultFace = 'en';
-    let currentUnitKey = 'eim9_u1';
-    let showIpa = localStorage.getItem(SHOW_IPA_STORAGE_KEY) !== 'false';
-    let currentViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY) || 'grid';
-
-    // DOM Elements
-    const gridEl = document.getElementById('vocabGrid');
-    const emptyStateEl = document.getElementById('emptyState');
-    const loadingEl = document.getElementById('loadingMessage');
-    const searchInput = document.getElementById('searchInput');
-    const clearSearchBtn = document.getElementById('clearSearchBtn');
-    const sortSelect = document.getElementById('sortSelect');
-    const accentSelect = document.getElementById('accentSelect');
-    const showIpaCheckbox = document.getElementById('showIpaCheckbox');
-    const cardCounter = document.getElementById('cardCounter');
-    const currentFaceIndicator = document.getElementById('currentFaceIndicator');
-    const modeEnBtn = document.getElementById('modeEnBtn');
-    const modeFrBtn = document.getElementById('modeFrBtn');
-    const viewGridBtn = document.getElementById('viewGridBtn');
-    const viewListBtn = document.getElementById('viewListBtn');
-    const filterAllBtn = document.getElementById('filterAllBtn');
-    const filterStarredBtn = document.getElementById('filterStarredBtn');
-
-    function updatePlayGameLink() {
-      const file = document.getElementById('unitSelect').value;
-      const playGameBtn = document.getElementById('playGameBtn');
-      if (playGameBtn) {
-        let href = `listen-and-point.html?unit=${encodeURIComponent(file)}`;
-        if (starFilter === 'starred') {
-          href += '&starred=true';
-        }
-        playGameBtn.href = href;
-      }
-    }
-
-    // Fetch JSON file dynamically
-    async function loadSelectedUnit() {
-      const file = document.getElementById('unitSelect').value;
-      currentUnitKey = file.replace('.json', '');
-
-      updatePlayGameLink();
-
-      gridEl.innerHTML = '';
-      emptyStateEl.classList.add('hidden');
-      loadingEl.classList.remove('hidden');
-      loadingEl.textContent = 'Loading unit data...';
-
+    function playSound(type) {
       try {
-        const response = await fetch(`data/${file}`);
-        if (!response.ok) throw new Error(`File data/${file} not found.`);
-        
-        const json = await response.json();
-        
-        const pageTitle = json.title || 'EiM Vocabulary Practice';
-        document.getElementById('unitTitle').textContent = pageTitle;
-        document.title = pageTitle;
-        
-        rawVocabularyData = (json.words || []).map(item => ({
-          id: `${currentUnitKey}_${item.id}`,
-          originalId: item.id,
-          english: item.en || item.english || '',
-          spoken: item.spoken || item.en || item.english || '',
-          french: item.fr || item.french || '',
-          ipa: item.ipa || ''
-        }));
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const now = audioCtx.currentTime;
 
-        loadingEl.classList.add('hidden');
-        applyFiltersAndSort();
-      } catch (err) {
-        loadingEl.textContent = `⚠️ Unable to load unit file (data/${file}). Please ensure the JSON file exists.`;
-      }
-    }
-
-    function setStarFilter(filter) {
-      starFilter = filter;
-
-      if (filter === 'starred') {
-        filterStarredBtn.className = "flex-1 py-1 px-2 text-xs font-semibold rounded-lg transition-all bg-white text-amber-600 shadow-xs text-center flex items-center justify-center gap-1";
-        filterAllBtn.className = "flex-1 py-1 px-2 text-xs font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900 text-center";
-      } else {
-        filterAllBtn.className = "flex-1 py-1 px-2 text-xs font-semibold rounded-lg transition-all bg-white text-indigo-600 shadow-xs text-center";
-        filterStarredBtn.className = "flex-1 py-1 px-2 text-xs font-semibold rounded-lg transition-all text-slate-600 hover:text-amber-600 text-center flex items-center justify-center gap-1";
-      }
-
-      updatePlayGameLink();
-      applyFiltersAndSort();
-    }
-
-    function setViewMode(mode) {
-      currentViewMode = mode;
-      localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
-
-      if (mode === 'grid') {
-        viewGridBtn.className = "px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-white text-indigo-600 shadow-xs flex items-center gap-1";
-        viewListBtn.className = "px-2.5 py-1 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1";
-        gridEl.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4";
-      } else {
-        viewListBtn.className = "px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-white text-indigo-600 shadow-xs flex items-center gap-1";
-        viewGridBtn.className = "px-2.5 py-1 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1";
-        gridEl.className = "flex flex-col gap-2";
-      }
-      renderCards();
-    }
-
-    function toggleStar(cardId, event) {
-      if (event) event.stopPropagation();
-      const current = !!starredMap[cardId];
-      const next = !current;
-      starredMap[cardId] = next;
-      saveStoredStarred(cardId, next);
-      applyFiltersAndSort();
-    }
-
-    function renderCards() {
-      gridEl.innerHTML = '';
-
-      if (currentCards.length === 0) {
-        emptyStateEl.classList.remove('hidden');
-        cardCounter.innerText = '0 Words Found';
-
-        const titleEl = document.getElementById('emptyStateTitle');
-        const subtextEl = document.getElementById('emptyStateSubtext');
-        const iconEl = document.getElementById('emptyStateIcon');
-        const btnEl = document.getElementById('emptyStateBtn');
-
-        if (starFilter === 'starred') {
-          iconEl.textContent = '⭐';
-          titleEl.textContent = 'No starred words in this unit';
-          subtextEl.textContent = 'Click the star icon on any card to add it to your practice list.';
-          btnEl.textContent = 'Show All Words';
-          btnEl.onclick = () => setStarFilter('all');
-        } else {
-          iconEl.textContent = '🔍';
-          titleEl.textContent = 'No matching vocabulary found';
-          subtextEl.textContent = 'Try searching for a different keyword.';
-          btnEl.textContent = 'Clear Search Filter';
-          btnEl.onclick = () => clearSearch();
+        if (type === 'win') {
+          const playTone = (freq, startTime, duration) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(0.15, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+          };
+          playTone(523.25, now, 0.15);
+          playTone(659.25, now + 0.12, 0.15);
+          playTone(783.99, now + 0.24, 0.3);
+        } else if (type === 'fail') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(200, now);
+          osc.frequency.linearRampToValueAtTime(120, now + 0.2);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.2);
         }
+      } catch (e) {}
+    }
+
+    function startGame() {
+      gameStarted = true;
+      document.getElementById('start-game-btn').style.display = 'none';
+      document.getElementById('replay-btn').style.display = 'inline-block';
+      document.getElementById('victory-banner').style.display = 'none';
+      document.getElementById('word-grid').style.display = 'grid';
+      resetGame();
+    }
+
+    function resetGame() {
+      score = 0;
+      totalAttempts = 0;
+      updateScoreboard();
+      currentTargetWord = null;
+      document.getElementById('victory-banner').style.display = 'none';
+      document.getElementById('word-grid').style.display = 'grid';
+
+      const requestedSize = parseInt(document.getElementById('grid-size').value);
+      const poolSize = Math.min(requestedSize, currentVocabulary.length);
+
+      activeWords = [...currentVocabulary].sort(() => 0.5 - Math.random()).slice(0, poolSize);
+
+      const grid = document.getElementById('word-grid');
+      grid.innerHTML = '';
+
+      const mode = document.getElementById('mode-select').value;
+      const displayWords = [...activeWords].sort(() => 0.5 - Math.random());
+
+      displayWords.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerText = mode === 'easy' ? item.en : item.fr;
+        card.onclick = () => checkAnswer(item, card);
+        grid.appendChild(card);
+      });
+
+      if (gameStarted) {
+        pickAndPlayNewWord();
+      }
+    }
+
+    function pickAndPlayNewWord() {
+      if (activeWords.length === 0) {
+        document.getElementById('word-grid').style.display = 'none';
+        document.getElementById('victory-banner').style.display = 'block';
+        playSound('win');
         return;
       }
-
-      emptyStateEl.classList.add('hidden');
-      cardCounter.innerText = `Showing ${currentCards.length} Word${currentCards.length > 1 ? 's' : ''}`;
-
-      const selectedEnglishAccent = accentSelect ? accentSelect.value : 'en-GB';
-
-      currentCards.forEach(item => {
-        const isEnglishDefault = defaultFace === 'en';
-        const rating = ratingsMap[item.id] || 0;
-        const isStarred = !!starredMap[item.id];
-        const ipaText = (showIpa && item.ipa) ? `/${item.ipa}/` : '';
-
-        const frontLangBadge = isEnglishDefault ? '[En]' : '[Fr]';
-        const backLangBadge = isEnglishDefault ? '[Fr]' : '[En]';
-
-        const frontWord = isEnglishDefault ? item.english : item.french;
-        const backWord = isEnglishDefault ? item.french : item.english;
-
-        const englishSpokenText = item.spoken || item.english;
-
-        const frontAudioText = isEnglishDefault ? englishSpokenText : item.french;
-        const frontAudioLang = isEnglishDefault ? selectedEnglishAccent : 'fr-FR';
-        
-        const backAudioText = isEnglishDefault ? item.french : englishSpokenText;
-        const backAudioLang = isEnglishDefault ? 'fr-FR' : selectedEnglishAccent;
-
-        const starIcon = isStarred ? '⭐' : '✩';
-        const starBtnClass = isStarred ? 'text-amber-500 scale-110' : 'text-slate-300 hover:text-amber-400';
-
-        let cardHTML = '';
-
-        if (currentViewMode === 'grid') {
-          cardHTML = `
-            <div class="card-container perspective-1000 h-[110px] cursor-pointer" onclick="toggleCardFlip(this)">
-              <div class="card-inner">
-                
-                <!-- CARD FRONT -->
-                <div class="card-front rounded-xl p-3 flex flex-col justify-between bg-white border border-slate-200/90 box-border shadow-xs hover:border-indigo-300 transition-colors">
-                  <div class="flex items-start justify-between gap-1 w-full">
-                    <div class="min-w-0 flex-1 pr-1">
-                      <h3 class="text-sm font-bold text-slate-800 leading-tight truncate">${frontWord}</h3>
-                      ${isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-indigo-500 block truncate">${ipaText}</span>` : ''}
-                    </div>
-                    <div class="flex items-center gap-1.5 shrink-0">
-                      <button onclick="toggleStar('${item.id}', event)" title="Toggle Star" class="text-sm p-0.5 transition-transform ${starBtnClass}">
-                        ${starIcon}
-                      </button>
-                      <span class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase select-none">${frontLangBadge}</span>
-                    </div>
-                  </div>
-
-                  <div class="flex items-center justify-between pt-1 border-t border-slate-100 mt-auto">
-                    <div class="flex items-center gap-1 bg-slate-50 p-0.5 rounded-lg border border-slate-200/60" title="Rate difficulty" onclick="event.stopPropagation()">
-                      <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}">🟢</button>
-                      <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'}">🟡</button>
-                      <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}">🔴</button>
-                    </div>
-
-                    <button title="Listen Pronunciation" 
-                            onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(frontAudioText)}', '${frontAudioLang}');"
-                            class="h-7 px-2.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white flex items-center gap-1.5 transition-all duration-200 border border-indigo-100 hover:border-transparent group">
-                      <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
-                      <span class="font-sans font-semibold text-[11px]">Listen</span>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- CARD BACK -->
-                <div class="card-back rounded-xl p-3 flex flex-col justify-between bg-slate-900 text-white border border-slate-800 box-border">
-                  <div class="flex items-start justify-between gap-1 w-full">
-                    <div class="min-w-0 flex-1 pr-1">
-                      <h3 class="text-sm font-bold text-sky-300 leading-tight truncate">${backWord}</h3>
-                      ${!isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-sky-400 block truncate">${ipaText}</span>` : ''}
-                    </div>
-                    <div class="flex items-center gap-1.5 shrink-0">
-                      <button onclick="toggleStar('${item.id}', event)" title="Toggle Star" class="text-sm p-0.5 transition-transform ${starBtnClass}">
-                        ${starIcon}
-                      </button>
-                      <span class="text-[10px] font-semibold tracking-wider text-slate-500 uppercase select-none">${backLangBadge}</span>
-                    </div>
-                  </div>
-
-                  <div class="flex items-center justify-between pt-1 border-t border-slate-800 mt-auto">
-                    <div class="flex items-center gap-1 bg-slate-800/80 p-0.5 rounded-lg border border-slate-700/60" title="Rate difficulty" onclick="event.stopPropagation()">
-                      <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white' : 'text-slate-400 hover:text-emerald-400 hover:bg-slate-700'}">🟢</button>
-                      <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white' : 'text-slate-400 hover:text-amber-400 hover:bg-slate-700'}">🟡</button>
-                      <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white' : 'text-slate-400 hover:text-rose-400 hover:bg-slate-700'}">🔴</button>
-                    </div>
-
-                    <button title="Listen Pronunciation" 
-                            onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(backAudioText)}', '${backAudioLang}');"
-                            class="h-7 px-2.5 rounded-lg bg-sky-950 hover:bg-sky-500 text-sky-400 hover:text-white flex items-center gap-1.5 transition-all duration-200 border border-sky-800 hover:border-transparent group">
-                      <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
-                      <span class="font-sans font-semibold text-[11px]">Listen</span>
-                    </button>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          `;
-        } else {
-          cardHTML = `
-            <div class="bg-white rounded-xl p-3 border border-slate-200/90 hover:border-indigo-300 transition-all shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div class="flex items-center gap-3 min-w-0 flex-1">
-                <button onclick="toggleStar('${item.id}', event)" title="Toggle Star" class="text-sm p-1 transition-transform ${starBtnClass} shrink-0">
-                  ${starIcon}
-                </button>
-                <div class="min-w-0 flex-1">
-                  <div class="flex items-center gap-2">
-                    <span class="text-sm font-bold text-slate-900 truncate">${item.english}</span>
-                    <span class="text-xs text-slate-400">➔</span>
-                    <span class="text-sm font-medium text-indigo-700 truncate">${item.french}</span>
-                  </div>
-                  ${ipaText ? `<span class="text-xs font-mono text-slate-500 block mt-0.5">${ipaText}</span>` : ''}
-                </div>
-              </div>
-
-              <div class="flex items-center gap-3 shrink-0 justify-between sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
-                <div class="flex items-center gap-1 bg-slate-50 p-0.5 rounded-lg border border-slate-200/60" title="Rate difficulty">
-                  <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}">🟢</button>
-                  <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'}">🟡</button>
-                  <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}">🔴</button>
-                </div>
-
-                <div class="flex items-center gap-1">
-                  <button title="Listen English" onclick="speakText('${escapeSingleQuotes(englishSpokenText)}', '${selectedEnglishAccent}')"
-                          class="h-7 px-2.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white flex items-center gap-1 transition-all text-xs font-semibold border border-indigo-100">
-                    <span>🔊 EN</span>
-                  </button>
-                  <button title="Listen French" onclick="speakText('${escapeSingleQuotes(item.french)}', 'fr-FR')"
-                          class="h-7 px-2.5 rounded-lg bg-slate-100 hover:bg-slate-700 text-slate-700 hover:text-white flex items-center gap-1 transition-all text-xs font-semibold border border-slate-200">
-                    <span>🔊 FR</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          `;
-        }
-
-        gridEl.insertAdjacentHTML('beforeend', cardHTML);
-      });
+      const randomIndex = Math.floor(Math.random() * activeWords.length);
+      currentTargetWord = activeWords[randomIndex];
+      playSecretWord();
     }
 
-    function toggleIpaVisibility() {
-      showIpa = showIpaCheckbox.checked;
-      localStorage.setItem(SHOW_IPA_STORAGE_KEY, showIpa);
-      renderCards();
-    }
-
-    function escapeSingleQuotes(str) {
-      return str.replace(/'/g, "\\'");
-    }
-
-    function toggleCardFlip(cardElement) {
-      cardElement.classList.toggle('flipped');
-    }
-
-    function setDefaultMode(mode) {
-      defaultFace = mode;
-
-      if (mode === 'en') {
-        modeEnBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs";
-        modeFrBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
-        currentFaceIndicator.innerText = "Default Mode: English Front";
-      } else {
-        modeFrBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs";
-        modeEnBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
-        currentFaceIndicator.innerText = "Default Mode: French Front";
+    function playSecretWord() {
+      if (!currentTargetWord && activeWords.length > 0) {
+        pickAndPlayNewWord();
+        return;
       }
+      if (!currentTargetWord) return;
 
-      applyFiltersAndSort();
-    }
-
-    function setCardRating(cardId, newRating) {
-      if (ratingsMap[cardId] === newRating) {
-        delete ratingsMap[cardId];
-        saveStoredRating(cardId, 0);
-      } else {
-        ratingsMap[cardId] = newRating;
-        saveStoredRating(cardId, newRating);
-      }
-      applyFiltersAndSort();
-    }
-
-    function applyFiltersAndSort() {
-      const query = searchInput.value.toLowerCase().trim();
-      const sortVal = sortSelect.value;
-
-      if (query.length > 0) {
-        clearSearchBtn.classList.remove('hidden');
-      } else {
-        clearSearchBtn.classList.add('hidden');
-      }
-
-      let filtered = rawVocabularyData.filter(item => {
-        const matchesSearch = item.english.toLowerCase().includes(query) ||
-                              item.french.toLowerCase().includes(query) ||
-                              item.ipa.toLowerCase().includes(query);
-        const matchesStarred = starFilter === 'all' || !!starredMap[item.id];
-        return matchesSearch && matchesStarred;
-      });
-
-      filtered.sort((a, b) => {
-        const ratingA = ratingsMap[a.id] || 0;
-        const ratingB = ratingsMap[b.id] || 0;
-        const langKey = defaultFace === 'en' ? 'english' : 'french';
-
-        if (sortVal === 'original') {
-          return a.originalId - b.originalId;
-        } else if (sortVal === 'alpha-asc') {
-          return a[langKey].localeCompare(b[langKey]);
-        } else if (sortVal === 'diff-desc') {
-          return ratingB - ratingA || a.originalId - b.originalId;
-        } else if (sortVal === 'diff-asc') {
-          return ratingA - ratingB || a.originalId - b.originalId;
-        }
-        return 0;
-      });
-
-      currentCards = filtered;
-      renderCards();
-    }
-
-    function shuffleCards() {
-      for (let i = currentCards.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
-      }
-      renderCards();
-    }
-
-    function clearSearch() {
-      searchInput.value = '';
-      applyFiltersAndSort();
-    }
-
-    function updateSpeedLabel(val) {
-      document.getElementById('speedValue').innerText = `${val}x`;
-    }
-
-    function speakText(text, lang) {
-      if (!('speechSynthesis' in window)) return;
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = lang;
-      const rateVal = parseFloat(document.getElementById('speedRate').value) || 0.85;
-      utterance.rate = rateVal;
+      const textToSpeak = currentTargetWord.spoken || currentTargetWord.en;
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.lang = 'en-GB';
+      utterance.rate = 0.85;
       window.speechSynthesis.speak(utterance);
     }
 
+    function checkAnswer(selectedItem, cardElement) {
+      if (!gameStarted || !currentTargetWord || cardElement.classList.contains('disabled')) return;
+
+      totalAttempts++;
+
+      if (selectedItem.id === currentTargetWord.id) {
+        cardElement.classList.add('correct', 'disabled');
+        score++;
+        updateScoreboard();
+        playSound('win');
+
+        activeWords = activeWords.filter(w => w.id !== currentTargetWord.id);
+
+        setTimeout(() => {
+          pickAndPlayNewWord();
+        }, 700);
+      } else {
+        cardElement.classList.add('wrong');
+        updateScoreboard();
+        playSound('fail');
+
+        setTimeout(() => {
+          cardElement.classList.remove('wrong');
+          playSecretWord();
+        }, 600);
+      }
+    }
+
+    function updateScoreboard() {
+      document.getElementById('score').innerText = score;
+      document.getElementById('total').innerText = totalAttempts;
+    }
+
     window.onload = function() {
-      if (showIpaCheckbox) {
-        showIpaCheckbox.checked = showIpa;
-      }
-      if (accentSelect) {
-        accentSelect.addEventListener('change', renderCards);
-      }
-      setViewMode(currentViewMode);
-      loadSelectedUnit();
+      loadUnitFromUrl();
     };
   </script>
 </body>
