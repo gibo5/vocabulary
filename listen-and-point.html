@@ -2,193 +2,304 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Listen & Point - Vocabulary Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listen & Point - English Vocabulary</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-align: center;
-      background: #f0f4f8;
-      color: #333;
-      padding: 20px;
-      min-height: 100vh;
-      margin: 0;
-      box-sizing: border-box;
-      position: relative;
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-purple: #c084fc;
+      --accent-green: #34d399;
+      --accent-red: #f87171;
+      --border-color: #334155;
     }
-    /* Fixed top-left floating navigation button */
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Floating Navigation Button */
     .top-left-nav {
       position: absolute;
-      top: 20px;
-      left: 20px;
+      top: 1.5rem;
+      left: 1.5rem;
     }
+
     a.home-btn {
-      padding: 8px 14px;
+      padding: 0.6rem 1.2rem;
       font-size: 0.9rem;
-      border-radius: 8px;
-      border: 1px solid #cbd5e1;
-      background: white;
-      color: #334155;
+      border-radius: 9999px;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       cursor: pointer;
-      font-weight: 600;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      transition: all 0.2s;
+      font-weight: 500;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
     }
+
     a.home-btn:hover {
-      background: #f8fafc;
-      border-color: #94a3b8;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--accent-blue);
       transform: translateY(-1px);
     }
-    h1 {
-      color: #2c3e50;
-      margin-top: 10px;
+
+    /* Header styling styled like index.html */
+    header {
+      text-align: center;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
     }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    /* Controls block matching index.html card style */
     .controls {
-      background: white;
-      padding: 15px;
-      border-radius: 12px;
-      max-width: 800px;
-      margin: 0 auto 20px auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(12px);
+      padding: 1.25rem 1.5rem;
+      border-radius: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
       display: flex;
-      gap: 15px;
+      gap: 1.25rem;
       justify-content: center;
       align-items: center;
       flex-wrap: wrap;
     }
-    .controls label {
-      color: #333;
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    select, button.action-btn {
-      padding: 8px 12px;
+
+    .control-group label {
+      color: var(--text-muted);
       font-size: 0.9rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      background: white;
-      color: #333;
+      font-weight: 600;
+    }
+
+    select, button.action-btn {
+      padding: 0.5rem 0.85rem;
+      font-size: 0.9rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border-color);
+      background: var(--bg-color);
+      color: var(--text-main);
       cursor: pointer;
       font-weight: 500;
+      outline: none;
+      transition: all 0.2s ease;
     }
+
+    select:focus, select:hover, button.action-btn:hover {
+      border-color: var(--accent-blue);
+    }
+
+    button.action-btn {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    button.action-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Game controls / Audio section */
     .audio-section {
-      margin: 20px 0;
+      text-align: center;
+      margin: 1.5rem 0;
     }
+
     button.start-btn {
-      font-size: 1.2rem;
-      padding: 12px 24px;
-      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 0.8rem 2rem;
+      border-radius: 9999px;
       border: none;
-      background: #2ed573;
+      background: linear-gradient(135deg, #10b981, #059669);
       color: white;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(46, 213, 115, 0.3);
-      transition: transform 0.1s, background 0.2s;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
+
     button.start-btn:hover {
-      background: #26af5f;
-      transform: scale(1.03);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
     }
+
     button.replay-btn {
       font-size: 1rem;
-      padding: 10px 20px;
-      border-radius: 50px;
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
       border: none;
-      background: #4a90e2;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: white;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
       display: none; 
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
+
     button.replay-btn:hover {
-      background: #357abd;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
     }
+
     .score-board {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #2c3e50;
-      margin-top: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 1rem;
     }
-    /* Perfect 3-column grid to prevent misalignments */
+
+    .score-board span {
+      color: var(--accent-blue);
+    }
+
+    /* Cards Grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(180px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(3, minmax(160px, 1fr));
+      gap: 1rem;
       justify-content: center;
-      max-width: 600px;
-      margin: 20px auto;
+      max-width: 650px;
+      margin: 1.5rem auto;
     }
+
     .card {
-      background: white;
-      color: #333;
-      padding: 20px 15px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 1.25rem 1rem;
+      border-radius: 0.85rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
       cursor: pointer;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 500;
-      min-height: 60px;
+      min-height: 70px;
       display: flex;
       align-items: center;
       justify-content: center;
+      text-align: center;
       transition: all 0.2s ease;
-      border: 2px solid transparent;
       user-select: none;
+      backdrop-filter: blur(8px);
     }
+
     .card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-      border-color: #4a90e2;
+      border-color: var(--accent-blue);
+      box-shadow: 0 8px 15px -3px rgba(56, 189, 248, 0.15);
     }
+
     .card.correct {
-      background: #2ed573 !important;
-      color: white;
-      border-color: #2ed573;
+      background: rgba(52, 211, 153, 0.2) !important;
+      border-color: var(--accent-green) !important;
+      color: #6ee7b7;
       animation: pulse 0.4s;
     }
+
     .card.wrong {
-      background: #ff4757 !important;
-      color: white;
-      border-color: #ff4757;
+      background: rgba(248, 113, 113, 0.2) !important;
+      border-color: var(--accent-red) !important;
+      color: #fca5a5;
     }
+
     .card.disabled {
       pointer-events: none;
-      opacity: 0.3;
+      opacity: 0.35;
     }
-    /* Festive Gold/Trophy Victory Banner Popup */
+
+    /* Festive Gold / Victory Banner */
     #victory-banner {
       display: none;
-      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-      border: 3px solid #f39c12;
-      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.25));
+      border: 2px solid #f59e0b;
+      border-radius: 1.25rem;
       max-width: 500px;
-      margin: 30px auto;
-      padding: 30px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      margin: 2rem auto;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);
+      backdrop-filter: blur(12px);
       animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-align: center;
     }
+
     #victory-banner h2 {
-      color: #ffffff;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.15);
-      font-size: 2.2rem;
-      margin-top: 0;
-      margin-bottom: 10px;
+      color: #fbbf24;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
     }
+
     #victory-banner p {
-      font-size: 1.2rem;
-      color: #2c3e50;
-      font-weight: 600;
-      margin-bottom: 20px;
+      font-size: 1.1rem;
+      color: var(--text-main);
+      margin-bottom: 1.5rem;
     }
+
     @keyframes popIn {
-      0% { transform: scale(0.5); opacity: 0; }
+      0% { transform: scale(0.8); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
+
     @keyframes pulse {
       0% { transform: scale(1); }
-      50% { transform: scale(1.08); }
+      50% { transform: scale(1.05); }
       100% { transform: scale(1); }
+    }
+
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .top-left-nav {
+        position: static;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: flex-start;
+      }
     }
   </style>
 </head>
@@ -196,83 +307,52 @@
 
   <!-- Top-left Navigation Button -->
   <div class="top-left-nav">
-    <a href="index.html" class="home-btn">🏠 Back to Lists</a>
+    <a href="index.html" class="home-btn">← Back to Lists</a>
   </div>
 
-  <h1>👂 Listen & Point</h1>
-  
-  <div class="controls">
-    <div>
-      <label for="unitSelect"><strong>Unit :</strong></label>
-      <select id="unitSelect" onchange="loadSelectedUnit()">
-        <optgroup label="EiM 9">
-          <option value="data/eim9_u1.json">EiM 9 - Unit 1</option>
-          <option value="data/eim9_u2.json">EiM 9 - Unit 2</option>
-          <option value="data/eim9_u3.json">EiM 9 - Unit 3</option>
-          <option value="data/eim9_u4.json">EiM 9 - Unit 4</option>
-          <option value="data/eim9_u5.json">EiM 9 - Unit 5</option>
-          <option value="data/eim9_u6.json">EiM 9 - Unit 6</option>
-          <option value="data/eim9_u7.json">EiM 9 - Unit 7</option>
-          <option value="data/eim9_u8.json">EiM 9 - Unit 8</option>
-        </optgroup>
-        <optgroup label="EiM 10">
-          <option value="data/eim10_u1.json">EiM 10 - Unit 1</option>
-          <option value="data/eim10_u2.json">EiM 10 - Unit 2</option>
-          <option value="data/eim10_u3.json">EiM 10 - Unit 3</option>
-          <option value="data/eim10_u4.json">EiM 10 - Unit 4</option>
-          <option value="data/eim10_u5.json">EiM 10 - Unit 5</option>
-          <option value="data/eim10_u6.json">EiM 10 - Unit 6</option>
-          <option value="data/eim10_u7.json">EiM 10 - Unit 7</option>
-          <option value="data/eim10_u8.json">EiM 10 - Unit 8</option>
-          <option value="data/eim10_irrVerbs.json">EiM 10 - Irregular Verbs</option>
-        </optgroup>
-        <optgroup label="EiM 11">
-          <option value="data/eim11_u1.json">EiM 11 - Unit 1</option>
-          <option value="data/eim11_u2.json">EiM 11 - Unit 2</option>
-          <option value="data/eim11_u3.json">EiM 11 - Unit 3</option>
-          <option value="data/eim11_u4.json">EiM 11 - Unit 4</option>
-          <option value="data/eim11_u5.json">EiM 11 - Unit 5</option>
-          <option value="data/eim11_u6.json">EiM 11 - Unit 6</option>
-          <option value="data/eim11_irrVerbs.json">EiM 11 - Irregular Verbs</option>
-        </optgroup>
-      </select>
+  <div class="container">
+    <header>
+      <h1>👂 Listen & Point</h1>
+      <p class="subtitle">Listen carefully to the audio and click on the matching word</p>
+    </header>
+
+    <div class="controls">
+      <div class="control-group">
+        <label for="mode-select">Level :</label>
+        <select id="mode-select" onchange="resetGame()">
+          <option value="easy">Easy (Sound ➔ English)</option>
+          <option value="medium">Medium (Sound ➔ French)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="grid-size">Cards :</label>
+        <select id="grid-size" onchange="resetGame()">
+          <option value="6">6 cards</option>
+          <option value="9" selected>9 cards</option>
+          <option value="12">12 cards</option>
+          <option value="15">15 cards</option>
+        </select>
+      </div>
+
+      <button class="action-btn" onclick="resetGame()">🔄 New Cards</button>
     </div>
 
-    <div>
-      <label for="mode-select"><strong>Level :</strong></label>
-      <select id="mode-select" onchange="resetGame()">
-        <option value="easy">Easy (Sound ➔ English)</option>
-        <option value="medium">Medium (Sound ➔ French)</option>
-      </select>
+    <div class="audio-section">
+      <button id="start-game-btn" class="start-btn" onclick="startGame()">▶️ Start Game</button>
+      <button id="replay-btn" class="replay-btn" onclick="playSecretWord()">🔊 Listen again</button>
+      <div class="score-board">Score : <span id="score">0</span> / <span id="total">0</span></div>
     </div>
 
-    <div>
-      <label for="grid-size"><strong>Cards :</strong></label>
-      <select id="grid-size" onchange="resetGame()">
-        <option value="6">6 cards</option>
-        <option value="9">9 cards</option>
-        <option value="12">12 cards</option>
-        <option value="15">15 cards</option>
-      </select>
+    <!-- Victory Banner Popup -->
+    <div id="victory-banner">
+      <h2>🏆 AMAZING JOB! 🌟</h2>
+      <p>You matched all the words successfully!</p>
+      <button class="start-btn" onclick="startGame()">Play Again 🚀</button>
     </div>
-    
-    <button class="action-btn" onclick="resetGame()">🔄 New Cards</button>
-  </div>
 
-  <div class="audio-section">
-    <button id="start-game-btn" class="start-btn" onclick="startGame()">▶️ Start Game</button>
-    <button id="replay-btn" class="replay-btn" onclick="playSecretWord()">🔊 Listen again</button>
-    <div class="score-board">Score : <span id="score">0</span> / <span id="total">0</span></div>
+    <div id="word-grid" class="grid"></div>
   </div>
-
-  <!-- Festive Gold/Trophy Victory Banner Popup -->
-  <div id="victory-banner">
-    <h2>🏆 AMAZING JOB! 🌟</h2>
-    <p>You matched all the words successfully like a pro!</p>
-    <button class="start-btn" onclick="startGame()">Play Again 🚀</button>
-  </div>
-
-  <div id="word-grid" class="grid"></div>
 
   <script>
     let currentVocabulary = [];
@@ -282,38 +362,27 @@
     let totalAttempts = 0;
     let gameStarted = false;
 
-    // Récupération de l'unité transmise dans l'URL si elle existe
-    function checkUrlParameter() {
+    // Load unit automatically based on URL parameter ?unit=...
+    async function loadUnitFromUrl() {
       const urlParams = new URLSearchParams(window.location.search);
-      const unitParam = urlParams.get('unit');
-      if (unitParam) {
-        const select = document.getElementById('unitSelect');
-        const targetValue = unitParam.startsWith('data/') ? unitParam : `data/${unitParam}`;
-        
-        for (let i = 0; i < select.options.length; i++) {
-          if (select.options[i].value === targetValue) {
-            select.selectedIndex = i;
-            break;
-          }
-        }
+      let fileUrl = urlParams.get('unit') || 'data/eim10_u1.json';
+      
+      if (!fileUrl.startsWith('data/')) {
+        fileUrl = `data/${fileUrl}`;
       }
-    }
 
-    async function loadSelectedUnit() {
-      const fileUrl = document.getElementById('unitSelect').value;
       try {
         const response = await fetch(fileUrl);
         if (!response.ok) throw new Error("File not found");
         const data = await response.json();
-        
-        // Adaptation pour supporter 'en', 'french'/'fr' et 'spoken'
+
         currentVocabulary = (data.words || []).map(item => ({
           id: item.id,
           en: item.en || item.english || '',
           fr: item.fr || item.french || '',
           spoken: item.spoken || item.en || item.english || ''
         }));
-        
+
         resetGame();
       } catch (error) {
         console.warn("Could not load " + fileUrl + ", using fallback dummy data.");
@@ -335,7 +404,7 @@
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const now = audioCtx.currentTime;
-        
+
         if (type === 'win') {
           const playTone = (freq, startTime, duration) => {
             const osc = audioCtx.createOscillator();
@@ -349,9 +418,9 @@
             osc.start(startTime);
             osc.stop(startTime + duration);
           };
-          playTone(523.25, now, 0.15);       
-          playTone(659.25, now + 0.12, 0.15); 
-          playTone(783.99, now + 0.24, 0.3);  
+          playTone(523.25, now, 0.15);
+          playTone(659.25, now + 0.12, 0.15);
+          playTone(783.99, now + 0.24, 0.3);
         } else if (type === 'fail') {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
@@ -389,10 +458,10 @@
       const poolSize = Math.min(requestedSize, currentVocabulary.length);
 
       activeWords = [...currentVocabulary].sort(() => 0.5 - Math.random()).slice(0, poolSize);
-      
+
       const grid = document.getElementById('word-grid');
       grid.innerHTML = '';
-      
+
       const mode = document.getElementById('mode-select').value;
       const displayWords = [...activeWords].sort(() => 0.5 - Math.random());
 
@@ -428,7 +497,7 @@
       }
       if (!currentTargetWord) return;
 
-      window.speechSynthesis.cancel(); 
+      window.speechSynthesis.cancel();
       const textToSpeak = currentTargetWord.spoken || currentTargetWord.en;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = 'en-GB';
@@ -446,9 +515,9 @@
         score++;
         updateScoreboard();
         playSound('win');
-        
+
         activeWords = activeWords.filter(w => w.id !== currentTargetWord.id);
-        
+
         setTimeout(() => {
           pickAndPlayNewWord();
         }, 700);
@@ -456,7 +525,7 @@
         cardElement.classList.add('wrong');
         updateScoreboard();
         playSound('fail');
-        
+
         setTimeout(() => {
           cardElement.classList.remove('wrong');
           playSecretWord();
@@ -470,8 +539,7 @@
     }
 
     window.onload = function() {
-      checkUrlParameter();
-      loadSelectedUnit();
+      loadUnitFromUrl();
     };
   </script>
 </body>
