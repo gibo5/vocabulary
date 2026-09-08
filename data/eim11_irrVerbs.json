@@ -52,7 +52,7 @@
     { "id": 49, "en": "meet, met, met", "fr": "rencontrer", "ipa": "miːt met met" },
     { "id": 50, "en": "pay, paid, paid", "fr": "payer", "ipa": "peɪ peɪd peɪd" },
     { "id": 51, "en": "put, put, put", "fr": "mettre", "ipa": "pʊt pʊt pʊt" },
-    { "id": 52, "en": "read, read, read", "fr": "lire", "ipa": "riːd red red" },
+    { "id": 48, "en": "read, read, read", "spoken": "read, red, red", "fr": "lire", "ipa": "riːd red red" },
     { "id": 53, "en": "ride, rode, ridden", "fr": "aller (à vélo ...)", "ipa": "raɪd rəʊd ˈrɪd.ən" },
     { "id": 54, "en": "ring, rang, rung", "fr": "sonner", "ipa": "rɪŋ ræŋ rʌŋ" },
     { "id": 55, "en": "rise, rose, risen", "fr": "monter", "ipa": "raɪz rəʊz ˈrɪz.ən" },
