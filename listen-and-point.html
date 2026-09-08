@@ -14,6 +14,7 @@
       --accent-purple: #c084fc;
       --accent-green: #34d399;
       --accent-red: #f87171;
+      --accent-amber: #f59e0b;
       --border-color: #334155;
     }
 
@@ -142,6 +143,20 @@
 
     button.action-btn:hover {
       background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Star Mode Indicator Badge */
+    .starred-badge {
+      display: none;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--accent-amber);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
     }
 
     /* Game controls / Audio section */
@@ -317,6 +332,10 @@
     </header>
 
     <div class="controls">
+      <div id="starredBadge" class="starred-badge">
+        <span>⭐</span> Starred Words Only
+      </div>
+
       <div class="control-group">
         <label for="mode-select">Level :</label>
         <select id="mode-select" onchange="resetGame()">
@@ -355,6 +374,8 @@
   </div>
 
   <script>
+    const STARRED_STORAGE_KEY = 'vocab_app_starred_v1';
+
     let currentVocabulary = [];
     let activeWords = [];
     let currentTargetWord = null;
@@ -362,13 +383,29 @@
     let totalAttempts = 0;
     let gameStarted = false;
 
-    // Load unit automatically based on URL parameter ?unit=...
+    function getStoredStarred() {
+      try {
+        const saved = localStorage.getItem(STARRED_STORAGE_KEY);
+        return saved ? JSON.parse(saved) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    // Load unit automatically based on URL parameters ?unit=... & ?starred=true
     async function loadUnitFromUrl() {
       const urlParams = new URLSearchParams(window.location.search);
-      let fileUrl = urlParams.get('unit') || 'data/eim10_u1.json';
-      
-      if (!fileUrl.startsWith('data/')) {
-        fileUrl = `data/${fileUrl}`;
+      let unitParam = urlParams.get('unit') || 'eim9_u1.json';
+      const isStarredOnly = urlParams.get('starred') === 'true';
+
+      // Clean unit name and form data path
+      const cleanUnitName = unitParam.replace(/^data\//, '');
+      const unitKey = cleanUnitName.replace('.json', '');
+      const fileUrl = `data/${cleanUnitName}`;
+
+      if (isStarredOnly) {
+        const badge = document.getElementById('starredBadge');
+        if (badge) badge.style.display = 'inline-flex';
       }
 
       try {
@@ -376,25 +413,45 @@
         if (!response.ok) throw new Error("File not found");
         const data = await response.json();
 
-        currentVocabulary = (data.words || []).map(item => ({
-          id: item.id,
-          en: item.en || item.english || '',
-          fr: item.fr || item.french || '',
-          spoken: item.spoken || item.en || item.english || ''
-        }));
+        const starredMap = getStoredStarred();
 
+        // Map items with composite IDs matching index.html format
+        let loadedWords = (data.words || []).map(item => {
+          const rawId = item.id;
+          const fullId = `${unitKey}_${rawId}`;
+          return {
+            id: fullId,
+            originalId: rawId,
+            en: item.en || item.english || '',
+            fr: item.fr || item.french || '',
+            spoken: item.spoken || item.en || item.english || ''
+          };
+        });
+
+        // Filter starred words if requested
+        if (isStarredOnly) {
+          const starredWords = loadedWords.filter(w => !!starredMap[w.id]);
+          if (starredWords.length > 0) {
+            loadedWords = starredWords;
+          } else {
+            alert("No starred words found in this unit! Loading all unit words instead.");
+            document.getElementById('starredBadge').style.display = 'none';
+          }
+        }
+
+        currentVocabulary = loadedWords;
         resetGame();
       } catch (error) {
         console.warn("Could not load " + fileUrl + ", using fallback dummy data.");
         currentVocabulary = [
-          { "id": 1, "en": "the adult", "fr": "l'adulte", "spoken": "the adult" },
-          { "id": 6, "en": "the teenager", "fr": "l'adolescent", "spoken": "the teenager" },
-          { "id": 7, "en": "the toddler", "fr": "le petit enfant", "spoken": "the toddler" },
-          { "id": 16, "en": "annoyed", "fr": "énervé, agacé", "spoken": "annoyed" },
-          { "id": 20, "en": "exhausted", "fr": "épuisé", "spoken": "exhausted" },
-          { "id": 26, "en": "the satellite dish", "fr": "l'antenne parabolique", "spoken": "the satellite dish" },
-          { "id": 30, "en": "crispy", "fr": "croustillant", "spoken": "crispy" },
-          { "id": 39, "en": "the fan", "fr": "le fan", "spoken": "the fan" }
+          { "id": "fallback_1", "en": "the adult", "fr": "l'adulte", "spoken": "the adult" },
+          { "id": "fallback_6", "en": "the teenager", "fr": "l'adolescent", "spoken": "the teenager" },
+          { "id": "fallback_7", "en": "the toddler", "fr": "le petit enfant", "spoken": "the toddler" },
+          { "id": "fallback_16", "en": "annoyed", "fr": "énervé, agacé", "spoken": "annoyed" },
+          { "id": "fallback_20", "en": "exhausted", "fr": "épuisé", "spoken": "exhausted" },
+          { "id": "fallback_26", "en": "the satellite dish", "fr": "l'antenne parabolique", "spoken": "the satellite dish" },
+          { "id": "fallback_30", "en": "crispy", "fr": "croustillant", "spoken": "crispy" },
+          { "id": "fallback_39", "en": "the fan", "fr": "le fan", "spoken": "the fan" }
         ];
         resetGame();
       }
