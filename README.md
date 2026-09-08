@@ -1,4 +1,4 @@
-# 🗣️ EiM Vocabulary & Pronunciation App
+# 🗣️ Vocabulary & Pronunciation App
 
 Une application web de type Flashcards simple et légère, sans publicité ni connexion, conçue pour un apprentissage du vocabulaire axé sur la prononciation.
 
