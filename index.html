@@ -11,13 +11,6 @@
   <style>
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      position: relative;
-    }
-    .top-left-nav {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      z-index: 40;
     }
     a.nav-btn {
       padding: 6px 12px;
@@ -83,17 +76,12 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
 
-  <!-- Floating Top-Left Game Button -->
-  <div class="top-left-nav">
-    <a href="listen-and-point.html" class="nav-btn">🎮 Play Game</a>
-  </div>
-
   <!-- Application Header -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
     <div class="max-w-6xl mx-auto px-4 py-3 sm:px-6">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         
-        <!-- App Title & Unit Selector -->
+        <!-- App Title, Unit Selector & Play Game Button -->
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
           <div class="flex items-center gap-2">
             <span class="text-2xl">🗣️</span>
@@ -135,6 +123,11 @@
                 <option value="eim11_u6.json">EiM 11 - Unit 6</option>
               </optgroup>
             </select>
+          </div>
+
+          <!-- Play Game Button (Relocated Here) -->
+          <div>
+            <a href="listen-and-point.html" class="nav-btn">🎮 Play Game</a>
           </div>
         </div>
 
@@ -196,7 +189,7 @@
           
           <!-- View Mode Toggle (Cards Grid vs List) -->
           <div class="bg-slate-100 p-0.5 rounded-xl border border-slate-200 flex items-center">
-            <button id="viewGridBtn" onclick="setViewMode('grid')" title="Grid Flashcard View" class="px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-white text-indigo-600 shadow-xs flex items-center gap-1">
+            <button id="viewGridBtn" onclick="setViewMode('grid')" title="Flashcard View" class="px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-white text-indigo-600 shadow-xs flex items-center gap-1">
               <span>🎴</span> Cards
             </button>
             <button id="viewListBtn" onclick="setViewMode('list')" title="Compact List View" class="px-2.5 py-1 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1">
@@ -230,7 +223,6 @@
           <input type="checkbox" id="showIpaCheckbox" onchange="toggleIpaVisibility()" class="rounded text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5">
           <span>Show Phonetic (IPA)</span>
         </label>
-        <span class="text-[11px] text-slate-400">💡 Tip: In Grid view, click any card to flip it. In List view, click items to view details.</span>
       </div>
     </section>
 
