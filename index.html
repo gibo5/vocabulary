@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="notranslate" translate="no">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" content="notranslate">
   <title id="pageTitle">EiM Vocabulary & Pronunciation</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -260,11 +261,12 @@
 
       </div>
 
-      <!-- ROW 2: View Controls, Accent, Speed & Phonetic Checkbox -->
-      <div class="flex flex-wrap items-center justify-between gap-3 pt-2.5 border-t border-slate-100">
+      <!-- ROW 2: Display, Accent, Speed & IPA Checkbox -->
+      <div class="flex flex-wrap items-center gap-3 md:gap-5 pt-2.5 border-t border-slate-100">
         
-        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-          <!-- View Mode Toggle (Cards Grid vs List) -->
+        <!-- View Mode Toggle with Label -->
+        <div class="flex items-center gap-1.5">
+          <span class="text-xs font-medium text-slate-500 whitespace-nowrap">Display:</span>
           <div class="bg-slate-100 p-0.5 rounded-xl border border-slate-200 flex items-center">
             <button id="viewGridBtn" onclick="setViewMode('grid')" title="Flashcard View" class="px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-white text-indigo-600 shadow-xs flex items-center gap-1">
               <span>🎴</span> Cards
@@ -273,26 +275,28 @@
               <span>📋</span> List
             </button>
           </div>
+        </div>
 
-          <!-- Accent Selector -->
-          <div class="flex items-center gap-1">
-            <select id="accentSelect" class="py-1.5 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option value="en-GB" selected>🇬🇧 UK</option>
-              <option value="en-US">🇺🇸 US</option>
-              <option value="en-AU">🇦🇺 AU</option>
-            </select>
-          </div>
+        <!-- Accent Selector with Label -->
+        <div class="flex items-center gap-1.5">
+          <label for="accentSelect" class="text-xs font-medium text-slate-500 whitespace-nowrap">Accent:</label>
+          <select id="accentSelect" class="py-1 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="en-GB" selected>🇬🇧 UK</option>
+            <option value="en-US">🇺🇸 US</option>
+            <option value="en-AU">🇦🇺 AU</option>
+          </select>
+        </div>
 
-          <!-- Speed Slider -->
-          <div class="flex items-center gap-1 bg-slate-50 px-2 py-1.5 rounded-xl border border-slate-200">
-            <input type="range" id="speedRate" min="0.5" max="1.2" step="0.05" value="0.85" oninput="updateSpeedLabel(this.value)"
-                   class="w-12 accent-indigo-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg">
-            <span id="speedValue" class="text-xs font-mono text-indigo-600 font-semibold w-6 text-right">0.85x</span>
-          </div>
+        <!-- Longer Speed Slider with Label -->
+        <div class="flex items-center gap-2 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200">
+          <label for="speedRate" class="text-xs font-medium text-slate-500 whitespace-nowrap">Speed:</label>
+          <input type="range" id="speedRate" min="0.5" max="1.2" step="0.05" value="0.85" oninput="updateSpeedLabel(this.value)"
+                 class="w-24 sm:w-32 accent-indigo-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg">
+          <span id="speedValue" class="text-xs font-mono text-indigo-600 font-semibold w-7 text-right">0.85x</span>
         </div>
 
         <!-- IPA Option Checkbox -->
-        <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-600 select-none">
+        <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-600 select-none ml-auto sm:ml-0">
           <input type="checkbox" id="showIpaCheckbox" onchange="toggleIpaVisibility()" class="rounded text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5">
           <span>Show Phonetic (IPA)</span>
         </label>
