@@ -160,7 +160,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 items-center">
         
         <!-- Live Search Bar -->
-        <div class="relative lg:col-span-4">
+        <div class="relative lg:col-span-3">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
           </div>
@@ -186,8 +186,20 @@
           </button>
         </div>
 
+        <!-- Star Filter Toggle -->
+        <div class="lg:col-span-2 flex items-center justify-start">
+          <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 w-full" role="group">
+            <button id="filterAllBtn" onclick="setStarFilter('all')" class="flex-1 py-1 px-2 text-xs font-semibold rounded-lg transition-all bg-white text-indigo-600 shadow-xs text-center">
+              All Words
+            </button>
+            <button id="filterStarredBtn" onclick="setStarFilter('starred')" class="flex-1 py-1 px-2 text-xs font-semibold rounded-lg transition-all text-slate-600 hover:text-amber-600 text-center flex items-center justify-center gap-1">
+              <span>⭐</span> Starred
+            </button>
+          </div>
+        </div>
+
         <!-- Layout View Toggle & Options -->
-        <div class="flex items-center gap-2 lg:col-span-4 justify-between sm:justify-end">
+        <div class="flex items-center gap-2 lg:col-span-3 justify-between sm:justify-end">
           
           <!-- View Mode Toggle (Cards Grid vs List) -->
           <div class="bg-slate-100 p-0.5 rounded-xl border border-slate-200 flex items-center">
@@ -246,10 +258,10 @@
 
     <!-- Empty State -->
     <div id="emptyState" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200 my-4">
-      <span class="text-4xl block mb-2">🔍</span>
-      <h3 class="text-slate-700 font-semibold text-lg">No matching vocabulary found</h3>
-      <p class="text-slate-500 text-sm mt-1">Try searching for a different keyword.</p>
-      <button onclick="clearSearch()" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-medium hover:bg-indigo-700 transition">
+      <span class="text-4xl block mb-2" id="emptyStateIcon">🔍</span>
+      <h3 class="text-slate-700 font-semibold text-lg" id="emptyStateTitle">No matching vocabulary found</h3>
+      <p class="text-slate-500 text-sm mt-1" id="emptyStateSubtext">Try searching for a different keyword.</p>
+      <button id="emptyStateBtn" onclick="clearSearch()" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-medium hover:bg-indigo-700 transition">
         Clear Search Filter
       </button>
     </div>
@@ -264,6 +276,7 @@
 
   <script>
     const RATINGS_STORAGE_KEY = 'vocab_app_ratings_v1';
+    const STARRED_STORAGE_KEY = 'vocab_app_starred_v1';
     const SHOW_IPA_STORAGE_KEY = 'vocab_app_show_ipa';
     const VIEW_MODE_STORAGE_KEY = 'vocab_app_view_mode';
 
@@ -286,10 +299,35 @@
       }
     }
 
+    function getStoredStarred() {
+      try {
+        const saved = localStorage.getItem(STARRED_STORAGE_KEY);
+        return saved ? JSON.parse(saved) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveStoredStarred(cardId, isStarred) {
+      try {
+        const starredMap = getStoredStarred();
+        if (isStarred) {
+          starredMap[cardId] = true;
+        } else {
+          delete starredMap[cardId];
+        }
+        localStorage.setItem(STARRED_STORAGE_KEY, JSON.stringify(starredMap));
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+    }
+
     // State Variables
     let rawVocabularyData = [];
     let currentCards = [];
     let ratingsMap = getStoredRatings();
+    let starredMap = getStoredStarred();
+    let starFilter = 'all'; // 'all' or 'starred'
     let defaultFace = 'en';
     let currentUnitKey = 'eim9_u1';
     let showIpa = localStorage.getItem(SHOW_IPA_STORAGE_KEY) !== 'false';
@@ -310,17 +348,27 @@
     const modeFrBtn = document.getElementById('modeFrBtn');
     const viewGridBtn = document.getElementById('viewGridBtn');
     const viewListBtn = document.getElementById('viewListBtn');
+    const filterAllBtn = document.getElementById('filterAllBtn');
+    const filterStarredBtn = document.getElementById('filterStarredBtn');
+
+    function updatePlayGameLink() {
+      const file = document.getElementById('unitSelect').value;
+      const playGameBtn = document.getElementById('playGameBtn');
+      if (playGameBtn) {
+        let href = `listen-and-point.html?unit=${encodeURIComponent(file)}`;
+        if (starFilter === 'starred') {
+          href += '&starred=true';
+        }
+        playGameBtn.href = href;
+      }
+    }
 
     // Fetch JSON file dynamically
     async function loadSelectedUnit() {
       const file = document.getElementById('unitSelect').value;
       currentUnitKey = file.replace('.json', '');
 
-      // Met à jour le lien de destination du jeu de manière dynamique
-      const playGameBtn = document.getElementById('playGameBtn');
-      if (playGameBtn) {
-        playGameBtn.href = `listen-and-point.html?unit=${encodeURIComponent(file)}`;
-      }
+      updatePlayGameLink();
 
       gridEl.innerHTML = '';
       emptyStateEl.classList.add('hidden');
@@ -353,6 +401,21 @@
       }
     }
 
+    function setStarFilter(filter) {
+      starFilter = filter;
+
+      if (filter === 'starred') {
+        filterStarredBtn.className = "flex-1 py-1 px-2 text-xs font-semibold rounded-lg transition-all bg-white text-amber-600 shadow-xs text-center flex items-center justify-center gap-1";
+        filterAllBtn.className = "flex-1 py-1 px-2 text-xs font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900 text-center";
+      } else {
+        filterAllBtn.className = "flex-1 py-1 px-2 text-xs font-semibold rounded-lg transition-all bg-white text-indigo-600 shadow-xs text-center";
+        filterStarredBtn.className = "flex-1 py-1 px-2 text-xs font-semibold rounded-lg transition-all text-slate-600 hover:text-amber-600 text-center flex items-center justify-center gap-1";
+      }
+
+      updatePlayGameLink();
+      applyFiltersAndSort();
+    }
+
     function setViewMode(mode) {
       currentViewMode = mode;
       localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
@@ -369,12 +432,40 @@
       renderCards();
     }
 
+    function toggleStar(cardId, event) {
+      if (event) event.stopPropagation();
+      const current = !!starredMap[cardId];
+      const next = !current;
+      starredMap[cardId] = next;
+      saveStoredStarred(cardId, next);
+      applyFiltersAndSort();
+    }
+
     function renderCards() {
       gridEl.innerHTML = '';
 
       if (currentCards.length === 0) {
         emptyStateEl.classList.remove('hidden');
         cardCounter.innerText = '0 Words Found';
+
+        const titleEl = document.getElementById('emptyStateTitle');
+        const subtextEl = document.getElementById('emptyStateSubtext');
+        const iconEl = document.getElementById('emptyStateIcon');
+        const btnEl = document.getElementById('emptyStateBtn');
+
+        if (starFilter === 'starred') {
+          iconEl.textContent = '⭐';
+          titleEl.textContent = 'No starred words in this unit';
+          subtextEl.textContent = 'Click the star icon on any card to add it to your practice list.';
+          btnEl.textContent = 'Show All Words';
+          btnEl.onclick = () => setStarFilter('all');
+        } else {
+          iconEl.textContent = '🔍';
+          titleEl.textContent = 'No matching vocabulary found';
+          subtextEl.textContent = 'Try searching for a different keyword.';
+          btnEl.textContent = 'Clear Search Filter';
+          btnEl.onclick = () => clearSearch();
+        }
         return;
       }
 
@@ -386,6 +477,7 @@
       currentCards.forEach(item => {
         const isEnglishDefault = defaultFace === 'en';
         const rating = ratingsMap[item.id] || 0;
+        const isStarred = !!starredMap[item.id];
         const ipaText = (showIpa && item.ipa) ? `/${item.ipa}/` : '';
 
         const frontLangBadge = isEnglishDefault ? '[En]' : '[Fr]';
@@ -402,6 +494,9 @@
         const backAudioText = isEnglishDefault ? item.french : englishSpokenText;
         const backAudioLang = isEnglishDefault ? 'fr-FR' : selectedEnglishAccent;
 
+        const starIcon = isStarred ? '⭐' : '✩';
+        const starBtnClass = isStarred ? 'text-amber-500 scale-110' : 'text-slate-300 hover:text-amber-400';
+
         let cardHTML = '';
 
         if (currentViewMode === 'grid') {
@@ -416,7 +511,12 @@
                       <h3 class="text-sm font-bold text-slate-800 leading-tight truncate">${frontWord}</h3>
                       ${isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-indigo-500 block truncate">${ipaText}</span>` : ''}
                     </div>
-                    <span class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase shrink-0 select-none">${frontLangBadge}</span>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                      <button onclick="toggleStar('${item.id}', event)" title="Toggle Star" class="text-sm p-0.5 transition-transform ${starBtnClass}">
+                        ${starIcon}
+                      </button>
+                      <span class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase select-none">${frontLangBadge}</span>
+                    </div>
                   </div>
 
                   <div class="flex items-center justify-between pt-1 border-t border-slate-100 mt-auto">
@@ -442,7 +542,12 @@
                       <h3 class="text-sm font-bold text-sky-300 leading-tight truncate">${backWord}</h3>
                       ${!isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-sky-400 block truncate">${ipaText}</span>` : ''}
                     </div>
-                    <span class="text-[10px] font-semibold tracking-wider text-slate-500 uppercase shrink-0 select-none">${backLangBadge}</span>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                      <button onclick="toggleStar('${item.id}', event)" title="Toggle Star" class="text-sm p-0.5 transition-transform ${starBtnClass}">
+                        ${starIcon}
+                      </button>
+                      <span class="text-[10px] font-semibold tracking-wider text-slate-500 uppercase select-none">${backLangBadge}</span>
+                    </div>
                   </div>
 
                   <div class="flex items-center justify-between pt-1 border-t border-slate-800 mt-auto">
@@ -467,7 +572,10 @@
         } else {
           cardHTML = `
             <div class="bg-white rounded-xl p-3 border border-slate-200/90 hover:border-indigo-300 transition-all shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div class="flex items-center gap-4 min-w-0 flex-1">
+              <div class="flex items-center gap-3 min-w-0 flex-1">
+                <button onclick="toggleStar('${item.id}', event)" title="Toggle Star" class="text-sm p-1 transition-transform ${starBtnClass} shrink-0">
+                  ${starIcon}
+                </button>
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-2">
                     <span class="text-sm font-bold text-slate-900 truncate">${item.english}</span>
@@ -555,11 +663,13 @@
         clearSearchBtn.classList.add('hidden');
       }
 
-      let filtered = rawVocabularyData.filter(item => 
-        item.english.toLowerCase().includes(query) ||
-        item.french.toLowerCase().includes(query) ||
-        item.ipa.toLowerCase().includes(query)
-      );
+      let filtered = rawVocabularyData.filter(item => {
+        const matchesSearch = item.english.toLowerCase().includes(query) ||
+                              item.french.toLowerCase().includes(query) ||
+                              item.ipa.toLowerCase().includes(query);
+        const matchesStarred = starFilter === 'all' || !!starredMap[item.id];
+        return matchesSearch && matchesStarred;
+      });
 
       filtered.sort((a, b) => {
         const ratingA = ratingsMap[a.id] || 0;
