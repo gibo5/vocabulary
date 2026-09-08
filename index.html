@@ -385,7 +385,7 @@
         const backLangBadge = isEnglishDefault ? '[Fr]' : '[En]';
 
         const frontWord = isEnglishDefault ? item.english : item.french;
-        const frontAudioText = isEnglishDefault ? item.english : item.french;
+        const frontAudioText = isEnglishDefault ? (item.spoken || item.english) : item.french;
         const frontAudioLang = isEnglishDefault ? selectedEnglishAccent : 'fr-FR';
 
         const backWord = isEnglishDefault ? item.french : item.english;
