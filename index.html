@@ -363,140 +363,146 @@
     }
 
     function renderCards() {
-      gridEl.innerHTML = '';
+    gridEl.innerHTML = '';
 
-      if (currentCards.length === 0) {
-        emptyStateEl.classList.remove('hidden');
-        cardCounter.innerText = '0 Words Found';
-        return;
+    if (currentCards.length === 0) {
+      emptyStateEl.classList.remove('hidden');
+      cardCounter.innerText = '0 Words Found';
+      return;
+    }
+
+    emptyStateEl.classList.add('hidden');
+    cardCounter.innerText = `Showing ${currentCards.length} Word${currentCards.length > 1 ? 's' : ''}`;
+
+    const selectedEnglishAccent = accentSelect ? accentSelect.value : 'en-GB';
+
+    currentCards.forEach(item => {
+      const isEnglishDefault = defaultFace === 'en';
+      const rating = ratingsMap[item.id] || 0;
+      const ipaText = (showIpa && item.ipa) ? `/${item.ipa}/` : '';
+
+      const frontLangBadge = isEnglishDefault ? '[En]' : '[Fr]';
+      const backLangBadge = isEnglishDefault ? '[Fr]' : '[En]';
+
+      // Textes à afficher
+      const frontWord = isEnglishDefault ? item.english : item.french;
+      const backWord = isEnglishDefault ? item.french : item.english;
+
+      // Textes à prononcer (Utilise 'spoken' si présent, sinon 'english')
+      const englishSpokenText = item.spoken || item.english;
+
+      const frontAudioText = isEnglishDefault ? englishSpokenText : item.french;
+      const frontAudioLang = isEnglishDefault ? selectedEnglishAccent : 'fr-FR';
+      
+      const backAudioText = isEnglishDefault ? item.french : englishSpokenText;
+      const backAudioLang = isEnglishDefault ? 'fr-FR' : selectedEnglishAccent;
+
+      let cardHTML = '';
+
+      if (currentViewMode === 'grid') {
+        // --- GRID FLASHCARD LAYOUT ---
+        cardHTML = `
+          <div class="card-container perspective-1000 h-[110px] cursor-pointer" onclick="toggleCardFlip(this)">
+            <div class="card-inner">
+              
+              <!-- CARD FRONT -->
+              <div class="card-front rounded-xl p-3 flex flex-col justify-between bg-white border border-slate-200/90 box-border shadow-xs hover:border-indigo-300 transition-colors">
+                <div class="flex items-start justify-between gap-1 w-full">
+                  <div class="min-w-0 flex-1 pr-1">
+                    <h3 class="text-sm font-bold text-slate-800 leading-tight truncate">${frontWord}</h3>
+                    ${isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-indigo-500 block truncate">${ipaText}</span>` : ''}
+                  </div>
+                  <span class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase shrink-0 select-none">${frontLangBadge}</span>
+                </div>
+
+                <div class="flex items-center justify-between pt-1 border-t border-slate-100 mt-auto">
+                  <div class="flex items-center gap-1 bg-slate-50 p-0.5 rounded-lg border border-slate-200/60" title="Rate difficulty" onclick="event.stopPropagation()">
+                    <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}">🟢</button>
+                    <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'}">🟡</button>
+                    <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}">🔴</button>
+                  </div>
+
+                  <button title="Listen Pronunciation" 
+                          onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(frontAudioText)}', '${frontAudioLang}');"
+                          class="h-7 px-2.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white flex items-center gap-1.5 transition-all duration-200 border border-indigo-100 hover:border-transparent group">
+                    <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
+                    <span class="font-sans font-semibold text-[11px]">Listen</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- CARD BACK -->
+              <div class="card-back rounded-xl p-3 flex flex-col justify-between bg-slate-900 text-white border border-slate-800 box-border">
+                <div class="flex items-start justify-between gap-1 w-full">
+                  <div class="min-w-0 flex-1 pr-1">
+                    <h3 class="text-sm font-bold text-sky-300 leading-tight truncate">${backWord}</h3>
+                    ${!isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-sky-400 block truncate">${ipaText}</span>` : ''}
+                  </div>
+                  <span class="text-[10px] font-semibold tracking-wider text-slate-500 uppercase shrink-0 select-none">${backLangBadge}</span>
+                </div>
+
+                <div class="flex items-center justify-between pt-1 border-t border-slate-800 mt-auto">
+                  <div class="flex items-center gap-1 bg-slate-800/80 p-0.5 rounded-lg border border-slate-700/60" title="Rate difficulty" onclick="event.stopPropagation()">
+                    <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white' : 'text-slate-400 hover:text-emerald-400 hover:bg-slate-700'}">🟢</button>
+                    <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white' : 'text-slate-400 hover:text-amber-400 hover:bg-slate-700'}">🟡</button>
+                    <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white' : 'text-slate-400 hover:text-rose-400 hover:bg-slate-700'}">🔴</button>
+                  </div>
+
+                  <button title="Listen Pronunciation" 
+                          onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(backAudioText)}', '${backAudioLang}');"
+                          class="h-7 px-2.5 rounded-lg bg-sky-950 hover:bg-sky-500 text-sky-400 hover:text-white flex items-center gap-1.5 transition-all duration-200 border border-sky-800 hover:border-transparent group">
+                    <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
+                    <span class="font-sans font-semibold text-[11px]">Listen</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        `;
+      } else {
+        // --- COMPACT LIST VIEW LAYOUT ---
+        cardHTML = `
+          <div class="bg-white rounded-xl p-3 border border-slate-200/90 hover:border-indigo-300 transition-all shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <!-- Left side: Words & IPA -->
+            <div class="flex items-center gap-4 min-w-0 flex-1">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-bold text-slate-900 truncate">${item.english}</span>
+                  <span class="text-xs text-slate-400">➔</span>
+                  <span class="text-sm font-medium text-indigo-700 truncate">${item.french}</span>
+                </div>
+                ${ipaText ? `<span class="text-xs font-mono text-slate-500 block mt-0.5">${ipaText}</span>` : ''}
+              </div>
+            </div>
+
+            <!-- Right side: Ratings & Audio Buttons -->
+            <div class="flex items-center gap-3 shrink-0 justify-between sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
+              <div class="flex items-center gap-1 bg-slate-50 p-0.5 rounded-lg border border-slate-200/60" title="Rate difficulty">
+                <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}">🟢</button>
+                <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'}">🟡</button>
+                <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}">🔴</button>
+              </div>
+
+              <div class="flex items-center gap-1">
+                <!-- ✅ Ici, nous utilisons maintenant englishSpokenText -->
+                <button title="Listen English" onclick="speakText('${escapeSingleQuotes(englishSpokenText)}', '${selectedEnglishAccent}')"
+                        class="h-7 px-2.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white flex items-center gap-1 transition-all text-xs font-semibold border border-indigo-100">
+                  <span>🔊 EN</span>
+                </button>
+                <button title="Listen French" onclick="speakText('${escapeSingleQuotes(item.french)}', 'fr-FR')"
+                        class="h-7 px-2.5 rounded-lg bg-slate-100 hover:bg-slate-700 text-slate-700 hover:text-white flex items-center gap-1 transition-all text-xs font-semibold border border-slate-200">
+                  <span>🔊 FR</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
       }
 
-      emptyStateEl.classList.add('hidden');
-      cardCounter.innerText = `Showing ${currentCards.length} Word${currentCards.length > 1 ? 's' : ''}`;
-
-      const selectedEnglishAccent = accentSelect ? accentSelect.value : 'en-GB';
-
-      currentCards.forEach(item => {
-        const isEnglishDefault = defaultFace === 'en';
-        const rating = ratingsMap[item.id] || 0;
-        const ipaText = (showIpa && item.ipa) ? `/${item.ipa}/` : '';
-
-        const frontLangBadge = isEnglishDefault ? '[En]' : '[Fr]';
-        const backLangBadge = isEnglishDefault ? '[Fr]' : '[En]';
-
-        const frontWord = isEnglishDefault ? item.english : item.french;
-        const frontAudioText = isEnglishDefault ? (item.spoken || item.english) : item.french;
-        const frontAudioLang = isEnglishDefault ? selectedEnglishAccent : 'fr-FR';
-        
-        const backWord = isEnglishDefault ? item.french : item.english;
-        const backAudioText = isEnglishDefault ? item.french : (item.spoken || item.english);
-        const backAudioLang = isEnglishDefault ? 'fr-FR' : selectedEnglishAccent;
-
-        let cardHTML = '';
-
-        if (currentViewMode === 'grid') {
-          // --- GRID FLASHCARD LAYOUT ---
-          cardHTML = `
-            <div class="card-container perspective-1000 h-[110px] cursor-pointer" onclick="toggleCardFlip(this)">
-              <div class="card-inner">
-                
-                <!-- CARD FRONT -->
-                <div class="card-front rounded-xl p-3 flex flex-col justify-between bg-white border border-slate-200/90 box-border shadow-xs hover:border-indigo-300 transition-colors">
-                  <div class="flex items-start justify-between gap-1 w-full">
-                    <div class="min-w-0 flex-1 pr-1">
-                      <h3 class="text-sm font-bold text-slate-800 leading-tight truncate">${frontWord}</h3>
-                      ${isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-indigo-500 block truncate">${ipaText}</span>` : ''}
-                    </div>
-                    <span class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase shrink-0 select-none">${frontLangBadge}</span>
-                  </div>
-
-                  <div class="flex items-center justify-between pt-1 border-t border-slate-100 mt-auto">
-                    <div class="flex items-center gap-1 bg-slate-50 p-0.5 rounded-lg border border-slate-200/60" title="Rate difficulty" onclick="event.stopPropagation()">
-                      <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}">🟢</button>
-                      <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'}">🟡</button>
-                      <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}">🔴</button>
-                    </div>
-
-                    <button title="Listen Pronunciation" 
-                            onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(frontAudioText)}', '${frontAudioLang}');"
-                            class="h-7 px-2.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white flex items-center gap-1.5 transition-all duration-200 border border-indigo-100 hover:border-transparent group">
-                      <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
-                      <span class="font-sans font-semibold text-[11px]">Listen</span>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- CARD BACK -->
-                <div class="card-back rounded-xl p-3 flex flex-col justify-between bg-slate-900 text-white border border-slate-800 box-border">
-                  <div class="flex items-start justify-between gap-1 w-full">
-                    <div class="min-w-0 flex-1 pr-1">
-                      <h3 class="text-sm font-bold text-sky-300 leading-tight truncate">${backWord}</h3>
-                      ${!isEnglishDefault && ipaText ? `<span class="text-[11px] font-mono font-medium text-sky-400 block truncate">${ipaText}</span>` : ''}
-                    </div>
-                    <span class="text-[10px] font-semibold tracking-wider text-slate-500 uppercase shrink-0 select-none">${backLangBadge}</span>
-                  </div>
-
-                  <div class="flex items-center justify-between pt-1 border-t border-slate-800 mt-auto">
-                    <div class="flex items-center gap-1 bg-slate-800/80 p-0.5 rounded-lg border border-slate-700/60" title="Rate difficulty" onclick="event.stopPropagation()">
-                      <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white' : 'text-slate-400 hover:text-emerald-400 hover:bg-slate-700'}">🟢</button>
-                      <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white' : 'text-slate-400 hover:text-amber-400 hover:bg-slate-700'}">🟡</button>
-                      <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white' : 'text-slate-400 hover:text-rose-400 hover:bg-slate-700'}">🔴</button>
-                    </div>
-
-                    <button title="Listen Pronunciation" 
-                            onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(backAudioText)}', '${backAudioLang}');"
-                            class="h-7 px-2.5 rounded-lg bg-sky-950 hover:bg-sky-500 text-sky-400 hover:text-white flex items-center gap-1.5 transition-all duration-200 border border-sky-800 hover:border-transparent group">
-                      <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
-                      <span class="font-sans font-semibold text-[11px]">Listen</span>
-                    </button>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          `;
-        } else {
-          // --- COMPACT LIST VIEW LAYOUT ---
-          cardHTML = `
-            <div class="bg-white rounded-xl p-3 border border-slate-200/90 hover:border-indigo-300 transition-all shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <!-- Left side: Words & IPA -->
-              <div class="flex items-center gap-4 min-w-0 flex-1">
-                <div class="min-w-0 flex-1">
-                  <div class="flex items-center gap-2">
-                    <span class="text-sm font-bold text-slate-900 truncate">${item.english}</span>
-                    <span class="text-xs text-slate-400">➔</span>
-                    <span class="text-sm font-medium text-indigo-700 truncate">${item.french}</span>
-                  </div>
-                  ${ipaText ? `<span class="text-xs font-mono text-slate-500 block mt-0.5">${ipaText}</span>` : ''}
-                </div>
-              </div>
-
-              <!-- Right side: Ratings & Audio Buttons -->
-              <div class="flex items-center gap-3 shrink-0 justify-between sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
-                <div class="flex items-center gap-1 bg-slate-50 p-0.5 rounded-lg border border-slate-200/60" title="Rate difficulty">
-                  <button onclick="setCardRating('${item.id}', 1)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 1 ? 'bg-emerald-500 text-white' : 'text-slate-400 hover:text-emerald-600 hover:bg-emerald-50'}">🟢</button>
-                  <button onclick="setCardRating('${item.id}', 2)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 2 ? 'bg-amber-500 text-white' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'}">🟡</button>
-                  <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}">🔴</button>
-                </div>
-
-                <div class="flex items-center gap-1">
-                  <button title="Listen English" onclick="speakText('${escapeSingleQuotes(item.english)}', '${selectedEnglishAccent}')"
-                          class="h-7 px-2.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white flex items-center gap-1 transition-all text-xs font-semibold border border-indigo-100">
-                    <span>🔊 EN</span>
-                  </button>
-                  <button title="Listen French" onclick="speakText('${escapeSingleQuotes(item.french)}', 'fr-FR')"
-                          class="h-7 px-2.5 rounded-lg bg-slate-100 hover:bg-slate-700 text-slate-700 hover:text-white flex items-center gap-1 transition-all text-xs font-semibold border border-slate-200">
-                    <span>🔊 FR</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          `;
-        }
-
-        gridEl.insertAdjacentHTML('beforeend', cardHTML);
-      });
-    }
+      gridEl.insertAdjacentHTML('beforeend', cardHTML);
+    });
+  }
 
     function toggleIpaVisibility() {
       showIpa = showIpaCheckbox.checked;
