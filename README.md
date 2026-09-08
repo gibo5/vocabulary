@@ -10,9 +10,9 @@ Une application web interactive, légère et réactive conçue pour l'apprentiss
 * **🔊 Synthèse vocale (Web Speech API)** : Écoutez la prononciation native des mots en anglais (avec choix de l'accent : 🇬🇧 UK, 🇺🇸 US, 🇦🇺 AU) et en français.
 * **🎛️ Contrôle de la vitesse** : Ajustez la vitesse d'élocution (de 0.5x à 1.2x) via un curseur dédié.
 * **🔤 Phonétique (API)** : Affichage optionnel de la transcription phonétique internationale.
-* **⭐ Cartes favorites** : Marquez les mots difficiles pour vous constituer une liste d'entraînement personnalisée.
+* **⭐ Cartes favorites** : Marquez les mots pour vous constituer une liste d'entraînement personnalisée.
 * **🟢🟡🔴 Évaluation de la difficulté** : Auto-évaluez chaque mot pour suivre votre progression et trier vos cartes du plus difficile au plus facile.
-* **🔍 Recherche & Tri en temps réel** : Filtrez par mot-clé, triez par ordre alphabétique, par niveau de difficulté ou mélangez aléatoirement le deck.
+* **🔍 Recherche & Tri en temps réel** : Filtrez par mot-clé, triez par ordre alphabétique, par niveau de difficulté ou mélangez aléatoirement.
 * **🎮 Jeu d'écoute ("Listen & Point")** : Entraînez votre compréhension orale de manière ludique grâce au jeu associé.
 * **🚫 Anti-Traduction automatique** : Balises intégrées pour empêcher les navigateurs de traduire automatiquement la page et de fausser l'exercice.
 
