@@ -1,6 +1,6 @@
 # 🗣️ EiM Vocabulary & Pronunciation App
 
-Une application web interactive, légère et réactive conçue pour l'apprentissage du vocabulaire et la pratique de la prononciation anglais-français (modules EiM).
+Une application web de type Flashcards simple et légère, sans publicité ni connexion, conçue pour un apprentissage du vocabulaire axé sur la prononciation.
 
 ---
 
