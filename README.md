@@ -44,10 +44,6 @@ Pour éviter toute confusion entre les cartes d'unités différentes, chaque mot
 
 ## 📂 Structure des fichiers JSON de vocabulaire
 
-L'application charge dynamiquement les données d'unités depuis le dossier `data/`.
-
-## 📂 Structure des fichiers JSON de vocabulaire
-
 L'application charge dynamiquement les données d'unités depuis le dossier `data/`. Chaque fichier JSON doit suivre cette structure :
 
 ```json
