@@ -1,260 +1,478 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Listen and Point - EiM Game</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Inter Font -->
-  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <title>Listen & Point - Vocabulary Game</title>
   <style>
     body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      background: #f0f4f8;
+      color: #333;
+      padding: 20px;
+      min-height: 100vh;
+      margin: 0;
+      box-sizing: border-box;
+      position: relative;
+    }
+    /* Fixed top-left floating navigation button */
+    .top-left-nav {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+    }
+    a.home-btn {
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      color: #334155;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      transition: all 0.2s;
+    }
+    a.home-btn:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+      transform: translateY(-1px);
+    }
+    h1 {
+      color: #2c3e50;
+      margin-top: 10px;
+    }
+    .controls {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      max-width: 800px;
+      margin: 0 auto 20px auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .controls label {
+      color: #333;
+    }
+    select, button.action-btn {
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: white;
+      color: #333;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .audio-section {
+      margin: 20px 0;
+    }
+    button.start-btn {
+      font-size: 1.2rem;
+      padding: 12px 24px;
+      border-radius: 50px;
+      border: none;
+      background: #2ed573;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(46, 213, 115, 0.3);
+      transition: transform 0.1s, background 0.2s;
+    }
+    button.start-btn:hover {
+      background: #26af5f;
+      transform: scale(1.03);
+    }
+    button.replay-btn {
+      font-size: 1rem;
+      padding: 10px 20px;
+      border-radius: 50px;
+      border: none;
+      background: #4a90e2;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+      display: none; 
+    }
+    button.replay-btn:hover {
+      background: #357abd;
+    }
+    .score-board {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-top: 10px;
+    }
+    /* Perfect 3-column grid to prevent misalignments */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(180px, 1fr));
+      gap: 15px;
+      justify-content: center;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    .card {
+      background: white;
+      color: #333;
+      padding: 20px 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 500;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      border: 2px solid transparent;
+      user-select: none;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      border-color: #4a90e2;
+    }
+    .card.correct {
+      background: #2ed573 !important;
+      color: white;
+      border-color: #2ed573;
+      animation: pulse 0.4s;
+    }
+    .card.wrong {
+      background: #ff4757 !important;
+      color: white;
+      border-color: #ff4757;
+    }
+    .card.disabled {
+      pointer-events: none;
+      opacity: 0.3;
+    }
+    /* Festive Gold/Trophy Victory Banner Popup */
+    #victory-banner {
+      display: none;
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      border: 3px solid #f39c12;
+      border-radius: 16px;
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    #victory-banner h2 {
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      font-size: 2.2rem;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    #victory-banner p {
+      font-size: 1.2rem;
+      color: #2c3e50;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body>
 
-  <!-- Header -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
-    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="index.html" class="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 transition text-slate-600" title="Back to Vocabulary">
-          ➔ Back
-        </a>
-        <div>
-          <h1 id="gameUnitTitle" class="text-base sm:text-lg font-bold text-slate-900 leading-tight">Listen & Point</h1>
-          <p class="text-xs text-slate-500">Listen to the audio and click the right word!</p>
-        </div>
-      </div>
+  <!-- Top-left Navigation Button -->
+  <div class="top-left-nav">
+    <a href="index.html" class="home-btn">🏠 Back to Lists</a>
+  </div>
 
-      <!-- Live Score -->
-      <div class="flex items-center gap-3">
-        <div class="bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-xl text-xs font-semibold text-indigo-700">
-          Score: <span id="scoreVal" class="text-sm font-bold">0</span> / <span id="totalQuestions">0</span>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Game Container -->
-  <main class="max-w-4xl mx-auto px-4 py-6 flex-grow w-full flex flex-col items-center justify-center">
-
-    <!-- Loading State -->
-    <div id="gameLoading" class="text-center py-12 bg-white rounded-2xl border border-slate-200 w-full text-slate-500 font-medium">
-      Loading game data...
-    </div>
-
-    <!-- Error State -->
-    <div id="gameError" class="hidden text-center py-12 bg-white rounded-2xl border border-rose-200 w-full text-rose-600 font-medium space-y-3">
-      <p id="errorMessage">Unable to load words for this unit.</p>
-      <a href="index.html" class="inline-block px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold hover:bg-slate-900 transition">Return to Home</a>
-    </div>
-
-    <!-- Active Game Box -->
-    <div id="gameBox" class="hidden w-full space-y-6">
-
-      <!-- Audio Trigger Card -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center flex flex-col items-center justify-center space-y-3">
-        <button id="repeatAudioBtn" onclick="playTargetAudio()" class="w-16 h-16 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-2xl flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all">
-          🔊
-        </button>
-        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Click to re-listen</p>
-      </div>
-
-      <!-- Word Choice Options Grid -->
-      <div id="optionsGrid" class="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-4">
-        <!-- Buttons injected dynamically -->
-      </div>
-
+  <h1>👂 Listen & Point</h1>
+  
+  <div class="controls">
+    <div>
+      <label for="unitSelect"><strong>Unit :</strong></label>
+      <select id="unitSelect" onchange="loadSelectedUnit()">
+        <optgroup label="EiM 9">
+          <option value="data/eim9_u1.json">EiM 9 - Unit 1</option>
+          <option value="data/eim9_u2.json">EiM 9 - Unit 2</option>
+          <option value="data/eim9_u3.json">EiM 9 - Unit 3</option>
+          <option value="data/eim9_u4.json">EiM 9 - Unit 4</option>
+          <option value="data/eim9_u5.json">EiM 9 - Unit 5</option>
+          <option value="data/eim9_u6.json">EiM 9 - Unit 6</option>
+          <option value="data/eim9_u7.json">EiM 9 - Unit 7</option>
+          <option value="data/eim9_u8.json">EiM 9 - Unit 8</option>
+        </optgroup>
+        <optgroup label="EiM 10">
+          <option value="data/eim10_u1.json">EiM 10 - Unit 1</option>
+          <option value="data/eim10_u2.json">EiM 10 - Unit 2</option>
+          <option value="data/eim10_u3.json">EiM 10 - Unit 3</option>
+          <option value="data/eim10_u4.json">EiM 10 - Unit 4</option>
+          <option value="data/eim10_u5.json">EiM 10 - Unit 5</option>
+          <option value="data/eim10_u6.json">EiM 10 - Unit 6</option>
+          <option value="data/eim10_u7.json">EiM 10 - Unit 7</option>
+          <option value="data/eim10_u8.json">EiM 10 - Unit 8</option>
+          <option value="data/eim10_irrVerbs.json">EiM 10 - Irregular Verbs</option>
+        </optgroup>
+        <optgroup label="EiM 11">
+          <option value="data/eim11_u1.json">EiM 11 - Unit 1</option>
+          <option value="data/eim11_u2.json">EiM 11 - Unit 2</option>
+          <option value="data/eim11_u3.json">EiM 11 - Unit 3</option>
+          <option value="data/eim11_u4.json">EiM 11 - Unit 4</option>
+          <option value="data/eim11_u5.json">EiM 11 - Unit 5</option>
+          <option value="data/eim11_u6.json">EiM 11 - Unit 6</option>
+          <option value="data/eim11_irrVerbs.json">EiM 11 - Irregular Verbs</option>
+        </optgroup>
+      </select>
     </div>
 
-    <!-- Game Completed Screen -->
-    <div id="gameComplete" class="hidden bg-white p-8 rounded-2xl border border-slate-200 shadow-sm text-center w-full max-w-md space-y-4">
-      <span class="text-5xl block">🎉</span>
-      <h2 class="text-xl font-bold text-slate-900">Unit Complete!</h2>
-      <p class="text-sm text-slate-600">You scored <span id="finalScore" class="font-bold text-indigo-600">0</span> points!</p>
-      
-      <div class="flex gap-3 justify-center pt-2">
-        <button onclick="restartGame()" class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-xl text-xs hover:bg-indigo-700 transition">
-          🔄 Play Again
-        </button>
-        <a href="index.html" class="px-4 py-2 bg-slate-100 text-slate-700 font-semibold rounded-xl text-xs hover:bg-slate-200 transition">
-          📋 Back to List
-        </a>
-      </div>
+    <div>
+      <label for="mode-select"><strong>Level :</strong></label>
+      <select id="mode-select" onchange="resetGame()">
+        <option value="easy">Easy (Sound ➔ English)</option>
+        <option value="medium">Medium (Sound ➔ French)</option>
+      </select>
     </div>
 
-  </main>
+    <div>
+      <label for="grid-size"><strong>Cards :</strong></label>
+      <select id="grid-size" onchange="resetGame()">
+        <option value="6">6 cards</option>
+        <option value="9">9 cards</option>
+        <option value="12">12 cards</option>
+        <option value="15">15 cards</option>
+      </select>
+    </div>
+    
+    <button class="action-btn" onclick="resetGame()">🔄 New Cards</button>
+  </div>
+
+  <div class="audio-section">
+    <button id="start-game-btn" class="start-btn" onclick="startGame()">▶️ Start Game</button>
+    <button id="replay-btn" class="replay-btn" onclick="playSecretWord()">🔊 Listen again</button>
+    <div class="score-board">Score : <span id="score">0</span> / <span id="total">0</span></div>
+  </div>
+
+  <!-- Festive Gold/Trophy Victory Banner Popup -->
+  <div id="victory-banner">
+    <h2>🏆 AMAZING JOB! 🌟</h2>
+    <p>You matched all the words successfully like a pro!</p>
+    <button class="start-btn" onclick="startGame()">Play Again 🚀</button>
+  </div>
+
+  <div id="word-grid" class="grid"></div>
 
   <script>
-    let words = [];
-    let currentPool = [];
-    let targetWord = null;
+    let currentVocabulary = [];
+    let activeWords = [];
+    let currentTargetWord = null;
     let score = 0;
-    let totalAsked = 0;
-    let isAnswerLocked = false;
+    let totalAttempts = 0;
+    let gameStarted = false;
 
-    // Helper: Extraire le paramètre "unit" de l'URL
-    function getSelectedUnitFromURL() {
+    // Récupération de l'unité transmise dans l'URL si elle existe
+    function checkUrlParameter() {
       const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get('unit') || 'eim9_u1.json';
-    }
-
-    async function initGame() {
-      const file = getSelectedUnitFromURL();
-
-      const loadingEl = document.getElementById('gameLoading');
-      const errorEl = document.getElementById('gameError');
-      const gameBox = document.getElementById('gameBox');
-
-      try {
-        const response = await fetch(`data/${file}`);
-        if (!response.ok) throw new Error(`Data file "data/${file}" not found.`);
-
-        const json = await response.json();
-
-        // Met à jour le titre
-        document.getElementById('gameUnitTitle').textContent = json.title ? `Game • ${json.title}` : 'Listen & Point';
-
-        words = (json.words || []).map(item => ({
-          id: item.id,
-          english: item.en || item.english || '',
-          spoken: item.spoken || item.en || item.english || '',
-          french: item.fr || item.french || ''
-        }));
-
-        if (words.length < 2) {
-          throw new Error('Not enough words in this unit to play.');
+      const unitParam = urlParams.get('unit');
+      if (unitParam) {
+        const select = document.getElementById('unitSelect');
+        const targetValue = unitParam.startsWith('data/') ? unitParam : `data/${unitParam}`;
+        
+        for (let i = 0; i < select.options.length; i++) {
+          if (select.options[i].value === targetValue) {
+            select.selectedIndex = i;
+            break;
+          }
         }
-
-        loadingEl.classList.add('hidden');
-        gameBox.classList.remove('hidden');
-
-        restartGame();
-
-      } catch (err) {
-        loadingEl.classList.add('hidden');
-        errorEl.classList.remove('hidden');
-        document.getElementById('errorMessage').textContent = err.message;
       }
     }
 
-    function restartGame() {
+    async function loadSelectedUnit() {
+      const fileUrl = document.getElementById('unitSelect').value;
+      try {
+        const response = await fetch(fileUrl);
+        if (!response.ok) throw new Error("File not found");
+        const data = await response.json();
+        
+        // Adaptation pour supporter 'en', 'french'/'fr' et 'spoken'
+        currentVocabulary = (data.words || []).map(item => ({
+          id: item.id,
+          en: item.en || item.english || '',
+          fr: item.fr || item.french || '',
+          spoken: item.spoken || item.en || item.english || ''
+        }));
+        
+        resetGame();
+      } catch (error) {
+        console.warn("Could not load " + fileUrl + ", using fallback dummy data.");
+        currentVocabulary = [
+          { "id": 1, "en": "the adult", "fr": "l'adulte", "spoken": "the adult" },
+          { "id": 6, "en": "the teenager", "fr": "l'adolescent", "spoken": "the teenager" },
+          { "id": 7, "en": "the toddler", "fr": "le petit enfant", "spoken": "the toddler" },
+          { "id": 16, "en": "annoyed", "fr": "énervé, agacé", "spoken": "annoyed" },
+          { "id": 20, "en": "exhausted", "fr": "épuisé", "spoken": "exhausted" },
+          { "id": 26, "en": "the satellite dish", "fr": "l'antenne parabolique", "spoken": "the satellite dish" },
+          { "id": 30, "en": "crispy", "fr": "croustillant", "spoken": "crispy" },
+          { "id": 39, "en": "the fan", "fr": "le fan", "spoken": "the fan" }
+        ];
+        resetGame();
+      }
+    }
+
+    function playSound(type) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const now = audioCtx.currentTime;
+        
+        if (type === 'win') {
+          const playTone = (freq, startTime, duration) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(0.15, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+          };
+          playTone(523.25, now, 0.15);       
+          playTone(659.25, now + 0.12, 0.15); 
+          playTone(783.99, now + 0.24, 0.3);  
+        } else if (type === 'fail') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(200, now);
+          osc.frequency.linearRampToValueAtTime(120, now + 0.2);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        }
+      } catch (e) {}
+    }
+
+    function startGame() {
+      gameStarted = true;
+      document.getElementById('start-game-btn').style.display = 'none';
+      document.getElementById('replay-btn').style.display = 'inline-block';
+      document.getElementById('victory-banner').style.display = 'none';
+      document.getElementById('word-grid').style.display = 'grid';
+      resetGame();
+    }
+
+    function resetGame() {
       score = 0;
-      totalAsked = 0;
-      currentPool = [...words];
+      totalAttempts = 0;
+      updateScoreboard();
+      currentTargetWord = null;
+      document.getElementById('victory-banner').style.display = 'none';
+      document.getElementById('word-grid').style.display = 'grid';
 
-      document.getElementById('scoreVal').textContent = '0';
-      document.getElementById('totalQuestions').textContent = words.length;
+      const requestedSize = parseInt(document.getElementById('grid-size').value);
+      const poolSize = Math.min(requestedSize, currentVocabulary.length);
 
-      document.getElementById('gameComplete').classList.add('hidden');
-      document.getElementById('gameBox').classList.remove('hidden');
-
-      nextRound();
-    }
-
-    function nextRound() {
-      if (currentPool.length === 0) {
-        showCompletionScreen();
-        return;
-      }
-
-      isAnswerLocked = false;
-
-      // Choisit le mot cible parmi ceux restants
-      const randomIndex = Math.floor(Math.random() * currentPool.length);
-      targetWord = currentPool[randomIndex];
-
-      // Génère 3 leurres
-      const distractors = words.filter(w => w.id !== targetWord.id);
-      shuffleArray(distractors);
-      const selectedOptions = [targetWord, ...distractors.slice(0, 3)];
-      shuffleArray(selectedOptions);
-
-      // Génère l'affichage des choix
-      const grid = document.getElementById('optionsGrid');
+      activeWords = [...currentVocabulary].sort(() => 0.5 - Math.random()).slice(0, poolSize);
+      
+      const grid = document.getElementById('word-grid');
       grid.innerHTML = '';
+      
+      const mode = document.getElementById('mode-select').value;
+      const displayWords = [...activeWords].sort(() => 0.5 - Math.random());
 
-      selectedOptions.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = "p-4 sm:p-5 bg-white border-2 border-slate-200 hover:border-indigo-400 rounded-2xl text-slate-800 font-bold text-sm sm:text-base shadow-xs hover:shadow transition-all text-center flex flex-col items-center justify-center min-h-[80px]";
-        btn.textContent = opt.french;
-        btn.onclick = () => handleChoice(opt, btn);
-        grid.appendChild(btn);
+      displayWords.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerText = mode === 'easy' ? item.en : item.fr;
+        card.onclick = () => checkAnswer(item, card);
+        grid.appendChild(card);
       });
 
-      // Prononce le mot cible
-      setTimeout(() => {
-        playTargetAudio();
-      }, 300);
+      if (gameStarted) {
+        pickAndPlayNewWord();
+      }
     }
 
-    function playTargetAudio() {
-      if (!targetWord || !('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
+    function pickAndPlayNewWord() {
+      if (activeWords.length === 0) {
+        document.getElementById('word-grid').style.display = 'none';
+        document.getElementById('victory-banner').style.display = 'block';
+        playSound('win');
+        return;
+      }
+      const randomIndex = Math.floor(Math.random() * activeWords.length);
+      currentTargetWord = activeWords[randomIndex];
+      playSecretWord();
+    }
 
-      const textToSpeak = targetWord.spoken || targetWord.english;
+    function playSecretWord() {
+      if (!currentTargetWord && activeWords.length > 0) {
+        pickAndPlayNewWord();
+        return;
+      }
+      if (!currentTargetWord) return;
+
+      window.speechSynthesis.cancel(); 
+      const textToSpeak = currentTargetWord.spoken || currentTargetWord.en;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = 'en-GB';
       utterance.rate = 0.85;
-
       window.speechSynthesis.speak(utterance);
     }
 
-    function handleChoice(selectedOption, buttonEl) {
-      if (isAnswerLocked) return;
-      isAnswerLocked = true;
+    function checkAnswer(selectedItem, cardElement) {
+      if (!gameStarted || !currentTargetWord || cardElement.classList.contains('disabled')) return;
 
-      totalAsked++;
+      totalAttempts++;
 
-      if (selectedOption.id === targetWord.id) {
+      if (selectedItem.id === currentTargetWord.id) {
+        cardElement.classList.add('correct', 'disabled');
         score++;
-        document.getElementById('scoreVal').textContent = score;
-
-        buttonEl.classList.remove('border-slate-200', 'hover:border-indigo-400');
-        buttonEl.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white');
-
-        // Retire le mot réussi de la pile de révision
-        currentPool = currentPool.filter(w => w.id !== targetWord.id);
-
+        updateScoreboard();
+        playSound('win');
+        
+        activeWords = activeWords.filter(w => w.id !== currentTargetWord.id);
+        
         setTimeout(() => {
-          nextRound();
-        }, 1000);
-
+          pickAndPlayNewWord();
+        }, 700);
       } else {
-        buttonEl.classList.remove('border-slate-200', 'hover:border-indigo-400');
-        buttonEl.classList.add('bg-rose-500', 'border-rose-600', 'text-white');
-
-        // Révèle la bonne réponse
-        const buttons = document.getElementById('optionsGrid').children;
-        Array.from(buttons).forEach(btn => {
-          if (btn.textContent === targetWord.french) {
-            btn.classList.add('bg-emerald-100', 'border-emerald-400', 'text-emerald-800');
-          }
-        });
-
+        cardElement.classList.add('wrong');
+        updateScoreboard();
+        playSound('fail');
+        
         setTimeout(() => {
-          nextRound();
-        }, 1800);
+          cardElement.classList.remove('wrong');
+          playSecretWord();
+        }, 600);
       }
     }
 
-    function showCompletionScreen() {
-      document.getElementById('gameBox').classList.add('hidden');
-      document.getElementById('gameComplete').classList.remove('hidden');
-      document.getElementById('finalScore').textContent = `${score} / ${totalAsked}`;
+    function updateScoreboard() {
+      document.getElementById('score').innerText = score;
+      document.getElementById('total').innerText = totalAttempts;
     }
 
-    function shuffleArray(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-    }
-
-    window.onload = initGame;
+    window.onload = function() {
+      checkUrlParameter();
+      loadSelectedUnit();
+    };
   </script>
 </body>
 </html>
