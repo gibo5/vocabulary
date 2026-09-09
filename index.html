@@ -351,6 +351,8 @@
     const VIEW_MODE_STORAGE_KEY = 'vocab_app_view_mode';
     const CURRENT_UNIT_STORAGE_KEY = 'vocab_app_current_unit';
     const DEFAULT_MODE_STORAGE_KEY = 'vocab_app_default_mode'; // NEW: persists Front (EN/FR) preference
+    const SORT_STORAGE_KEY = 'vocab_app_sort'; // NEW: persists the Sort selector
+    const STAR_FILTER_STORAGE_KEY = 'vocab_app_star_filter'; // NEW: persists the All/Starred filter
 
     function getStoredRatings() {
       try {
@@ -488,6 +490,7 @@
 
     function setStarFilter(filter) {
       starFilter = filter;
+      localStorage.setItem(STAR_FILTER_STORAGE_KEY, filter);
 
       if (filter === 'starred') {
         filterStarredBtn.className = "flex-1 py-1 px-2 text-xs font-semibold rounded-lg transition-all bg-white text-amber-600 shadow-xs text-center flex items-center justify-center gap-1";
@@ -752,6 +755,7 @@
     function applyFiltersAndSort() {
       const query = searchInput.value.toLowerCase().trim();
       const sortVal = sortSelect.value;
+      localStorage.setItem(SORT_STORAGE_KEY, sortVal);
 
       if (query.length > 0) {
         clearSearchBtn.classList.remove('hidden');
@@ -854,6 +858,17 @@
       }
       setViewMode(currentViewMode);   // applique aussi la visibilité du sélecteur Front
       setDefaultMode(defaultFace);    // reflète la préférence EN/FR sauvegardée sur les boutons
+
+      // Restaure le tri sauvegardé (avant tout rendu, pour éviter un "flash" en ordre original)
+      const savedSort = localStorage.getItem(SORT_STORAGE_KEY);
+      if (savedSort && sortSelect) {
+        sortSelect.value = savedSort;
+      }
+
+      // Restaure le filtre All/Starred sauvegardé (met aussi à jour le style des boutons)
+      const savedStarFilter = localStorage.getItem(STAR_FILTER_STORAGE_KEY) || 'all';
+      setStarFilter(savedStarFilter);
+
       initUnitSelection();            // sélectionne l'unité et lance l'unique chargement JSON
     });
 
