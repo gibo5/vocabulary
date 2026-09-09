@@ -322,7 +322,7 @@
 
   <!-- Top-left Navigation Button -->
   <div class="top-left-nav">
-    <a href="index.html" class="home-btn">← Back to Lists</a>
+    <a id="back-btn" href="index.html" class="home-btn">← Back to Lists</a>
   </div>
 
   <div class="container">
@@ -375,6 +375,7 @@
 
   <script>
     const STARRED_STORAGE_KEY = 'vocab_app_starred_v1';
+    const CURRENT_UNIT_STORAGE_KEY = 'vocab_app_current_unit';
 
     let currentVocabulary = [];
     let activeWords = [];
@@ -392,16 +393,28 @@
       }
     }
 
-    // Load unit automatically based on URL parameters ?unit=... & ?starred=true
+    // Load unit automatically based on URL parameters ?unit=... & ?starred=true or LocalStorage fallback
     async function loadUnitFromUrl() {
       const urlParams = new URLSearchParams(window.location.search);
-      let unitParam = urlParams.get('unit') || 'eim9_u1.json';
+      let unitParam = urlParams.get('unit');
+      
+      // Fallback au localStorage si unit est absent de l'URL
+      if (!unitParam) {
+        unitParam = localStorage.getItem(CURRENT_UNIT_STORAGE_KEY) || 'eim9_u1.json';
+      }
+
       const isStarredOnly = urlParams.get('starred') === 'true';
 
       // Clean unit name and form data path
       const cleanUnitName = unitParam.replace(/^data\//, '');
       const unitKey = cleanUnitName.replace('.json', '');
       const fileUrl = `data/${cleanUnitName}`;
+
+      // Mettre à jour le bouton de retour avec l'unité sélectionnée
+      const backBtn = document.getElementById('back-btn');
+      if (backBtn) {
+        backBtn.href = `index.html?unit=${encodeURIComponent(cleanUnitName)}`;
+      }
 
       if (isStarredOnly) {
         const badge = document.getElementById('starredBadge');
