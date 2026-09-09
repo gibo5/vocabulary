@@ -856,14 +856,19 @@
       if (accentSelect) {
         accentSelect.addEventListener('change', renderCards);
       }
-      setViewMode(currentViewMode);   // applique aussi la visibilité du sélecteur Front
-      setDefaultMode(defaultFace);    // reflète la préférence EN/FR sauvegardée sur les boutons
 
-      // Restaure le tri sauvegardé (avant tout rendu, pour éviter un "flash" en ordre original)
+      // IMPORTANT: restaurer le tri sauvegardé en tout premier, avant tout appel
+      // à setViewMode/setDefaultMode/setStarFilter — ces fonctions déclenchent
+      // applyFiltersAndSort(), qui elle-même sauvegarde la valeur *courante* du
+      // select. Si on ne restaure pas d'abord, la valeur par défaut ("original")
+      // écrase la préférence sauvegardée avant qu'on ait pu l'appliquer.
       const savedSort = localStorage.getItem(SORT_STORAGE_KEY);
       if (savedSort && sortSelect) {
         sortSelect.value = savedSort;
       }
+
+      setViewMode(currentViewMode);   // applique aussi la visibilité du sélecteur Front
+      setDefaultMode(defaultFace);    // reflète la préférence EN/FR sauvegardée sur les boutons
 
       // Restaure le filtre All/Starred sauvegardé (met aussi à jour le style des boutons)
       const savedStarFilter = localStorage.getItem(STAR_FILTER_STORAGE_KEY) || 'all';
