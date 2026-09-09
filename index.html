@@ -527,7 +527,7 @@
           defaultFrontSelector.classList.remove('flex');
         }
       }
-      renderCards();
+      renderCards(false); // pas d'animation FLIP ici : la mise en page change trop (cartes ↔ liste)
     }
 
     function toggleStar(cardId, event) {
@@ -539,7 +539,65 @@
       applyFiltersAndSort();
     }
 
-    function renderCards() {
+    // NEW: capture the on-screen position of every card, keyed by its stable id,
+    // so we can later animate the transition to their new position (FLIP technique).
+    function captureCardPositions() {
+      const positions = new Map();
+      gridEl.querySelectorAll('[data-card-id]').forEach(el => {
+        positions.set(el.dataset.cardId, el.getBoundingClientRect());
+      });
+      return positions;
+    }
+
+    // NEW: given positions captured before the DOM was rebuilt, make each card
+    // that has moved appear to slide smoothly from its old spot to its new one,
+    // instead of popping instantly into place (used after re-sorting/filtering).
+    function playCardFlipAnimation(oldPositions) {
+      if (!oldPositions || oldPositions.size === 0) return;
+
+      const toAnimate = [];
+      gridEl.querySelectorAll('[data-card-id]').forEach(el => {
+        const oldRect = oldPositions.get(el.dataset.cardId);
+        if (!oldRect) return; // brand new card: nothing to animate from
+
+        const newRect = el.getBoundingClientRect();
+        const deltaX = oldRect.left - newRect.left;
+        const deltaY = oldRect.top - newRect.top;
+        if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1) return; // didn't move
+
+        el.style.transition = 'none';
+        el.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        toAnimate.push(el);
+      });
+
+      if (toAnimate.length === 0) return;
+
+      // Force the browser to register the "from" transform before animating away from it.
+      void gridEl.offsetHeight;
+
+      requestAnimationFrame(() => {
+        toAnimate.forEach(el => {
+          el.style.transition = 'transform 400ms cubic-bezier(0.4, 0, 0.2, 1)';
+          el.style.transform = '';
+        });
+      });
+
+      // Clean up inline styles once the animation ends, so they don't linger.
+      toAnimate.forEach(el => {
+        el.addEventListener('transitionend', function handler(e) {
+          if (e.propertyName === 'transform') {
+            el.style.transition = '';
+            el.removeEventListener('transitionend', handler);
+          }
+        });
+      });
+    }
+
+    // `animate = false` is used when the layout itself changes shape (e.g. switching
+    // between Cards and List view), where a sliding animation wouldn't make sense.
+    function renderCards(animate = true) {
+      const oldPositions = animate ? captureCardPositions() : null;
+
       gridEl.innerHTML = '';
 
       if (currentCards.length === 0) {
@@ -599,7 +657,7 @@
 
         if (currentViewMode === 'grid') {
           cardHTML = `
-            <div class="card-container perspective-1000 h-[110px] cursor-pointer" onclick="toggleCardFlip(this)">
+            <div class="card-container perspective-1000 h-[110px] cursor-pointer" data-card-id="${item.id}" onclick="toggleCardFlip(this)">
               <div class="card-inner">
 
                 <!-- CARD FRONT -->
@@ -669,7 +727,7 @@
           `;
         } else {
           cardHTML = `
-            <div class="bg-white rounded-xl p-3 border border-slate-200/90 hover:border-indigo-300 transition-all shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="bg-white rounded-xl p-3 border border-slate-200/90 hover:border-indigo-300 transition-all shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3" data-card-id="${item.id}">
               <div class="flex items-center gap-3 min-w-0 flex-1">
                 <button onclick="toggleStar('${item.id}', event)" title="Toggle Star" class="text-sm p-1 transition-transform ${starBtnClass} shrink-0">
                   ${starIcon}
@@ -708,6 +766,8 @@
 
         gridEl.insertAdjacentHTML('beforeend', cardHTML);
       });
+
+      playCardFlipAnimation(oldPositions);
     }
 
     function toggleIpaVisibility() {
