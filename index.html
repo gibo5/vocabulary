@@ -82,7 +82,7 @@
     <div class="max-w-6xl mx-auto px-4 py-3 sm:px-6">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
 
-        <!-- App Title, Unit Selector and Play Game Button -->
+        <!-- App Title and Unit Selector -->
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
           <div class="flex items-center gap-2">
             <span class="text-2xl">🗣️</span>
@@ -127,11 +127,11 @@
               </optgroup>
             </select>
           </div>
+        </div>
 
-          <!-- Quick Action Buttons -->
-          <div class="flex items-center gap-2">
-            <a id="playGameBtn" href="listen-and-point.html?unit=eim9_u1.json" class="nav-btn">🎮 Play Game</a>
-          </div>
+        <!-- Quick Action Buttons: sibling of the title/unit block so justify-between pushes it to the right -->
+        <div class="flex items-center gap-2">
+          <a id="playGameBtn" href="listen-and-point.html?unit=eim9_u1.json" class="nav-btn">🎮 Play Game</a>
         </div>
 
       </div>
@@ -294,15 +294,15 @@
       <span class="text-xs font-semibold uppercase tracking-wider text-slate-500" id="cardCounter">Showing 0 Words</span>
 
       <!-- Default Front Selector: only relevant/visible in Cards view -->
-      <div id="defaultFrontSelector" class="hidden items-center gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200">
-        <span class="text-xs font-semibold text-slate-600 pl-1">Front:</span>
-        <div class="inline-flex rounded-lg bg-slate-200/70 p-0.5" role="group">
+      <div id="defaultFrontSelector" class="hidden items-center gap-1.5">
+        <span class="text-xs font-medium text-slate-500 whitespace-nowrap">Front:</span>
+        <div class="bg-slate-100 p-0.5 rounded-xl border border-slate-200 flex items-center" role="group">
           <button id="modeEnBtn" onclick="setDefaultMode('en')"
-                  class="px-3 py-1 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs">
+                  class="px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-white text-indigo-600 shadow-xs flex items-center gap-1">
             🇬🇧 English
           </button>
           <button id="modeFrBtn" onclick="setDefaultMode('fr')"
-                  class="px-3 py-1 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900">
+                  class="px-2.5 py-1 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1">
             🇫🇷 Français
           </button>
         </div>
@@ -728,11 +728,11 @@
       localStorage.setItem(DEFAULT_MODE_STORAGE_KEY, mode);
 
       if (mode === 'en') {
-        modeEnBtn.className = "px-3 py-1 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs";
-        modeFrBtn.className = "px-3 py-1 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
+        modeEnBtn.className = "px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-white text-indigo-600 shadow-xs flex items-center gap-1";
+        modeFrBtn.className = "px-2.5 py-1 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1";
       } else {
-        modeFrBtn.className = "px-3 py-1 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs";
-        modeEnBtn.className = "px-3 py-1 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
+        modeFrBtn.className = "px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-white text-indigo-600 shadow-xs flex items-center gap-1";
+        modeEnBtn.className = "px-2.5 py-1 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1";
       }
 
       applyFiltersAndSort();
