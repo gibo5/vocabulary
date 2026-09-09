@@ -344,6 +344,7 @@
     const STARRED_STORAGE_KEY = 'vocab_app_starred_v1';
     const SHOW_IPA_STORAGE_KEY = 'vocab_app_show_ipa';
     const VIEW_MODE_STORAGE_KEY = 'vocab_app_view_mode';
+    const CURRENT_UNIT_STORAGE_KEY = 'vocab_app_current_unit';
 
     function getStoredRatings() {
       try {
@@ -437,42 +438,45 @@
       }
     }
 
-    async function loadSelectedUnit() {
-      const file = document.getElementById('unitSelect').value;
-      currentUnitKey = file.replace('.json', '');
-
-      updatePlayGameLink();
-
-      gridEl.innerHTML = '';
-      emptyStateEl.classList.add('hidden');
-      loadingEl.classList.remove('hidden');
-      loadingEl.textContent = 'Loading unit data...';
-
-      try {
-        const response = await fetch(`data/${file}`);
-        if (!response.ok) throw new Error(`File data/${file} not found.`);
-        
-        const json = await response.json();
-        
-        const pageTitle = json.title || 'EiM Vocabulary Practice';
-        document.getElementById('unitTitle').textContent = pageTitle;
-        document.title = pageTitle;
-        
-        rawVocabularyData = (json.words || []).map(item => ({
-          id: `${currentUnitKey}_${item.id}`,
-          originalId: item.id,
-          english: item.en || item.english || '',
-          spoken: item.spoken || item.en || item.english || '',
-          french: item.fr || item.french || '',
-          ipa: item.ipa || ''
-        }));
-
-        loadingEl.classList.add('hidden');
-        applyFiltersAndSort();
-      } catch (err) {
-        loadingEl.textContent = `⚠️ Unable to load unit file (data/${file}). Please ensure the JSON file exists.`;
-      }
+  async function loadSelectedUnit() {
+    const file = document.getElementById('unitSelect').value;
+    currentUnitKey = file.replace('.json', '');
+  
+    // Sauvegarder l'unité active dans le localStorage
+    localStorage.setItem(CURRENT_UNIT_STORAGE_KEY, file);
+  
+    updatePlayGameLink();
+  
+    gridEl.innerHTML = '';
+    emptyStateEl.classList.add('hidden');
+    loadingEl.classList.remove('hidden');
+    loadingEl.textContent = 'Loading unit data...';
+  
+    try {
+      const response = await fetch(`data/${file}`);
+      if (!response.ok) throw new Error(`File data/${file} not found.`);
+      
+      const json = await response.json();
+      
+      const pageTitle = json.title || 'EiM Vocabulary Practice';
+      document.getElementById('unitTitle').textContent = pageTitle;
+      document.title = pageTitle;
+      
+      rawVocabularyData = (json.words || []).map(item => ({
+        id: `${currentUnitKey}_${item.id}`,
+        originalId: item.id,
+        english: item.en || item.english || '',
+        spoken: item.spoken || item.en || item.english || '',
+        french: item.fr || item.french || '',
+        ipa: item.ipa || ''
+      }));
+  
+      loadingEl.classList.add('hidden');
+      applyFiltersAndSort();
+    } catch (err) {
+      loadingEl.textContent = `⚠️ Unable to load unit file (data/${file}). Please ensure the JSON file exists.`;
     }
+  }
 
     function setStarFilter(filter) {
       starFilter = filter;
@@ -810,6 +814,33 @@
       setViewMode(currentViewMode);
       loadSelectedUnit();
     };
+
+      // Fonction pour déterminer quelle unité charger au démarrage
+  function initUnitSelection() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const unitFromUrl = urlParams.get('unit');
+    const unitFromStorage = localStorage.getItem(CURRENT_UNIT_STORAGE_KEY);
+    
+    // Priorité : 1. Paramètre URL -> 2. LocalStorage -> 3. Valeur par défaut ('eim9_u1.json')
+    const initialUnit = unitFromUrl || unitFromStorage || 'eim9_u1.json';
+    
+    const unitSelect = document.getElementById('unitSelect');
+    if (unitSelect) {
+      // Si l'option existe dans le menu déroulant, on la sélectionne
+      if ([...unitSelect.options].some(opt => opt.value === initialUnit)) {
+        unitSelect.value = initialUnit;
+      }
+    }
+    
+    // Charger la liste correspondante
+    loadSelectedUnit();
+  }
+  
+  // Appeler l'initialisation au chargement de la page
+  document.addEventListener('DOMContentLoaded', () => {
+    initUnitSelection();
+  });
+    
   </script>
 </body>
 </html>
