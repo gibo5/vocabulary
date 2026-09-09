@@ -433,6 +433,9 @@
         let href = `listen-and-point.html?unit=${encodeURIComponent(file)}`;
         if (starFilter === 'starred') {
           href += '&starred=true';
+          playGameBtn.innerHTML = '🎮 Play Game ⭐'; // Ajoute l'étoile au bouton
+        } else {
+          playGameBtn.innerHTML = '🎮 Play Game';   // Label normal
         }
         playGameBtn.href = href;
       }
