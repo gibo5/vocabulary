@@ -81,7 +81,7 @@
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
     <div class="max-w-6xl mx-auto px-4 py-3 sm:px-6">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        
+
         <!-- App Title, Unit Selector and Play Game Button -->
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
           <div class="flex items-center gap-2">
@@ -134,21 +134,6 @@
           </div>
         </div>
 
-        <!-- Default Face Display Selector Mode -->
-        <div class="bg-slate-100 p-1.5 rounded-xl border border-slate-200 flex items-center justify-between sm:justify-start gap-2 self-start md:self-auto">
-          <span class="text-xs font-semibold text-slate-600 pl-2">Default Front:</span>
-          <div class="inline-flex rounded-lg bg-slate-200/70 p-0.5" role="group">
-            <button id="modeEnBtn" onclick="setDefaultMode('en')" 
-                    class="px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs">
-              🇺🇸/🇬🇧 English
-            </button>
-            <button id="modeFrBtn" onclick="setDefaultMode('fr')" 
-                    class="px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900">
-              🇫🇷 Français
-            </button>
-          </div>
-        </div>
-
       </div>
     </div>
   </header>
@@ -156,7 +141,7 @@
   <!-- Help Modal Overlay -->
   <div id="helpModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 transition-opacity">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative max-h-[90vh] overflow-y-auto">
-      
+
       <!-- Modal Header -->
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <div class="flex items-center gap-2">
@@ -212,19 +197,19 @@
 
   <!-- Main Content Layout -->
   <main class="max-w-6xl mx-auto px-4 py-5 sm:px-6 flex-grow w-full">
-    
+
     <!-- Controls Toolbar -->
     <section class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs mb-5 space-y-3">
-      
+
       <!-- ROW 1: Search, Sorting & Star Filter -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 items-center">
-        
+
         <!-- Live Search Bar -->
         <div class="relative lg:col-span-4">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
           </div>
-          <input type="text" id="searchInput" oninput="applyFiltersAndSort()" placeholder="Search word, phonetic or translation..." 
+          <input type="text" id="searchInput" oninput="applyFiltersAndSort()" placeholder="Search word, phonetic or translation..."
                  class="w-full pl-9 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
           <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
             &times;
@@ -262,7 +247,7 @@
 
       <!-- ROW 2: Display, Accent, Speed & IPA Checkbox -->
       <div class="flex flex-wrap items-center gap-3 md:gap-5 pt-2.5 border-t border-slate-100">
-        
+
         <!-- View Mode Toggle with Label -->
         <div class="flex items-center gap-1.5">
           <span class="text-xs font-medium text-slate-500 whitespace-nowrap">Display:</span>
@@ -305,11 +290,24 @@
     </section>
 
     <!-- Status Bar -->
-    <div class="flex justify-between items-center mb-3 px-1">
+    <div class="flex justify-between items-center mb-3 px-1 gap-2 flex-wrap">
       <span class="text-xs font-semibold uppercase tracking-wider text-slate-500" id="cardCounter">Showing 0 Words</span>
-      <span class="text-xs text-indigo-600 font-medium bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-100/80" id="currentFaceIndicator">Default Mode: English Front</span>
+
+      <!-- Default Front Selector: only relevant/visible in Cards view -->
+      <div id="defaultFrontSelector" class="hidden items-center gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200">
+        <span class="text-xs font-semibold text-slate-600 pl-1">Front:</span>
+        <div class="inline-flex rounded-lg bg-slate-200/70 p-0.5" role="group">
+          <button id="modeEnBtn" onclick="setDefaultMode('en')"
+                  class="px-3 py-1 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs">
+            🇬🇧 English
+          </button>
+          <button id="modeFrBtn" onclick="setDefaultMode('fr')"
+                  class="px-3 py-1 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900">
+            🇫🇷 Français
+          </button>
+        </div>
+      </div>
     </div>
-    
 
     <!-- Loading State -->
     <div id="loadingMessage" class="text-center py-12 bg-white rounded-2xl border border-slate-200 my-4 text-slate-500 font-medium text-sm">
@@ -337,10 +335,10 @@
     <div class="max-w-6xl mx-auto px-4">
       <!-- Bouton Help -->
       <button onclick="openHelpModal()" class="nav-btn inline-flex items-center justify-center gap-1" title="How to use this tool">❓ Help</button>
-      
+
       <!-- Séparateur discret -->
       <hr class="my-4 border-t border-slate-100 max-w-xs mx-auto" />
-  
+
       <!-- Texte de bas de page -->
       <p class="text-slate-400 leading-relaxed">Interactive English-French Vocabulary Practice • Powered by Web Speech API • No Ads • No Account • CO ERVEO • GB</p>
     </div>
@@ -352,6 +350,7 @@
     const SHOW_IPA_STORAGE_KEY = 'vocab_app_show_ipa';
     const VIEW_MODE_STORAGE_KEY = 'vocab_app_view_mode';
     const CURRENT_UNIT_STORAGE_KEY = 'vocab_app_current_unit';
+    const DEFAULT_MODE_STORAGE_KEY = 'vocab_app_default_mode'; // NEW: persists Front (EN/FR) preference
 
     function getStoredRatings() {
       try {
@@ -409,8 +408,8 @@
     let currentCards = [];
     let ratingsMap = getStoredRatings();
     let starredMap = getStoredStarred();
-    let starFilter = 'all'; 
-    let defaultFace = 'en';
+    let starFilter = 'all';
+    let defaultFace = localStorage.getItem(DEFAULT_MODE_STORAGE_KEY) || 'en'; // NEW: restore saved preference
     let currentUnitKey = 'eim9_u1';
     let showIpa = localStorage.getItem(SHOW_IPA_STORAGE_KEY) !== 'false';
     let currentViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY) || 'grid';
@@ -425,7 +424,7 @@
     const accentSelect = document.getElementById('accentSelect');
     const showIpaCheckbox = document.getElementById('showIpaCheckbox');
     const cardCounter = document.getElementById('cardCounter');
-    const currentFaceIndicator = document.getElementById('currentFaceIndicator');
+    const defaultFrontSelector = document.getElementById('defaultFrontSelector'); // NEW (replaces currentFaceIndicator)
     const modeEnBtn = document.getElementById('modeEnBtn');
     const modeFrBtn = document.getElementById('modeFrBtn');
     const viewGridBtn = document.getElementById('viewGridBtn');
@@ -440,53 +439,52 @@
         let href = `listen-and-point.html?unit=${encodeURIComponent(file)}`;
         if (starFilter === 'starred') {
           href += '&starred=true';
-          playGameBtn.innerHTML = '🎮 Play Game ⭐'; // Ajoute l'étoile au bouton
+          playGameBtn.innerHTML = '🎮 Play Game ⭐';
         } else {
-          playGameBtn.innerHTML = '🎮 Play Game';   // Label normal
+          playGameBtn.innerHTML = '🎮 Play Game';
         }
         playGameBtn.href = href;
       }
     }
 
-  async function loadSelectedUnit() {
-    const file = document.getElementById('unitSelect').value;
-    currentUnitKey = file.replace('.json', '');
-  
-    // Sauvegarder l'unité active dans le localStorage
-    localStorage.setItem(CURRENT_UNIT_STORAGE_KEY, file);
-  
-    updatePlayGameLink();
-  
-    gridEl.innerHTML = '';
-    emptyStateEl.classList.add('hidden');
-    loadingEl.classList.remove('hidden');
-    loadingEl.textContent = 'Loading unit data...';
-  
-    try {
-      const response = await fetch(`data/${file}`);
-      if (!response.ok) throw new Error(`File data/${file} not found.`);
-      
-      const json = await response.json();
-      
-      const pageTitle = json.title || 'EiM Vocabulary Practice';
-      document.getElementById('unitTitle').textContent = pageTitle;
-      document.title = pageTitle;
-      
-      rawVocabularyData = (json.words || []).map(item => ({
-        id: `${currentUnitKey}_${item.id}`,
-        originalId: item.id,
-        english: item.en || item.english || '',
-        spoken: item.spoken || item.en || item.english || '',
-        french: item.fr || item.french || '',
-        ipa: item.ipa || ''
-      }));
-  
-      loadingEl.classList.add('hidden');
-      applyFiltersAndSort();
-    } catch (err) {
-      loadingEl.textContent = `⚠️ Unable to load unit file (data/${file}). Please ensure the JSON file exists.`;
+    async function loadSelectedUnit() {
+      const file = document.getElementById('unitSelect').value;
+      currentUnitKey = file.replace('.json', '');
+
+      localStorage.setItem(CURRENT_UNIT_STORAGE_KEY, file);
+
+      updatePlayGameLink();
+
+      gridEl.innerHTML = '';
+      emptyStateEl.classList.add('hidden');
+      loadingEl.classList.remove('hidden');
+      loadingEl.textContent = 'Loading unit data...';
+
+      try {
+        const response = await fetch(`data/${file}`);
+        if (!response.ok) throw new Error(`File data/${file} not found.`);
+
+        const json = await response.json();
+
+        const pageTitle = json.title || 'EiM Vocabulary Practice';
+        document.getElementById('unitTitle').textContent = pageTitle;
+        document.title = pageTitle;
+
+        rawVocabularyData = (json.words || []).map(item => ({
+          id: `${currentUnitKey}_${item.id}`,
+          originalId: item.id,
+          english: item.en || item.english || '',
+          spoken: item.spoken || item.en || item.english || '',
+          french: item.fr || item.french || '',
+          ipa: item.ipa || ''
+        }));
+
+        loadingEl.classList.add('hidden');
+        applyFiltersAndSort();
+      } catch (err) {
+        loadingEl.textContent = `⚠️ Unable to load unit file (data/${file}). Please ensure the JSON file exists.`;
+      }
     }
-  }
 
     function setStarFilter(filter) {
       starFilter = filter;
@@ -503,6 +501,8 @@
       applyFiltersAndSort();
     }
 
+    // UPDATED: now also shows/hides the Default Front selector, since it only
+    // makes sense in Cards view (List view shows EN and FR side by side).
     function setViewMode(mode) {
       currentViewMode = mode;
       localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
@@ -511,10 +511,18 @@
         viewGridBtn.className = "px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-white text-indigo-600 shadow-xs flex items-center gap-1";
         viewListBtn.className = "px-2.5 py-1 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1";
         gridEl.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4";
+        if (defaultFrontSelector) {
+          defaultFrontSelector.classList.remove('hidden');
+          defaultFrontSelector.classList.add('flex');
+        }
       } else {
         viewListBtn.className = "px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-white text-indigo-600 shadow-xs flex items-center gap-1";
         viewGridBtn.className = "px-2.5 py-1 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1";
         gridEl.className = "flex flex-col gap-2";
+        if (defaultFrontSelector) {
+          defaultFrontSelector.classList.add('hidden');
+          defaultFrontSelector.classList.remove('flex');
+        }
       }
       renderCards();
     }
@@ -577,7 +585,7 @@
 
         const frontAudioText = isEnglishDefault ? englishSpokenText : item.french;
         const frontAudioLang = isEnglishDefault ? selectedEnglishAccent : 'fr-FR';
-        
+
         const backAudioText = isEnglishDefault ? item.french : englishSpokenText;
         const backAudioLang = isEnglishDefault ? 'fr-FR' : selectedEnglishAccent;
 
@@ -590,7 +598,7 @@
           cardHTML = `
             <div class="card-container perspective-1000 h-[110px] cursor-pointer" onclick="toggleCardFlip(this)">
               <div class="card-inner">
-                
+
                 <!-- CARD FRONT -->
                 <div class="card-front rounded-xl p-3 flex flex-col justify-between bg-white border border-slate-200/90 box-border shadow-xs hover:border-indigo-300 transition-colors">
                   <div class="flex items-start justify-between gap-1 w-full">
@@ -613,7 +621,7 @@
                       <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}">🔴</button>
                     </div>
 
-                    <button title="Listen Pronunciation" 
+                    <button title="Listen Pronunciation"
                             onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(frontAudioText)}', '${frontAudioLang}');"
                             class="h-7 px-2.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white flex items-center gap-1.5 transition-all duration-200 border border-indigo-100 hover:border-transparent group">
                       <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
@@ -644,7 +652,7 @@
                       <button onclick="setCardRating('${item.id}', 3)" class="w-4 h-4 rounded text-[9px] flex items-center justify-center transition-all ${rating === 3 ? 'bg-rose-500 text-white' : 'text-slate-400 hover:text-rose-400 hover:bg-slate-700'}">🔴</button>
                     </div>
 
-                    <button title="Listen Pronunciation" 
+                    <button title="Listen Pronunciation"
                             onclick="event.stopPropagation(); speakText('${escapeSingleQuotes(backAudioText)}', '${backAudioLang}');"
                             class="h-7 px-2.5 rounded-lg bg-sky-950 hover:bg-sky-500 text-sky-400 hover:text-white flex items-center gap-1.5 transition-all duration-200 border border-sky-800 hover:border-transparent group">
                       <span class="text-xs group-hover:scale-110 transition-transform">🔊</span>
@@ -713,17 +721,18 @@
       cardElement.classList.toggle('flipped');
     }
 
+    // UPDATED: now persists the choice to localStorage, and no longer touches
+    // the old currentFaceIndicator text (removed — the selector itself shows state).
     function setDefaultMode(mode) {
       defaultFace = mode;
+      localStorage.setItem(DEFAULT_MODE_STORAGE_KEY, mode);
 
       if (mode === 'en') {
-        modeEnBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs";
-        modeFrBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
-        currentFaceIndicator.innerText = "Default Mode: English Front";
+        modeEnBtn.className = "px-3 py-1 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs";
+        modeFrBtn.className = "px-3 py-1 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
       } else {
-        modeFrBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs";
-        modeEnBtn.className = "px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
-        currentFaceIndicator.innerText = "Default Mode: French Front";
+        modeFrBtn.className = "px-3 py-1 text-xs font-medium rounded-md transition-all duration-150 bg-white text-indigo-600 shadow-xs";
+        modeEnBtn.className = "px-3 py-1 text-xs font-medium rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
       }
 
       applyFiltersAndSort();
@@ -814,43 +823,40 @@
       }
     };
 
-    window.onload = function() {
+    // Fonction pour déterminer quelle unité charger au démarrage
+    function initUnitSelection() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const unitFromUrl = urlParams.get('unit');
+      const unitFromStorage = localStorage.getItem(CURRENT_UNIT_STORAGE_KEY);
+
+      // Priorité : 1. Paramètre URL -> 2. LocalStorage -> 3. Valeur par défaut ('eim9_u1.json')
+      const initialUnit = unitFromUrl || unitFromStorage || 'eim9_u1.json';
+
+      const unitSelect = document.getElementById('unitSelect');
+      if (unitSelect) {
+        if ([...unitSelect.options].some(opt => opt.value === initialUnit)) {
+          unitSelect.value = initialUnit;
+        }
+      }
+
+      // Charger la liste correspondante (seul point d'entrée du fetch)
+      loadSelectedUnit();
+    }
+
+    // SINGLE init entry point (fusion de l'ancien window.onload + DOMContentLoaded,
+    // pour ne plus déclencher deux fois le chargement du fichier JSON de l'unité).
+    document.addEventListener('DOMContentLoaded', () => {
       if (showIpaCheckbox) {
         showIpaCheckbox.checked = showIpa;
       }
       if (accentSelect) {
         accentSelect.addEventListener('change', renderCards);
       }
-      setViewMode(currentViewMode);
-      loadSelectedUnit();
-    };
+      setViewMode(currentViewMode);   // applique aussi la visibilité du sélecteur Front
+      setDefaultMode(defaultFace);    // reflète la préférence EN/FR sauvegardée sur les boutons
+      initUnitSelection();            // sélectionne l'unité et lance l'unique chargement JSON
+    });
 
-      // Fonction pour déterminer quelle unité charger au démarrage
-  function initUnitSelection() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const unitFromUrl = urlParams.get('unit');
-    const unitFromStorage = localStorage.getItem(CURRENT_UNIT_STORAGE_KEY);
-    
-    // Priorité : 1. Paramètre URL -> 2. LocalStorage -> 3. Valeur par défaut ('eim9_u1.json')
-    const initialUnit = unitFromUrl || unitFromStorage || 'eim9_u1.json';
-    
-    const unitSelect = document.getElementById('unitSelect');
-    if (unitSelect) {
-      // Si l'option existe dans le menu déroulant, on la sélectionne
-      if ([...unitSelect.options].some(opt => opt.value === initialUnit)) {
-        unitSelect.value = initialUnit;
-      }
-    }
-    
-    // Charger la liste correspondante
-    loadSelectedUnit();
-  }
-  
-  // Appeler l'initialisation au chargement de la page
-  document.addEventListener('DOMContentLoaded', () => {
-    initUnitSelection();
-  });
-    
   </script>
 </body>
 </html>
