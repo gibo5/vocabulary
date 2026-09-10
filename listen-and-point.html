@@ -551,9 +551,9 @@
           playTone(783.99, now + 0.24, 0.3);  // G5
         } else if (type === 'victory') {
           // Bigger fanfare for the final "Amazing Job" banner: same C-E-G run,
-          playTone(783.99, now, 0.25);         // G5 
-          playTone(1046.50, now + 0.20, 0.45, 0.3);   // C6 — octave, triumphant finish
-          playTone(523.25, now + 0.20, 0.45, 0.15, 'sine'); // low octave doubling underneath
+          playTone(783.99, now + 0.15, 0.20);         // G5 
+          playTone(1046.50, now + 0.30, 0.45, 0.3);   // C6 — octave, triumphant finish
+          playTone(523.25, now + 0.30, 0.45, 0.1, 'sine'); // low octave doubling underneath
         } else if (type === 'fail') {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
