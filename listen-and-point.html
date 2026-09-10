@@ -498,22 +498,31 @@
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const now = audioCtx.currentTime;
 
+        const playTone = (freq, startTime, duration, gainLevel = 0.15) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, startTime);
+          gain.gain.setValueAtTime(gainLevel, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(startTime);
+          osc.stop(startTime + duration);
+        };
+
         if (type === 'win') {
-          const playTone = (freq, startTime, duration) => {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(freq, startTime);
-            gain.gain.setValueAtTime(0.15, startTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(startTime);
-            osc.stop(startTime + duration);
-          };
-          playTone(523.25, now, 0.15);
-          playTone(659.25, now + 0.12, 0.15);
-          playTone(783.99, now + 0.24, 0.3);
+          // Regular "correct card" chime — unchanged.
+          playTone(523.25, now, 0.15);        // C5
+          playTone(659.25, now + 0.12, 0.15); // E5
+          playTone(783.99, now + 0.24, 0.3);  // G5
+        } else if (type === 'victory') {
+          // Bigger fanfare for the final "Amazing Job" banner: same C-E-G run,
+          // capped with the octave (C6) as a longer, slightly louder 4th note.
+          playTone(523.25, now, 0.15);         // C5
+          playTone(659.25, now + 0.12, 0.15);  // E5
+          playTone(783.99, now + 0.24, 0.2);   // G5
+          playTone(1046.50, now + 0.38, 0.35, 0.2); // C6 — octave, triumphant finish
         } else if (type === 'fail') {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
@@ -575,7 +584,7 @@
       if (activeWords.length === 0) {
         document.getElementById('word-grid').style.display = 'none';
         document.getElementById('victory-banner').style.display = 'block';
-        playSound('win');
+        playSound('victory');
         return;
       }
       const randomIndex = Math.floor(Math.random() * activeWords.length);
@@ -633,9 +642,15 @@
         cardElement.classList.add('correct', 'disabled');
         score++;
         updateScoreboard();
-        playSound('win');
 
         activeWords = activeWords.filter(w => w.id !== currentTargetWord.id);
+
+        // Skip the regular chime on the very last card: the victory fanfare
+        // (played by pickAndPlayNewWord below) takes over instead, so the
+        // player doesn't hear the same "win" sound twice in a row.
+        if (activeWords.length > 0) {
+          playSound('win');
+        }
 
         setTimeout(() => {
           pickAndPlayNewWord();
