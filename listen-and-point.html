@@ -267,6 +267,29 @@
       opacity: 0.35;
     }
 
+    /* Stack used to show the word + its revealed translation on a correct match */
+    .card-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      line-height: 1.25;
+    }
+
+    .card-translation {
+      font-size: 0.78rem;
+      font-weight: 600;
+      font-style: italic;
+      opacity: 0;
+      transform: translateY(-4px);
+      animation: fadeInTranslation 0.35s ease forwards;
+      animation-delay: 0.12s;
+    }
+
+    @keyframes fadeInTranslation {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     /* Festive Gold / Victory Banner */
     #victory-banner {
       display: none;
@@ -575,12 +598,38 @@
       window.speechSynthesis.speak(utterance);
     }
 
+    // NEW: on a correct match, replace the card's plain text with a small stack
+    // showing the word the player saw plus — right below it — its translation,
+    // so the pairing is reinforced right at the moment of success.
+    function revealTranslation(cardElement, item) {
+      const mode = document.getElementById('mode-select').value;
+      const mainText = mode === 'easy' ? item.en : item.fr;
+      const translationText = mode === 'easy' ? item.fr : item.en;
+
+      cardElement.innerHTML = '';
+
+      const stack = document.createElement('div');
+      stack.className = 'card-stack';
+
+      const mainWord = document.createElement('span');
+      mainWord.textContent = mainText;
+
+      const translation = document.createElement('span');
+      translation.className = 'card-translation';
+      translation.textContent = translationText;
+
+      stack.appendChild(mainWord);
+      stack.appendChild(translation);
+      cardElement.appendChild(stack);
+    }
+
     function checkAnswer(selectedItem, cardElement) {
       if (!gameStarted || !currentTargetWord || cardElement.classList.contains('disabled')) return;
 
       totalAttempts++;
 
       if (selectedItem.id === currentTargetWord.id) {
+        revealTranslation(cardElement, selectedItem);
         cardElement.classList.add('correct', 'disabled');
         score++;
         updateScoreboard();
