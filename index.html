@@ -291,23 +291,22 @@
 
     <!-- Progress Bar: per-unit mastery, based on 🟢/🟡/🔴 ratings -->
     <div id="progressSection" class="hidden bg-white p-3 rounded-2xl border border-slate-200/80 shadow-xs mb-4">
-      <div class="flex justify-between items-center mb-1.5">
-        <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Progression</span>
-        <span id="progressFraction" class="text-xs font-bold text-emerald-600">0/0</span>
-      </div>
-      <div class="flex h-2 rounded-full overflow-hidden bg-slate-100">
-        <div id="progEasy" class="h-full bg-emerald-500 relative group cursor-default" style="width:0%">
-          <span id="progEasyTip" class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-[11px] font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity z-10"></span>
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 shrink-0">Progression</span>
+
+        <!-- Wrapper stays overflow-visible so the tooltip (a sibling, not a
+             child of the clipped track) is never cut off by rounded-full/overflow-hidden. -->
+        <div class="relative flex-1">
+          <div class="flex h-2 rounded-full overflow-hidden bg-slate-100">
+            <div id="progEasy" class="h-full bg-emerald-500 cursor-default" data-tip="" style="width:0%"></div>
+            <div id="progMedium" class="h-full bg-amber-500 cursor-default" data-tip="" style="width:0%"></div>
+            <div id="progHard" class="h-full bg-rose-500 cursor-default" data-tip="" style="width:0%"></div>
+            <div id="progUnrated" class="h-full bg-slate-200 cursor-default" data-tip="" style="width:100%"></div>
+          </div>
+          <div id="progTooltip" class="hidden absolute bottom-full mb-1.5 -translate-x-1/2 whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-[11px] font-medium text-white pointer-events-none z-10"></div>
         </div>
-        <div id="progMedium" class="h-full bg-amber-500 relative group cursor-default" style="width:0%">
-          <span id="progMediumTip" class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-[11px] font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity z-10"></span>
-        </div>
-        <div id="progHard" class="h-full bg-rose-500 relative group cursor-default" style="width:0%">
-          <span id="progHardTip" class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-[11px] font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity z-10"></span>
-        </div>
-        <div id="progUnrated" class="h-full bg-slate-200 relative group cursor-default" style="width:100%">
-          <span id="progUnratedTip" class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-[11px] font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity z-10"></span>
-        </div>
+
+        <span id="progressFraction" class="text-xs font-bold text-emerald-600 shrink-0">0/0</span>
       </div>
     </div>
 
@@ -866,10 +865,38 @@
       document.getElementById('progHard').style.width = pct(hard);
       document.getElementById('progUnrated').style.width = pct(unrated);
 
-      document.getElementById('progEasyTip').textContent = `${easy} facile${easy !== 1 ? 's' : ''}`;
-      document.getElementById('progMediumTip').textContent = `${medium} moyen${medium !== 1 ? 's' : ''}`;
-      document.getElementById('progHardTip').textContent = `${hard} difficile${hard !== 1 ? 's' : ''}`;
-      document.getElementById('progUnratedTip').textContent = `${unrated} non noté${unrated !== 1 ? 's' : ''}`;
+      document.getElementById('progEasy').dataset.tip = `${easy} facile${easy !== 1 ? 's' : ''}`;
+      document.getElementById('progMedium').dataset.tip = `${medium} moyen${medium !== 1 ? 's' : ''}`;
+      document.getElementById('progHard').dataset.tip = `${hard} difficile${hard !== 1 ? 's' : ''}`;
+      document.getElementById('progUnrated').dataset.tip = `${unrated} non noté${unrated !== 1 ? 's' : ''}`;
+    }
+
+    // NEW: shows the shared tooltip positioned above whichever segment triggered
+    // it. Using JS mouseenter/mouseleave (rather than a CSS :hover variant) also
+    // sidesteps the overflow-hidden clipping issue entirely: the tooltip element
+    // lives outside the clipped bar track, so nothing needs to "escape" it.
+    function showProgressTooltip(segmentEl) {
+      const tooltip = document.getElementById('progTooltip');
+      if (!tooltip || !segmentEl.dataset.tip) return;
+      tooltip.textContent = segmentEl.dataset.tip;
+      tooltip.style.left = (segmentEl.offsetLeft + segmentEl.offsetWidth / 2) + 'px';
+      tooltip.classList.remove('hidden');
+    }
+
+    function hideProgressTooltip() {
+      const tooltip = document.getElementById('progTooltip');
+      if (tooltip) tooltip.classList.add('hidden');
+    }
+
+    // Bind once: the four segment elements are static HTML, only their width
+    // and data-tip change over time (handled in updateProgressBar above).
+    function bindProgressTooltips() {
+      ['progEasy', 'progMedium', 'progHard', 'progUnrated'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('mouseenter', () => showProgressTooltip(el));
+        el.addEventListener('mouseleave', hideProgressTooltip);
+      });
     }
 
     function applyFiltersAndSort() {
@@ -992,6 +1019,8 @@
         speedRateInput.value = savedSpeed;
         updateSpeedLabel(savedSpeed);
       }
+
+      bindProgressTooltips();
 
       // IMPORTANT: restaurer le tri sauvegardé en tout premier, avant tout appel
       // à setViewMode/setDefaultMode/setStarFilter — ces fonctions déclenchent
