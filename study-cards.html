@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Cards - English Vocabulary</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-purple: #c084fc;
+      --accent-green: #34d399;
+      --accent-amber: #f59e0b;
+      --accent-red: #f87171;
+      --border-color: #334155;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 3rem;
+      overflow-x: hidden;
+    }
+
+    .container { width: 100%; max-width: 760px; margin: 0 auto; }
+
+    .top-left-nav { position: absolute; top: 1.5rem; left: 1.5rem; }
+
+    a.home-btn {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+    }
+    a.home-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent-blue); transform: translateY(-1px); }
+
+    header { text-align: center; margin-top: 2rem; margin-bottom: 1.5rem; }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.4rem;
+    }
+
+    p.subtitle { color: var(--text-muted); font-size: 1rem; }
+
+    /* ---------- Controls ---------- */
+    .controls {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(12px);
+      padding: 1rem 1.25rem;
+      border-radius: 1rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      display: flex;
+      gap: 1rem 1.5rem;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .control-group { display: flex; align-items: center; gap: 0.6rem; }
+    .control-group > label.group-label { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    .toggle-group {
+      display: inline-flex;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      padding: 3px;
+    }
+    .toggle-group button {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .toggle-group button.active { background: var(--accent-blue); color: #04263a; }
+
+    .starred-badge {
+      display: none;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--accent-amber);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .filter-checks { display: flex; gap: 0.9rem; flex-wrap: wrap; }
+    .filter-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+    .filter-check input { accent-color: var(--accent-blue); width: 15px; height: 15px; cursor: pointer; }
+    .filter-check.dot-easy span.dot { color: var(--accent-green); }
+    .filter-check.dot-medium span.dot { color: var(--accent-amber); }
+    .filter-check.dot-hard span.dot { color: var(--accent-red); }
+    .filter-check.dot-unrated span.dot { color: #64748b; }
+
+    /* ---------- Progress bar (dark variant of the index.html widget) ---------- */
+    .progress-card {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 0.75rem 1.1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+    .progress-card .prog-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .progress-track-wrap { position: relative; flex: 1; }
+    .progress-track {
+      display: flex;
+      height: 8px;
+      border-radius: 9999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .progress-track > div { height: 100%; cursor: default; }
+    #studyProgTooltip {
+      display: none;
+      position: absolute;
+      bottom: 100%;
+      margin-bottom: 6px;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      background: #f8fafc;
+      color: #0f172a;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .progress-card .prog-fraction { font-size: 0.8rem; font-weight: 700; color: var(--accent-green); flex-shrink: 0; }
+
+    /* ---------- Card stage ---------- */
+    .stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin: 0.5rem 0 1rem;
+    }
+
+    .nav-arrow {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .nav-arrow:hover:not(:disabled) { background: rgba(255, 255, 255, 0.12); border-color: var(--accent-blue); transform: scale(1.05); }
+    .nav-arrow:disabled { opacity: 0.25; cursor: default; }
+
+    .card-zone {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* Direction hints around the card */
+    .zone-hint {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.3rem 0.6rem;
+      border-radius: 9999px;
+      opacity: 0.35;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .zone-hint.left   { left: -0.5rem; top: 50%; transform: translate(-100%, -50%); background: rgba(52, 211, 153, 0.15); color: var(--accent-green); border: 1px solid rgba(52, 211, 153, 0.4); }
+    .zone-hint.right  { right: -0.5rem; top: 50%; transform: translate(100%, -50%); background: rgba(248, 113, 113, 0.15); color: var(--accent-red); border: 1px solid rgba(248, 113, 113, 0.4); }
+    .zone-hint.bottom { bottom: -2.4rem; left: 50%; transform: translate(-50%, 0); background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.4); }
+    .zone-hint.active-zone { opacity: 1; }
+    .zone-hint.left.active-zone { transform: translate(-100%, -50%) scale(1.08); }
+    .zone-hint.right.active-zone { transform: translate(100%, -50%) scale(1.08); }
+    .zone-hint.bottom.active-zone { transform: translate(-50%, 0) scale(1.08); }
+
+    .perspective { perspective: 1200px; }
+
+    #cardInner {
+      position: relative;
+      width: 100%;
+      height: 260px;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+      touch-action: none;
+    }
+    #cardInner.dragging { transition: none; }
+    #cardInner.flipped { transform: rotateY(180deg); }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 1.25rem;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      text-align: center;
+      background: rgba(30, 41, 59, 0.85);
+      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.45);
+    }
+    .face.back { transform: rotateY(180deg); }
+
+    .face .lang-badge {
+      position: absolute;
+      top: 0.9rem;
+      right: 1rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .face .word { font-size: 1.6rem; font-weight: 700; line-height: 1.25; }
+    .face .ipa { font-size: 0.9rem; font-family: 'Courier New', monospace; color: var(--accent-blue); margin-top: 0.4rem; }
+
+    .listen-btn {
+      position: absolute;
+      bottom: 0.9rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .listen-btn:hover { background: rgba(56, 189, 248, 0.2); border-color: var(--accent-blue); }
+
+    /* Rating pills ("le curseur trois points") shown under the card */
+    .rating-row { display: flex; justify-content: center; gap: 0.75rem; margin-top: 1.6rem; }
+    .rating-pill {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.05);
+      transition: all 0.15s ease;
+    }
+    .rating-pill:hover { transform: translateY(-2px); }
+    .rating-pill.easy.active { background: rgba(52, 211, 153, 0.25); border-color: var(--accent-green); }
+    .rating-pill.medium.active { background: rgba(245, 158, 11, 0.25); border-color: var(--accent-amber); }
+    .rating-pill.hard.active { background: rgba(248, 113, 113, 0.25); border-color: var(--accent-red); }
+
+    .card-counter { text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem; font-weight: 600; }
+
+    .shortcuts-hint {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 1.75rem;
+      opacity: 0.75;
+    }
+    .shortcuts-hint kbd {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      padding: 1px 6px;
+      font-family: inherit;
+      font-size: 0.75rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px dashed var(--border-color);
+      border-radius: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .top-left-nav { position: static; margin-bottom: 1rem; display: flex; }
+      .stage { gap: 0.4rem; }
+      .nav-arrow { width: 38px; height: 38px; font-size: 1.1rem; }
+      .zone-hint.left, .zone-hint.right { display: none; } /* not enough room; keyboard/tap still work */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-left-nav">
+    <a id="back-btn" href="index.html" class="home-btn">← Back to Lists</a>
+  </div>
+
+  <div class="container">
+    <header>
+      <h1>📇 Study Cards</h1>
+      <p class="subtitle">Flip, listen, and rate one card at a time</p>
+    </header>
+
+    <div class="controls">
+      <div id="starredBadge" class="starred-badge"><span>⭐</span> Starred Words Only</div>
+
+      <div class="control-group">
+        <span class="group-label">Verso par défaut</span>
+        <div class="toggle-group" id="frontToggle">
+          <button id="frontEnBtn" onclick="setDefaultFront('en')">🇬🇧 English</button>
+          <button id="frontFrBtn" onclick="setDefaultFront('fr')">🇫🇷 Français</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <span class="group-label">Cartes</span>
+        <div class="filter-checks">
+          <label class="filter-check dot-easy"><input type="checkbox" id="filterEasy" checked onchange="onFilterChange()"><span class="dot">🟢</span> Facile</label>
+          <label class="filter-check dot-medium"><input type="checkbox" id="filterMedium" checked onchange="onFilterChange()"><span class="dot">🟡</span> Moyen</label>
+          <label class="filter-check dot-hard"><input type="checkbox" id="filterHard" checked onchange="onFilterChange()"><span class="dot">🔴</span> Difficile</label>
+          <label class="filter-check dot-unrated"><input type="checkbox" id="filterUnrated" checked onchange="onFilterChange()"><span class="dot">⚪</span> Non noté</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress bar: mirrors index.html's widget, restyled for the dark theme -->
+    <div class="progress-card">
+      <span class="prog-label">Progression</span>
+      <div class="progress-track-wrap">
+        <div class="progress-track">
+          <div id="progEasy" style="width:0%;background:var(--accent-green);" data-tip=""></div>
+          <div id="progMedium" style="width:0%;background:var(--accent-amber);" data-tip=""></div>
+          <div id="progHard" style="width:0%;background:var(--accent-red);" data-tip=""></div>
+          <div id="progUnrated" style="width:100%;background:rgba(255,255,255,0.12);" data-tip=""></div>
+        </div>
+        <div id="studyProgTooltip"></div>
+      </div>
+      <span id="progressFraction" class="prog-fraction">0/0</span>
+    </div>
+
+    <!-- Card stage -->
+    <div id="stage" class="stage">
+      <button id="prevBtn" class="nav-arrow" onclick="goToCard(currentIndex - 1)" title="Previous (←)">‹</button>
+
+      <div class="card-zone">
+        <div class="zone-hint left">🟢 Easy</div>
+        <div class="zone-hint right">🔴 Hard</div>
+        <div class="zone-hint bottom">🟡 Medium</div>
+
+        <div class="perspective">
+          <div id="cardInner" onclick="handleCardClick()">
+            <div class="face front">
+              <span id="frontBadge" class="lang-badge">[En]</span>
+              <div id="frontWord" class="word">…</div>
+              <div id="frontIpa" class="ipa"></div>
+              <button class="listen-btn" onclick="event.stopPropagation(); playFace('front');">🔊 Listen</button>
+            </div>
+            <div class="face back">
+              <span id="backBadge" class="lang-badge">[Fr]</span>
+              <div id="backWord" class="word">…</div>
+              <div id="backIpa" class="ipa"></div>
+              <button class="listen-btn" onclick="event.stopPropagation(); playFace('back');">🔊 Listen</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="rating-row">
+          <div id="pillEasy" class="rating-pill easy" onclick="rateCurrentCard(1)" title="Easy (1)">🟢</div>
+          <div id="pillMedium" class="rating-pill medium" onclick="rateCurrentCard(2)" title="Medium (2)">🟡</div>
+          <div id="pillHard" class="rating-pill hard" onclick="rateCurrentCard(3)" title="Hard (3)">🔴</div>
+        </div>
+      </div>
+
+      <button id="nextBtn" class="nav-arrow" onclick="goToCard(currentIndex + 1)" title="Next (→)">›</button>
+    </div>
+
+    <div id="cardCounter" class="card-counter">Card 0 / 0</div>
+
+    <div id="emptyState" class="empty-state" style="display:none;">
+      Aucune carte ne correspond aux filtres sélectionnés.
+    </div>
+
+    <p class="shortcuts-hint">
+      <kbd>␣</kbd> Retourner &nbsp; <kbd>←</kbd> <kbd>→</kbd> Naviguer &nbsp; <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> Noter Facile/Moyen/Difficile
+    </p>
+  </div>
+
+  <script>
+    const RATINGS_STORAGE_KEY = 'vocab_app_ratings_v1';
+    const STARRED_STORAGE_KEY = 'vocab_app_starred_v1';
+    const CURRENT_UNIT_STORAGE_KEY = 'vocab_app_current_unit';
+    const DEFAULT_MODE_STORAGE_KEY = 'vocab_app_default_mode';
+    const ACCENT_STORAGE_KEY = 'vocab_app_accent';
+    const SPEED_STORAGE_KEY = 'vocab_app_speed';
+
+    let fullUnitVocabulary = [];  // every word in the loaded unit — used for the progress bar
+    let deck = [];                // filtered subset currently being browsed
+    let currentIndex = 0;
+    let defaultFace = 'en';       // which language shows on the front by default
+    let ratingsMap = {};
+    let starredMap = {};
+    let isStarredOnly = false;
+    let cleanUnitName = 'eim9_u1.json';
+    let unitKey = 'eim9_u1';
+    let isFlipped = false;
+
+    // ---------- localStorage helpers ----------
+    function getStored(key) {
+      try {
+        const saved = localStorage.getItem(key);
+        return saved ? JSON.parse(saved) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+    function saveRating(cardId, rating) {
+      ratingsMap[cardId] = rating;
+      try { localStorage.setItem(RATINGS_STORAGE_KEY, JSON.stringify(ratingsMap)); } catch (e) {}
+    }
+
+    // ---------- Load unit (mirrors listen-and-point.html's loader) ----------
+    async function loadUnitFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let unitParam = urlParams.get('unit') || localStorage.getItem(CURRENT_UNIT_STORAGE_KEY) || 'eim9_u1.json';
+      isStarredOnly = urlParams.get('starred') === 'true';
+
+      cleanUnitName = unitParam.replace(/^data\//, '');
+      unitKey = cleanUnitName.replace('.json', '');
+      const fileUrl = `data/${cleanUnitName}`;
+
+      const backBtn = document.getElementById('back-btn');
+      if (backBtn) backBtn.href = `index.html?unit=${encodeURIComponent(cleanUnitName)}`;
+
+      if (isStarredOnly) {
+        document.getElementById('starredBadge').style.display = 'inline-flex';
+      }
+
+      ratingsMap = getStored(RATINGS_STORAGE_KEY);
+      starredMap = getStored(STARRED_STORAGE_KEY);
+      defaultFace = localStorage.getItem(DEFAULT_MODE_STORAGE_KEY) || 'en';
+      applyFrontToggleUI();
+
+      try {
+        const response = await fetch(fileUrl);
+        if (!response.ok) throw new Error('File not found');
+        const data = await response.json();
+
+        fullUnitVocabulary = (data.words || []).map(item => {
+          const fullId = `${unitKey}_${item.id}`;
+          return {
+            id: fullId,
+            originalId: item.id,
+            en: item.en || item.english || '',
+            fr: item.fr || item.french || '',
+            ipa: item.ipa || '',
+            spoken: item.spoken || item.en || item.english || '',
+          };
+        });
+      } catch (error) {
+        console.warn('Could not load ' + fileUrl + ', using fallback dummy data.');
+        fullUnitVocabulary = [
+          { id: 'fallback_1', en: 'the adult', fr: "l'adulte", ipa: '', spoken: 'the adult' },
+          { id: 'fallback_6', en: 'the teenager', fr: "l'adolescent", ipa: '', spoken: 'the teenager' },
+          { id: 'fallback_7', en: 'the toddler', fr: 'le petit enfant', ipa: '', spoken: 'the toddler' },
+          { id: 'fallback_16', en: 'annoyed', fr: 'énervé, agacé', ipa: '', spoken: 'annoyed' },
+          { id: 'fallback_20', en: 'exhausted', fr: 'épuisé', ipa: '', spoken: 'exhausted' },
+        ];
+      }
+
+      buildDeck();
+      updateProgressBar();
+    }
+
+    // ---------- Deck filtering ----------
+    function buildDeck() {
+      const wantEasy = document.getElementById('filterEasy').checked;
+      const wantMedium = document.getElementById('filterMedium').checked;
+      const wantHard = document.getElementById('filterHard').checked;
+      const wantUnrated = document.getElementById('filterUnrated').checked;
+
+      deck = fullUnitVocabulary.filter(item => {
+        if (isStarredOnly && !starredMap[item.id]) return false;
+        const rating = ratingsMap[item.id] || 0;
+        if (rating === 1) return wantEasy;
+        if (rating === 2) return wantMedium;
+        if (rating === 3) return wantHard;
+        return wantUnrated;
+      });
+
+      currentIndex = 0;
+      renderCard();
+    }
+
+    function onFilterChange() {
+      buildDeck();
+    }
+
+    // ---------- Front/back preference (shared with index.html) ----------
+    function setDefaultFront(mode) {
+      defaultFace = mode;
+      localStorage.setItem(DEFAULT_MODE_STORAGE_KEY, mode);
+      applyFrontToggleUI();
+      renderCard();
+    }
+    function applyFrontToggleUI() {
+      document.getElementById('frontEnBtn').classList.toggle('active', defaultFace === 'en');
+      document.getElementById('frontFrBtn').classList.toggle('active', defaultFace === 'fr');
+    }
+
+    // ---------- Card rendering ----------
+    function currentCard() {
+      return deck[currentIndex] || null;
+    }
+
+    function renderCard() {
+      const stage = document.getElementById('stage');
+      const emptyState = document.getElementById('emptyState');
+      const item = currentCard();
+
+      if (!item) {
+        stage.style.display = 'none';
+        emptyState.style.display = 'block';
+        document.getElementById('cardCounter').textContent = 'Card 0 / 0';
+        return;
+      }
+      stage.style.display = 'flex';
+      emptyState.style.display = 'none';
+
+      isFlipped = false;
+      const cardInner = document.getElementById('cardInner');
+      cardInner.classList.remove('flipped');
+      cardInner.style.transform = '';
+
+      const frontIsEnglish = defaultFace === 'en';
+      const frontText = frontIsEnglish ? item.en : item.fr;
+      const backText = frontIsEnglish ? item.fr : item.en;
+
+      document.getElementById('frontWord').textContent = frontText;
+      document.getElementById('backWord').textContent = backText;
+      document.getElementById('frontBadge').textContent = frontIsEnglish ? '[En]' : '[Fr]';
+      document.getElementById('backBadge').textContent = frontIsEnglish ? '[Fr]' : '[En]';
+      document.getElementById('frontIpa').textContent = frontIsEnglish && item.ipa ? `/${item.ipa}/` : '';
+      document.getElementById('backIpa').textContent = !frontIsEnglish && item.ipa ? `/${item.ipa}/` : '';
+
+      document.getElementById('cardCounter').textContent = `Card ${currentIndex + 1} / ${deck.length}`;
+      document.getElementById('prevBtn').disabled = currentIndex === 0;
+      document.getElementById('nextBtn').disabled = currentIndex === deck.length - 1;
+
+      updateRatingPills(item);
+
+      // Auto-play English audio whenever the English face is the one showing.
+      if (frontIsEnglish) {
+        speakWord(item.spoken || item.en, 'en-GB');
+      }
+    }
+
+    function updateRatingPills(item) {
+      const rating = ratingsMap[item.id] || 0;
+      document.getElementById('pillEasy').classList.toggle('active', rating === 1);
+      document.getElementById('pillMedium').classList.toggle('active', rating === 2);
+      document.getElementById('pillHard').classList.toggle('active', rating === 3);
+    }
+
+    // ---------- Navigation ----------
+    function goToCard(index) {
+      if (index < 0 || index >= deck.length) return; // no wrap-around
+      currentIndex = index;
+      renderCard();
+    }
+
+    // ---------- Flip ----------
+    function handleCardClick() {
+      if (wasDragged) { wasDragged = false; return; } // a drag just ended; don't also flip
+      flipCard();
+    }
+
+    function flipCard() {
+      if (!currentCard()) return;
+      isFlipped = !isFlipped;
+      document.getElementById('cardInner').classList.toggle('flipped', isFlipped);
+
+      const item = currentCard();
+      const frontIsEnglish = defaultFace === 'en';
+      const nowShowingEnglish = isFlipped ? !frontIsEnglish : frontIsEnglish;
+      if (nowShowingEnglish) {
+        speakWord(item.spoken || item.en, 'en-GB');
+      }
+    }
+
+    // ---------- Audio ----------
+    function speakWord(text, lang) {
+      if (!('speechSynthesis' in window) || !text) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      utterance.rate = parseFloat(localStorage.getItem(SPEED_STORAGE_KEY)) || 0.85;
+      if (lang.startsWith('en')) {
+        utterance.lang = localStorage.getItem(ACCENT_STORAGE_KEY) || 'en-GB';
+      }
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function playFace(face) {
+      const item = currentCard();
+      if (!item) return;
+      const frontIsEnglish = defaultFace === 'en';
+      const showingEnglish = face === 'front' ? frontIsEnglish : !frontIsEnglish;
+      if (showingEnglish) {
+        speakWord(item.spoken || item.en, 'en-GB');
+      } else {
+        speakWord(item.fr, 'fr-FR');
+      }
+    }
+
+    // ---------- Rating (click / pills / keys / drag all funnel through here) ----------
+    function rateCurrentCard(rating) {
+      const item = currentCard();
+      if (!item) return;
+      saveRating(item.id, rating);
+      updateRatingPills(item);
+      updateProgressBar();
+
+      // Confirmed behaviour: rating auto-advances to the next card.
+      // If a difficulty filter now excludes this rating, rebuild the deck instead
+      // (the card would otherwise vanish from under the player without warning).
+      const filterMap = { 1: 'filterEasy', 2: 'filterMedium', 3: 'filterHard' };
+      const stillVisible = document.getElementById(filterMap[rating]).checked;
+      if (!stillVisible) {
+        buildDeck();
+      } else if (currentIndex < deck.length - 1) {
+        goToCard(currentIndex + 1);
+      }
+      // If it was the last card, just stay put (no wrap-around).
+    }
+
+    // ---------- Progress bar (same logic/markup pattern as index.html) ----------
+    function updateProgressBar() {
+      const total = fullUnitVocabulary.length;
+      if (total === 0) return;
+
+      let easy = 0, medium = 0, hard = 0;
+      fullUnitVocabulary.forEach(item => {
+        const r = ratingsMap[item.id] || 0;
+        if (r === 1) easy++;
+        else if (r === 2) medium++;
+        else if (r === 3) hard++;
+      });
+      const unrated = total - easy - medium - hard;
+      const pct = n => (n / total * 100).toFixed(2) + '%';
+
+      document.getElementById('progressFraction').textContent = `${easy}/${total}`;
+      document.getElementById('progEasy').style.width = pct(easy);
+      document.getElementById('progMedium').style.width = pct(medium);
+      document.getElementById('progHard').style.width = pct(hard);
+      document.getElementById('progUnrated').style.width = pct(unrated);
+
+      document.getElementById('progEasy').dataset.tip = `${easy} facile${easy !== 1 ? 's' : ''}`;
+      document.getElementById('progMedium').dataset.tip = `${medium} moyen${medium !== 1 ? 's' : ''}`;
+      document.getElementById('progHard').dataset.tip = `${hard} difficile${hard !== 1 ? 's' : ''}`;
+      document.getElementById('progUnrated').dataset.tip = `${unrated} non noté${unrated !== 1 ? 's' : ''}`;
+    }
+
+    function bindProgressTooltips() {
+      ['progEasy', 'progMedium', 'progHard', 'progUnrated'].forEach(id => {
+        const el = document.getElementById(id);
+        el.addEventListener('mouseenter', () => {
+          const tip = document.getElementById('studyProgTooltip');
+          if (!el.dataset.tip) return;
+          tip.textContent = el.dataset.tip;
+          tip.style.left = (el.offsetLeft + el.offsetWidth / 2) + 'px';
+          tip.style.display = 'block';
+        });
+        el.addEventListener('mouseleave', () => {
+          document.getElementById('studyProgTooltip').style.display = 'none';
+        });
+      });
+    }
+
+    // ---------- Keyboard shortcuts ----------
+    document.addEventListener('keydown', (e) => {
+      const tag = document.activeElement ? document.activeElement.tagName : '';
+      if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'BUTTON') return; // don't hijack form controls
+
+      if (e.code === 'Space') { e.preventDefault(); flipCard(); }
+      else if (e.code === 'ArrowLeft') { e.preventDefault(); goToCard(currentIndex - 1); }
+      else if (e.code === 'ArrowRight') { e.preventDefault(); goToCard(currentIndex + 1); }
+      else if (e.key === '1') { rateCurrentCard(1); }
+      else if (e.key === '2') { rateCurrentCard(2); }
+      else if (e.key === '3') { rateCurrentCard(3); }
+    });
+
+    // ---------- Drag / swipe to rate ----------
+    let wasDragged = false;
+    let dragState = null; // { startX, startY, pointerId }
+    const DRAG_CLICK_THRESHOLD = 6;   // px — beyond this, treat as a drag, not a click
+    const DRAG_COMMIT_X = 90;         // px — horizontal distance to commit Easy/Hard
+    const DRAG_COMMIT_Y = 70;         // px — vertical distance to commit Medium
+
+    function getCardInner() { return document.getElementById('cardInner'); }
+
+    function computeZone(dx, dy) {
+      if (Math.abs(dy) > Math.abs(dx) && dy > DRAG_COMMIT_Y) return 'medium';
+      if (dx < -DRAG_COMMIT_X) return 'easy';
+      if (dx > DRAG_COMMIT_X) return 'hard';
+      return null;
+    }
+
+    function setActiveZoneHint(zone) {
+      document.querySelector('.zone-hint.left').classList.toggle('active-zone', zone === 'easy');
+      document.querySelector('.zone-hint.right').classList.toggle('active-zone', zone === 'hard');
+      document.querySelector('.zone-hint.bottom').classList.toggle('active-zone', zone === 'medium');
+    }
+
+    function onPointerDown(e) {
+      if (!currentCard()) return;
+      dragState = { startX: e.clientX, startY: e.clientY, pointerId: e.pointerId };
+      wasDragged = false;
+      const card = getCardInner();
+      card.classList.add('dragging');
+      card.setPointerCapture(e.pointerId);
+    }
+
+    function onPointerMove(e) {
+      if (!dragState) return;
+      const dx = e.clientX - dragState.startX;
+      const dy = e.clientY - dragState.startY;
+
+      if (Math.abs(dx) > DRAG_CLICK_THRESHOLD || Math.abs(dy) > DRAG_CLICK_THRESHOLD) {
+        wasDragged = true;
+      }
+
+      const card = getCardInner();
+      const rotate = dx / 18;
+      const baseFlip = isFlipped ? 180 : 0;
+      card.style.transform = `translate(${dx}px, ${dy}px) rotateY(${baseFlip}deg) rotate(${rotate}deg)`;
+
+      setActiveZoneHint(computeZone(dx, dy));
+    }
+
+    function onPointerUp(e) {
+      if (!dragState) return;
+      const dx = e.clientX - dragState.startX;
+      const dy = e.clientY - dragState.startY;
+      const zone = computeZone(dx, dy);
+
+      const card = getCardInner();
+      card.classList.remove('dragging');
+      card.releasePointerCapture(dragState.pointerId);
+      dragState = null;
+      setActiveZoneHint(null);
+
+      if (zone) {
+        // Snap back visually first, then apply the rating (which renders the next card).
+        card.style.transform = '';
+        const ratingByZone = { easy: 1, medium: 2, hard: 3 };
+        rateCurrentCard(ratingByZone[zone]);
+      } else {
+        card.style.transform = '';
+      }
+    }
+
+    const cardEl = getCardInner();
+    cardEl.addEventListener('pointerdown', onPointerDown);
+    cardEl.addEventListener('pointermove', onPointerMove);
+    cardEl.addEventListener('pointerup', onPointerUp);
+    cardEl.addEventListener('pointercancel', onPointerUp);
+
+    bindProgressTooltips();
+    loadUnitFromUrl();
+  </script>
+</body>
+</html>
