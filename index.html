@@ -289,6 +289,28 @@
 
     </section>
 
+    <!-- Progress Bar: per-unit mastery, based on 🟢/🟡/🔴 ratings -->
+    <div id="progressSection" class="hidden bg-white p-3 rounded-2xl border border-slate-200/80 shadow-xs mb-4">
+      <div class="flex justify-between items-center mb-1.5">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Progression</span>
+        <span id="progressFraction" class="text-xs font-bold text-emerald-600">0/0</span>
+      </div>
+      <div class="flex h-2 rounded-full overflow-hidden bg-slate-100">
+        <div id="progEasy" class="h-full bg-emerald-500 relative group cursor-default" style="width:0%">
+          <span id="progEasyTip" class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-[11px] font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity z-10"></span>
+        </div>
+        <div id="progMedium" class="h-full bg-amber-500 relative group cursor-default" style="width:0%">
+          <span id="progMediumTip" class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-[11px] font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity z-10"></span>
+        </div>
+        <div id="progHard" class="h-full bg-rose-500 relative group cursor-default" style="width:0%">
+          <span id="progHardTip" class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-[11px] font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity z-10"></span>
+        </div>
+        <div id="progUnrated" class="h-full bg-slate-200 relative group cursor-default" style="width:100%">
+          <span id="progUnratedTip" class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-[11px] font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity z-10"></span>
+        </div>
+      </div>
+    </div>
+
     <!-- Status Bar -->
     <div class="flex justify-between items-center mb-3 px-1 gap-2 flex-wrap">
       <span class="text-xs font-semibold uppercase tracking-wider text-slate-500" id="cardCounter">Showing 0 Words</span>
@@ -353,6 +375,8 @@
     const DEFAULT_MODE_STORAGE_KEY = 'vocab_app_default_mode'; // NEW: persists Front (EN/FR) preference
     const SORT_STORAGE_KEY = 'vocab_app_sort'; // NEW: persists the Sort selector
     const STAR_FILTER_STORAGE_KEY = 'vocab_app_star_filter'; // NEW: persists the All/Starred filter
+    const ACCENT_STORAGE_KEY = 'vocab_app_accent'; // NEW: persists the Accent selector (UK/US/AU)
+    const SPEED_STORAGE_KEY = 'vocab_app_speed'; // NEW: persists the playback speed slider
 
     function getStoredRatings() {
       try {
@@ -812,6 +836,42 @@
       applyFiltersAndSort();
     }
 
+    // NEW: recomputes the mastery progress bar from the *entire* current unit
+    // (rawVocabularyData), independent of any active search/star filter — the
+    // fraction always reflects the whole unit, not just what's on screen.
+    function updateProgressBar() {
+      const section = document.getElementById('progressSection');
+      const total = rawVocabularyData.length;
+
+      if (!section || total === 0) {
+        if (section) section.classList.add('hidden');
+        return;
+      }
+      section.classList.remove('hidden');
+
+      let easy = 0, medium = 0, hard = 0;
+      rawVocabularyData.forEach(item => {
+        const rating = ratingsMap[item.id] || 0;
+        if (rating === 1) easy++;
+        else if (rating === 2) medium++;
+        else if (rating === 3) hard++;
+      });
+      const unrated = total - easy - medium - hard;
+      const pct = n => (n / total * 100).toFixed(2) + '%';
+
+      document.getElementById('progressFraction').textContent = `${easy}/${total}`;
+
+      document.getElementById('progEasy').style.width = pct(easy);
+      document.getElementById('progMedium').style.width = pct(medium);
+      document.getElementById('progHard').style.width = pct(hard);
+      document.getElementById('progUnrated').style.width = pct(unrated);
+
+      document.getElementById('progEasyTip').textContent = `${easy} facile${easy !== 1 ? 's' : ''}`;
+      document.getElementById('progMediumTip').textContent = `${medium} moyen${medium !== 1 ? 's' : ''}`;
+      document.getElementById('progHardTip').textContent = `${hard} difficile${hard !== 1 ? 's' : ''}`;
+      document.getElementById('progUnratedTip').textContent = `${unrated} non noté${unrated !== 1 ? 's' : ''}`;
+    }
+
     function applyFiltersAndSort() {
       const query = searchInput.value.toLowerCase().trim();
       const sortVal = sortSelect.value;
@@ -850,6 +910,7 @@
 
       currentCards = filtered;
       renderCards();
+      updateProgressBar();
     }
 
     function shuffleCards() {
@@ -867,6 +928,7 @@
 
     function updateSpeedLabel(val) {
       document.getElementById('speedValue').innerText = `${val}x`;
+      localStorage.setItem(SPEED_STORAGE_KEY, val);
     }
 
     function speakText(text, lang) {
@@ -914,7 +976,21 @@
         showIpaCheckbox.checked = showIpa;
       }
       if (accentSelect) {
-        accentSelect.addEventListener('change', renderCards);
+        accentSelect.addEventListener('change', () => {
+          localStorage.setItem(ACCENT_STORAGE_KEY, accentSelect.value);
+          renderCards();
+        });
+        const savedAccent = localStorage.getItem(ACCENT_STORAGE_KEY);
+        if (savedAccent) {
+          accentSelect.value = savedAccent;
+        }
+      }
+
+      const savedSpeed = localStorage.getItem(SPEED_STORAGE_KEY);
+      const speedRateInput = document.getElementById('speedRate');
+      if (savedSpeed && speedRateInput) {
+        speedRateInput.value = savedSpeed;
+        updateSpeedLabel(savedSpeed);
       }
 
       // IMPORTANT: restaurer le tri sauvegardé en tout premier, avant tout appel
