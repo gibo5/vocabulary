@@ -865,10 +865,10 @@
       document.getElementById('progHard').style.width = pct(hard);
       document.getElementById('progUnrated').style.width = pct(unrated);
 
-      document.getElementById('progEasy').dataset.tip = `${easy}`;
-      document.getElementById('progMedium').dataset.tip = `${medium} words`;
-      document.getElementById('progHard').dataset.tip = `${hard} difficile${hard !== 1 ? 's' : ''}`;
-      document.getElementById('progUnrated').dataset.tip = `${unrated} non noté${unrated !== 1 ? 's' : ''}`;
+      document.getElementById('progEasy').dataset.tip = `${easy} easy`;
+      document.getElementById('progMedium').dataset.tip = `${medium} medium`;
+      document.getElementById('progHard').dataset.tip = `${hard} hard`;
+      document.getElementById('progUnrated').dataset.tip = `${unrated} unrated`;
     }
 
     // NEW: shows the shared tooltip positioned above whichever segment triggered
