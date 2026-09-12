@@ -28,11 +28,11 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem 1rem 3rem;
+      padding: 1.5rem 0.5rem 3rem;
       overflow-x: hidden;
     }
 
-    .container { width: 100%; max-width: 760px; margin: 0 auto; }
+    .container { width: 100%; max-width: 680px; margin: 0 auto; }
 
     .top-left-nav { position: absolute; top: 1.5rem; left: 1.5rem; }
 
@@ -53,7 +53,7 @@
     }
     a.home-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent-blue); transform: translateY(-1px); }
 
-    header { text-align: center; margin-top: 2rem; margin-bottom: 1.5rem; }
+    header { text-align: center; margin-top: 2rem; margin-bottom: 1.25rem; }
 
     h1 {
       font-size: 2.2rem;
@@ -64,26 +64,33 @@
       margin-bottom: 0.4rem;
     }
 
-    p.subtitle { color: var(--text-muted); font-size: 1rem; }
+    p.subtitle { color: var(--text-muted); font-size: 0.95rem; }
 
-    /* ---------- Controls ---------- */
+    /* ---------- Controls & Merged Filter/Progress Bar ---------- */
     .controls {
       background: rgba(30, 41, 59, 0.7);
       border: 1px solid var(--border-color);
       backdrop-filter: blur(12px);
-      padding: 1rem 1.25rem;
+      padding: 1rem;
       border-radius: 1rem;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
       display: flex;
-      gap: 1rem 1.5rem;
-      justify-content: center;
+      flex-direction: column;
+      gap: 1rem;
       align-items: center;
+    }
+
+    .control-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
       flex-wrap: wrap;
+      width: 100%;
     }
 
     .control-group { display: flex; align-items: center; gap: 0.6rem; }
-    .control-group > label.group-label,
     .control-group > span.group-label {
       color: var(--text-muted);
       font-size: 0.8rem;
@@ -125,139 +132,103 @@
       font-weight: 600;
     }
 
-    .filter-checks { display: flex; gap: 0.9rem; flex-wrap: wrap; }
-    .filter-check {
+    /* Combined Filter & Progress Pills */
+    .filter-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      padding: 0.45rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
+      transition: all 0.2s ease;
       user-select: none;
     }
-    .filter-check input { accent-color: var(--accent-blue); width: 15px; height: 15px; cursor: pointer; }
 
-    /* ---------- Progress bar (dark variant of the index.html widget) ---------- */
-    .progress-card {
-      background: rgba(30, 41, 59, 0.7);
-      border: 1px solid var(--border-color);
-      border-radius: 1rem;
-      padding: 0.75rem 1.1rem;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-    }
-    .progress-card .prog-label {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      flex-shrink: 0;
-    }
-    .progress-track-wrap { position: relative; flex: 1; }
-    .progress-track {
-      display: flex;
-      height: 8px;
+    .filter-btn:hover { background: rgba(255, 255, 255, 0.08); }
+    .filter-btn.active { color: var(--text-main); border-color: rgba(255, 255, 255, 0.25); }
+    .filter-btn.active.easy { background: rgba(52, 211, 153, 0.18); border-color: var(--accent-green); }
+    .filter-btn.active.medium { background: rgba(245, 158, 11, 0.18); border-color: var(--accent-amber); }
+    .filter-btn.active.hard { background: rgba(248, 113, 113, 0.18); border-color: var(--accent-red); }
+    .filter-btn.active.unrated { background: rgba(148, 163, 184, 0.18); border-color: var(--text-muted); }
+
+    .filter-count {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 7px;
       border-radius: 9999px;
+      font-size: 0.75rem;
+    }
+
+    /* ---------- Carousel Wrapper ---------- */
+    .carousel-container {
+      position: relative;
+      width: 100%;
       overflow: hidden;
-      background: rgba(255, 255, 255, 0.08);
+      padding: 10px 0 20px;
+      touch-action: pan-y;
+      transition: opacity 0.25s ease;
     }
-    .progress-track > div { height: 100%; cursor: default; }
-    #studyProgTooltip {
-      display: none;
-      position: absolute;
-      bottom: 100%;
-      margin-bottom: 6px;
-      transform: translateX(-50%);
-      white-space: nowrap;
-      background: #f8fafc;
-      color: #0f172a;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 6px;
-      pointer-events: none;
-      z-index: 20;
-    }
-    .progress-card .prog-fraction { font-size: 0.8rem; font-weight: 700; color: var(--accent-green); flex-shrink: 0; }
 
-    /* ---------- Card stage ---------- */
-    .stage {
+    .carousel-container.fading { opacity: 0; }
+
+    .carousel-track {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      margin: 0.5rem 0 1.75rem;
+      transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: transform;
     }
 
-    .nav-arrow {
-      flex-shrink: 0;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 1px solid var(--border-color);
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-main);
-      font-size: 1.3rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s ease;
+    .carousel-slide {
+      flex: 0 0 88%;
+      margin: 0 1%;
+      perspective: 1000px;
+      opacity: 0.3;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      transform: scale(0.94);
     }
-    .nav-arrow:hover:not(:disabled) { background: rgba(255, 255, 255, 0.12); border-color: var(--accent-blue); transform: scale(1.05); }
-    .nav-arrow:disabled { opacity: 0.25; cursor: default; }
 
-    .card-zone {
+    .carousel-slide.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Hide text content on side peeking cards */
+    .carousel-slide:not(.active) .word,
+    .carousel-slide:not(.active) .ipa,
+    .carousel-slide:not(.active) .lang-badge,
+    .carousel-slide:not(.active) .listen-icon-btn,
+    .carousel-slide:not(.active) .rating-row,
+    .carousel-slide:not(.active) .end-content {
+      visibility: hidden;
+    }
+
+    /* Card styling */
+    .card-wrapper {
       position: relative;
       width: 100%;
-      max-width: 420px;
+      height: 270px;
     }
 
-    /* Decorative "deck" cards peeking out behind the active card */
-    .stack-card {
-      position: absolute;
-      inset: 0;
-      border-radius: 1.25rem;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-    }
-    .stack-card.stack-2 { transform: translateY(16px) scale(0.92); opacity: 0.35; z-index: 0; }
-    .stack-card.stack-1 { transform: translateY(8px) scale(0.96); opacity: 0.6; z-index: 1; }
-
-    .perspective { position: relative; z-index: 2; perspective: 1200px; }
-
-    /* Groups the card + its attached controls (listen icon, rating pills) so
-       they all move together during the deck transition — only the card
-       itself (#cardInner) ever rotates for a flip; this wrapper only ever
-       translates/scales/fades, so the pills visibly stay "glued" to the card. */
-    .card-travel {
-      position: relative;
-      transition: transform 0.26s cubic-bezier(0.22, 0.68, 0.32, 1), opacity 0.26s ease-out;
-    }
-    .card-travel.exiting {
-      transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease;
-      transform: translateY(18px) scale(0.82);
-      opacity: 0;
-    }
-    .card-travel.entering {
-      transition: none;
-      transform: translateY(-14px) scale(0.9);
-      opacity: 0;
-    }
-
-    #cardInner {
+    .card-inner {
       position: relative;
       width: 100%;
-      height: 260px;
+      height: 100%;
       cursor: pointer;
       transform-style: preserve-3d;
-      transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    #cardInner.flipped { transform: rotateX(180deg); }
+
+    .card-inner.flipped { transform: rotateX(180deg); }
 
     .face {
       position: absolute;
@@ -272,9 +243,10 @@
       justify-content: center;
       padding: 1.5rem;
       text-align: center;
-      background: #1e293b; /* fully opaque — a translucent bg let the back face's text bleed through mid-flip */
+      background: var(--card-bg);
       box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.45);
     }
+
     .face.back { transform: rotateX(180deg); }
 
     .face .lang-badge {
@@ -291,16 +263,14 @@
     .face .word { font-size: 1.6rem; font-weight: 700; line-height: 1.25; }
     .face .ipa { font-size: 0.9rem; font-family: 'Courier New', monospace; color: var(--accent-blue); margin-top: 0.4rem; }
 
-    /* Icon-only listen button, sits on top of the card (outside the flipping
-       element) so it never rotates away and always controls whichever face
-       is currently visible. */
+    /* Ex 5: Listen icon top-left */
     .listen-icon-btn {
       position: absolute;
       z-index: 5;
-      bottom: 14px;
-      right: 14px;
-      width: 36px;
-      height: 36px;
+      top: 14px;
+      left: 14px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       border: 1px solid var(--border-color);
       background: rgba(255, 255, 255, 0.08);
@@ -314,9 +284,7 @@
     }
     .listen-icon-btn:hover { background: rgba(56, 189, 248, 0.25); border-color: var(--accent-blue); }
 
-    /* Rating pills ("le curseur trois points") sit directly on the card,
-       also outside the flipping element, so they stay put and legible on
-       either face and are unmistakably about *this* card. */
+    /* Rating pills */
     .rating-row {
       position: absolute;
       z-index: 5;
@@ -336,7 +304,7 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      background: rgba(15, 23, 42, 0.55);
+      background: rgba(15, 23, 42, 0.7);
       transition: all 0.15s ease;
     }
     .rating-pill:hover { transform: translateY(-2px); }
@@ -344,8 +312,66 @@
     .rating-pill.medium.active { background: rgba(245, 158, 11, 0.3); border-color: var(--accent-amber); }
     .rating-pill.hard.active { background: rgba(248, 113, 113, 0.3); border-color: var(--accent-red); }
 
-    .card-counter { text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem; font-weight: 600; }
+    /* Ex 1: End slide styling */
+    .end-card {
+      background: rgba(30, 41, 59, 0.9);
+      border: 2px dashed var(--accent-purple);
+      border-radius: 1.25rem;
+      height: 270px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.45);
+    }
+    .end-content h2 { font-size: 1.4rem; margin-bottom: 0.5rem; color: var(--text-main); }
+    .end-content p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
+    .end-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+    .btn-action {
+      padding: 0.65rem 1.2rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border-color);
+      background: var(--accent-purple);
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-action:hover { transform: translateY(-2px); filter: brightness(1.1); }
+    .btn-action.secondary { background: rgba(255, 255, 255, 0.1); color: var(--text-main); }
 
+    /* Ex 2a: Nav Controls placing arrows on either side of counter below card */
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .nav-arrow {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .nav-arrow:hover:not(:disabled) { background: rgba(255, 255, 255, 0.12); border-color: var(--accent-blue); transform: scale(1.05); }
+    .nav-arrow:disabled { opacity: 0.25; cursor: default; }
+
+    .card-counter { color: var(--text-muted); font-size: 0.9rem; font-weight: 700; min-width: 100px; text-align: center; }
+
+    /* Ex 6: Shortcuts hint (hidden on mobile) */
     .shortcuts-hint {
       text-align: center;
       color: var(--text-muted);
@@ -369,19 +395,20 @@
       background: rgba(30, 41, 59, 0.5);
       border: 1px dashed var(--border-color);
       border-radius: 1rem;
+      margin: 1rem 0;
     }
 
     @media (max-width: 640px) {
       .top-left-nav { position: static; margin-bottom: 1rem; display: flex; }
-      .stage { gap: 0.4rem; }
-      .nav-arrow { width: 38px; height: 38px; font-size: 1.1rem; }
+      .shortcuts-hint { display: none; } /* Ex 6 */
+      .carousel-slide { flex: 0 0 90%; margin: 0 0.5%; }
     }
   </style>
 </head>
 <body>
 
   <div class="top-left-nav">
-    <a id="back-btn" href="index.html" class="home-btn">← Back to List</a>
+    <a id="back-btn" href="index.html" class="home-btn">← Back to Lists</a>
   </div>
 
   <div class="container">
@@ -393,83 +420,50 @@
     <div class="controls">
       <div id="starredBadge" class="starred-badge"><span>⭐</span> Starred Words Only</div>
 
-      <div class="control-group">
-        <span class="group-label">Front</span>
-        <div class="toggle-group" id="frontToggle">
-          <button id="frontEnBtn" onclick="setDefaultFront('en')">🇬🇧 English</button>
-          <button id="frontFrBtn" onclick="setDefaultFront('fr')">🇫🇷 Français</button>
-        </div>
-      </div>
-
-      <div class="control-group">
-        <span class="group-label">Show</span>
-        <div class="filter-checks">
-          <label class="filter-check"><input type="checkbox" id="filterEasy" checked onchange="onFilterChange()">🟢 Easy</label>
-          <label class="filter-check"><input type="checkbox" id="filterMedium" checked onchange="onFilterChange()">🟡 Medium</label>
-          <label class="filter-check"><input type="checkbox" id="filterHard" checked onchange="onFilterChange()">🔴 Hard</label>
-          <label class="filter-check"><input type="checkbox" id="filterUnrated" checked onchange="onFilterChange()">⚪ Unrated</label>
-        </div>
-      </div>
-    </div>
-
-    <!-- Progress bar: mirrors index.html's widget, restyled for the dark theme -->
-    <div class="progress-card">
-      <span class="prog-label">Progress</span>
-      <div class="progress-track-wrap">
-        <div class="progress-track">
-          <div id="progEasy" style="width:0%;background:var(--accent-green);" data-tip=""></div>
-          <div id="progMedium" style="width:0%;background:var(--accent-amber);" data-tip=""></div>
-          <div id="progHard" style="width:0%;background:var(--accent-red);" data-tip=""></div>
-          <div id="progUnrated" style="width:100%;background:rgba(255,255,255,0.12);" data-tip=""></div>
-        </div>
-        <div id="studyProgTooltip"></div>
-      </div>
-      <span id="progressFraction" class="prog-fraction">0/0</span>
-    </div>
-
-    <!-- Card stage -->
-    <div id="stage" class="stage">
-      <button id="prevBtn" class="nav-arrow" onclick="goToCard(currentIndex - 1)" title="Previous (←)">‹</button>
-
-      <div class="card-zone">
-        <div class="stack-card stack-2"></div>
-        <div class="stack-card stack-1"></div>
-
-        <div id="cardTravel" class="card-travel">
-          <div class="perspective">
-            <div id="cardInner" onclick="flipCard()">
-              <div class="face front">
-                <span id="frontBadge" class="lang-badge">[En]</span>
-                <div id="frontWord" class="word">…</div>
-                <div id="frontIpa" class="ipa"></div>
-              </div>
-              <div class="face back">
-                <span id="backBadge" class="lang-badge">[Fr]</span>
-                <div id="backWord" class="word">…</div>
-                <div id="backIpa" class="ipa"></div>
-              </div>
-            </div>
-          </div>
-
-          <button id="listenBtn" class="listen-icon-btn" onclick="event.stopPropagation(); playCurrentFace();" title="Listen">🔊</button>
-
-          <div class="rating-row">
-            <div id="pillEasy" class="rating-pill easy" onclick="event.stopPropagation(); rateCurrentCard(1);" title="Easy (1)">🟢</div>
-            <div id="pillMedium" class="rating-pill medium" onclick="event.stopPropagation(); rateCurrentCard(2);" title="Medium (2)">🟡</div>
-            <div id="pillHard" class="rating-pill hard" onclick="event.stopPropagation(); rateCurrentCard(3);" title="Hard (3)">🔴</div>
+      <div class="control-row">
+        <div class="control-group">
+          <span class="group-label">Front</span>
+          <div class="toggle-group" id="frontToggle">
+            <button id="frontEnBtn" onclick="setDefaultFront('en')">🇬🇧 English</button>
+            <button id="frontFrBtn" onclick="setDefaultFront('fr')">🇫🇷 Français</button>
           </div>
         </div>
       </div>
 
-      <button id="nextBtn" class="nav-arrow" onclick="goToCard(currentIndex + 1)" title="Next (→)">›</button>
+      <!-- Ex 3: Merged Filter & Card Counts -->
+      <div class="filter-pills">
+        <button id="filterEasy" class="filter-btn easy active" onclick="toggleFilter('easy')">
+          🟢 Easy <span id="countEasy" class="filter-count">0</span>
+        </button>
+        <button id="filterMedium" class="filter-btn medium active" onclick="toggleFilter('medium')">
+          🟡 Medium <span id="countMedium" class="filter-count">0</span>
+        </button>
+        <button id="filterHard" class="filter-btn hard active" onclick="toggleFilter('hard')">
+          🔴 Hard <span id="countHard" class="filter-count">0</span>
+        </button>
+        <button id="filterUnrated" class="filter-btn unrated active" onclick="toggleFilter('unrated')">
+          ⚪ Unrated <span id="countUnrated" class="filter-count">0</span>
+        </button>
+      </div>
     </div>
 
-    <div id="cardCounter" class="card-counter">Card 0 / 0</div>
+    <!-- Carousel stage -->
+    <div id="carouselContainer" class="carousel-container">
+      <div id="carouselTrack" class="carousel-track"></div>
+    </div>
 
     <div id="emptyState" class="empty-state" style="display:none;">
       No cards match the selected filters.
     </div>
 
+    <!-- Ex 2a: Navigation arrows below card -->
+    <div id="navControls" class="nav-controls">
+      <button id="prevBtn" class="nav-arrow" onclick="goToCard(currentIndex - 1)" title="Previous (←)">‹</button>
+      <div id="cardCounter" class="card-counter">0 / 0</div>
+      <button id="nextBtn" class="nav-arrow" onclick="goToCard(currentIndex + 1)" title="Next (→)">›</button>
+    </div>
+
+    <!-- Ex 6: Hidden on mobile via CSS -->
     <p class="shortcuts-hint">
       <kbd>↑</kbd> <kbd>↓</kbd> Flip &nbsp; <kbd>←</kbd> <kbd>→</kbd> Navigate &nbsp; <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> Rate Easy/Medium/Hard
     </p>
@@ -483,18 +477,23 @@
     const ACCENT_STORAGE_KEY = 'vocab_app_accent';
     const SPEED_STORAGE_KEY = 'vocab_app_speed';
 
-    let fullUnitVocabulary = [];  // every word in the loaded unit — used for the progress bar
-    let deck = [];                // filtered subset currently being browsed
+    let fullUnitVocabulary = [];
+    let deck = [];
     let currentIndex = 0;
-    let defaultFace = 'en';       // which language shows on the front by default
+    let defaultFace = 'en';
     let ratingsMap = {};
     let starredMap = {};
     let isStarredOnly = false;
     let unitKey = 'eim9_u1';
-    let isFlipped = false;
-    let busy = false; // true while a rating-confirmation delay or card-change animation is running
+    let cardFlippedStates = [];
 
-    // ---------- localStorage helpers ----------
+    // Active filters state
+    let activeFilters = { easy: true, medium: true, hard: true, unrated: true };
+
+    // Touch swipe variables
+    let touchStartX = 0;
+    let touchEndX = 0;
+
     function getStored(key) {
       try {
         const saved = localStorage.getItem(key);
@@ -503,12 +502,12 @@
         return {};
       }
     }
+
     function saveRating(cardId, rating) {
       ratingsMap[cardId] = rating;
       try { localStorage.setItem(RATINGS_STORAGE_KEY, JSON.stringify(ratingsMap)); } catch (e) {}
     }
 
-    // ---------- Load unit (mirrors listen-and-point.html's loader) ----------
     async function loadUnitFromUrl() {
       const urlParams = new URLSearchParams(window.location.search);
       let unitParam = urlParams.get('unit') || localStorage.getItem(CURRENT_UNIT_STORAGE_KEY) || 'eim9_u1.json';
@@ -557,147 +556,234 @@
         ];
       }
 
-      buildDeck();
-      updateProgressBar();
+      buildDeck(false);
+      updateCounts();
     }
 
-    // ---------- Deck filtering ----------
-    function buildDeck() {
-      const wantEasy = document.getElementById('filterEasy').checked;
-      const wantMedium = document.getElementById('filterMedium').checked;
-      const wantHard = document.getElementById('filterHard').checked;
-      const wantUnrated = document.getElementById('filterUnrated').checked;
+    // Ex 3: Toggle filter
+    function toggleFilter(type) {
+      activeFilters[type] = !activeFilters[type];
+      const btn = document.getElementById('filter' + type.charAt(0).toUpperCase() + type.slice(1));
+      btn.classList.toggle('active', activeFilters[type]);
+      
+      // Ex 4: Fade transition when filters change deck
+      triggerFadeChange(() => {
+        buildDeck(true);
+      });
+    }
 
+    // Ex 4: Fade effect helper
+    function triggerFadeChange(callback) {
+      const container = document.getElementById('carouselContainer');
+      container.classList.add('fading');
+      setTimeout(() => {
+        callback();
+        container.classList.remove('fading');
+      }, 200);
+    }
+
+    function buildDeck(resetIndex = true) {
       deck = fullUnitVocabulary.filter(item => {
         if (isStarredOnly && !starredMap[item.id]) return false;
         const rating = ratingsMap[item.id] || 0;
-        if (rating === 1) return wantEasy;
-        if (rating === 2) return wantMedium;
-        if (rating === 3) return wantHard;
-        return wantUnrated;
+        if (rating === 1) return activeFilters.easy;
+        if (rating === 2) return activeFilters.medium;
+        if (rating === 3) return activeFilters.hard;
+        return activeFilters.unrated;
       });
 
-      currentIndex = 0;
-      renderCardImmediate();
+      if (resetIndex || currentIndex >= deck.length) {
+        currentIndex = 0;
+      }
+
+      cardFlippedStates = new Array(deck.length).fill(false);
+      renderCarousel();
+      updateCounts();
     }
 
-    function onFilterChange() {
-      buildDeck();
+    // Ex 3: Counts merged into buttons
+    function updateCounts() {
+      let easy = 0, medium = 0, hard = 0, unrated = 0;
+      fullUnitVocabulary.forEach(item => {
+        if (isStarredOnly && !starredMap[item.id]) return;
+        const r = ratingsMap[item.id] || 0;
+        if (r === 1) easy++;
+        else if (r === 2) medium++;
+        else if (r === 3) hard++;
+        else unrated++;
+      });
+
+      document.getElementById('countEasy').textContent = easy;
+      document.getElementById('countMedium').textContent = medium;
+      document.getElementById('countHard').textContent = hard;
+      document.getElementById('countUnrated').textContent = unrated;
     }
 
-    // ---------- Front/back preference (shared with index.html) ----------
     function setDefaultFront(mode) {
       defaultFace = mode;
       localStorage.setItem(DEFAULT_MODE_STORAGE_KEY, mode);
       applyFrontToggleUI();
-      renderCardImmediate();
+      triggerFadeChange(() => {
+        renderCarousel();
+      });
     }
+
     function applyFrontToggleUI() {
       document.getElementById('frontEnBtn').classList.toggle('active', defaultFace === 'en');
       document.getElementById('frontFrBtn').classList.toggle('active', defaultFace === 'fr');
     }
 
-    // ---------- Card rendering ----------
-    function currentCard() {
-      return deck[currentIndex] || null;
-    }
-
-    function getCardInner() { return document.getElementById('cardInner'); }
-
-    function renderCardImmediate() {
-      const stage = document.getElementById('stage');
+    // Carousel Rendering & Carousel Effect (Ex 2b, Ex 1)
+    function renderCarousel() {
+      const track = document.getElementById('carouselTrack');
       const emptyState = document.getElementById('emptyState');
-      const item = currentCard();
+      const carouselContainer = document.getElementById('carouselContainer');
+      const navControls = document.getElementById('navControls');
 
-      if (!item) {
-        stage.style.display = 'none';
+      track.innerHTML = '';
+
+      if (deck.length === 0) {
+        carouselContainer.style.display = 'none';
+        navControls.style.display = 'none';
         emptyState.style.display = 'block';
-        document.getElementById('cardCounter').textContent = 'Card 0 / 0';
         return;
       }
-      stage.style.display = 'flex';
+
+      carouselContainer.style.display = 'block';
+      navControls.style.display = 'flex';
       emptyState.style.display = 'none';
 
-      isFlipped = false;
-      const cardInner = getCardInner();
-      cardInner.classList.remove('flipped');
+      // Build cards + End Slide
+      deck.forEach((item, index) => {
+        const slide = document.createElement('div');
+        slide.className = `carousel-slide ${index === currentIndex ? 'active' : ''}`;
+        
+        const frontIsEnglish = defaultFace === 'en';
+        const frontText = frontIsEnglish ? item.en : item.fr;
+        const backText = frontIsEnglish ? item.fr : item.en;
+        const rating = ratingsMap[item.id] || 0;
 
-      const frontIsEnglish = defaultFace === 'en';
-      const frontText = frontIsEnglish ? item.en : item.fr;
-      const backText = frontIsEnglish ? item.fr : item.en;
+        slide.innerHTML = `
+          <div class="card-wrapper">
+            <div id="cardInner_${index}" class="card-inner ${cardFlippedStates[index] ? 'flipped' : ''}" onclick="flipCard(${index})">
+              <div class="face front">
+                <span class="lang-badge">${frontIsEnglish ? '[En]' : '[Fr]'}</span>
+                <div class="word">${frontText}</div>
+                <div class="ipa">${frontIsEnglish && item.ipa ? '/' + item.ipa + '/' : ''}</div>
+              </div>
+              <div class="face back">
+                <span class="lang-badge">${frontIsEnglish ? '[Fr]' : '[En]'}</span>
+                <div class="word">${backText}</div>
+                <div class="ipa">${!frontIsEnglish && item.ipa ? '/' + item.ipa + '/' : ''}</div>
+              </div>
+            </div>
 
-      document.getElementById('frontWord').textContent = frontText;
-      document.getElementById('backWord').textContent = backText;
-      document.getElementById('frontBadge').textContent = frontIsEnglish ? '[En]' : '[Fr]';
-      document.getElementById('backBadge').textContent = frontIsEnglish ? '[Fr]' : '[En]';
-      document.getElementById('frontIpa').textContent = frontIsEnglish && item.ipa ? `/${item.ipa}/` : '';
-      document.getElementById('backIpa').textContent = !frontIsEnglish && item.ipa ? `/${item.ipa}/` : '';
+            <!-- Ex 5: Top Left Listen Button -->
+            <button class="listen-icon-btn" onclick="event.stopPropagation(); playCardAudio(${index});" title="Listen">🔊</button>
 
-      document.getElementById('cardCounter').textContent = `Card ${currentIndex + 1} / ${deck.length}`;
+            <!-- Rating Pills -->
+            <div class="rating-row">
+              <div class="rating-pill easy ${rating === 1 ? 'active' : ''}" onclick="event.stopPropagation(); rateCard(${index}, 1);" title="Easy (1)">🟢</div>
+              <div class="rating-pill medium ${rating === 2 ? 'active' : ''}" onclick="event.stopPropagation(); rateCard(${index}, 2);" title="Medium (2)">🟡</div>
+              <div class="rating-pill hard ${rating === 3 ? 'active' : ''}" onclick="event.stopPropagation(); rateCard(${index}, 3);" title="Hard (3)">🔴</div>
+            </div>
+          </div>
+        `;
+        track.appendChild(slide);
+      });
+
+      // Ex 1: End Slide (as extra slide in carousel)
+      const endSlide = document.createElement('div');
+      endSlide.className = `carousel-slide ${currentIndex === deck.length ? 'active' : ''}`;
+      endSlide.innerHTML = `
+        <div class="end-card">
+          <div class="end-content">
+            <h2>🎉 Fin du tas !</h2>
+            <p>Vous avez parcouru toutes les cartes sélectionnées.</p>
+            <div class="end-actions">
+              <button class="btn-action" onclick="shuffleAndRestart()">🔀 Mélanger et recommencer</button>
+              <button class="btn-action secondary" onclick="restartDeck()">🔄 Recommencer</button>
+            </div>
+          </div>
+        </div>
+      `;
+      track.appendChild(endSlide);
+
+      updateCarouselPosition();
+      updateNavControls();
+    }
+
+    function updateCarouselPosition() {
+      const track = document.getElementById('carouselTrack');
+      const slides = document.querySelectorAll('.carousel-slide');
+      
+      slides.forEach((slide, idx) => {
+        slide.classList.toggle('active', idx === currentIndex);
+      });
+
+      // 88% width + 2% margins = 90% offset per slide
+      const offset = 5 - (currentIndex * 90);
+      track.style.transform = `translateX(${offset}%)`;
+    }
+
+    function updateNavControls() {
+      const totalSlides = deck.length + 1; // deck + end slide
       document.getElementById('prevBtn').disabled = currentIndex === 0;
-      document.getElementById('nextBtn').disabled = currentIndex === deck.length - 1;
+      document.getElementById('nextBtn').disabled = currentIndex >= deck.length;
 
-      updateRatingPills(item);
-
-      // Auto-play English audio whenever the English face is the one showing.
-      if (frontIsEnglish) {
-        speakWord(item.spoken || item.en, 'en-GB');
+      if (currentIndex === deck.length) {
+        document.getElementById('cardCounter').textContent = `Fin / ${deck.length}`;
+      } else {
+        document.getElementById('cardCounter').textContent = `${currentIndex + 1} / ${deck.length}`;
       }
     }
 
-    function updateRatingPills(item) {
-      const rating = ratingsMap[item.id] || 0;
-      document.getElementById('pillEasy').classList.toggle('active', rating === 1);
-      document.getElementById('pillMedium').classList.toggle('active', rating === 2);
-      document.getElementById('pillHard').classList.toggle('active', rating === 3);
-    }
-
-    // ---------- "Deck" transition: current card recedes to the back, next
-    // card pops in from a slightly-shrunk state. Used by both plain
-    // navigation and rating-triggered advances, so every card change scrolls
-    // through the same motion. ----------
-    const TRANSITION_OUT_MS = 220;
-    const TRANSITION_IN_MS = 260;
-
-    function animateToCard(newIndex, onDone) {
-      const travel = document.getElementById('cardTravel');
-      travel.classList.add('exiting');
-      setTimeout(() => {
-        currentIndex = newIndex;
-        renderCardImmediate();
-        travel.classList.remove('exiting');
-        travel.classList.add('entering');
-        void travel.offsetWidth; // force reflow so the "entering" start state is committed
-        requestAnimationFrame(() => {
-          travel.classList.remove('entering');
-          setTimeout(() => { if (onDone) onDone(); }, TRANSITION_IN_MS);
-        });
-      }, TRANSITION_OUT_MS);
-    }
-
-    // ---------- Navigation ----------
     function goToCard(index) {
-      if (busy) return;
-      if (index < 0 || index >= deck.length) return; // no wrap-around
-      busy = true;
-      animateToCard(index, () => { busy = false; });
+      if (index < 0 || index > deck.length) return;
+      currentIndex = index;
+      updateCarouselPosition();
+      updateNavControls();
+
+      // Auto-play audio when navigating to an active English card face
+      if (currentIndex < deck.length && !cardFlippedStates[currentIndex] && defaultFace === 'en') {
+        speakWord(deck[currentIndex].spoken || deck[currentIndex].en, 'en-GB');
+      }
     }
 
-    // ---------- Flip ----------
-    function flipCard() {
-      if (busy || !currentCard()) return;
-      isFlipped = !isFlipped;
-      getCardInner().classList.toggle('flipped', isFlipped);
+    // Ex 1: Deck restart actions
+    function shuffleAndRestart() {
+      deck.sort(() => Math.random() - 0.5);
+      currentIndex = 0;
+      cardFlippedStates = new Array(deck.length).fill(false);
+      triggerFadeChange(() => {
+        renderCarousel();
+      });
+    }
 
-      const item = currentCard();
+    function restartDeck() {
+      currentIndex = 0;
+      cardFlippedStates = new Array(deck.length).fill(false);
+      triggerFadeChange(() => {
+        renderCarousel();
+      });
+    }
+
+    // Flip card action
+    function flipCard(index) {
+      if (index !== currentIndex || index >= deck.length) return;
+      cardFlippedStates[index] = !cardFlippedStates[index];
+      const cardInner = document.getElementById(`cardInner_${index}`);
+      if (cardInner) cardInner.classList.toggle('flipped', cardFlippedStates[index]);
+
+      const item = deck[index];
       const frontIsEnglish = defaultFace === 'en';
-      const nowShowingEnglish = isFlipped ? !frontIsEnglish : frontIsEnglish;
+      const nowShowingEnglish = cardFlippedStates[index] ? !frontIsEnglish : frontIsEnglish;
       if (nowShowingEnglish) {
         speakWord(item.spoken || item.en, 'en-GB');
       }
     }
 
-    // ---------- Audio ----------
+    // Audio helper
     function speakWord(text, lang) {
       if (!('speechSynthesis' in window) || !text) return;
       window.speechSynthesis.cancel();
@@ -710,11 +796,10 @@
       window.speechSynthesis.speak(utterance);
     }
 
-    // Plays whichever face is currently visible (front or back), used by the
-    // single shared listen icon that sits on top of the card.
-    function playCurrentFace() {
-      const item = currentCard();
+    function playCardAudio(index) {
+      const item = deck[index];
       if (!item) return;
+      const isFlipped = cardFlippedStates[index];
       const frontIsEnglish = defaultFace === 'en';
       const showingEnglish = isFlipped ? !frontIsEnglish : frontIsEnglish;
       if (showingEnglish) {
@@ -724,96 +809,59 @@
       }
     }
 
-    // ---------- Rating (pills / keys all funnel through here) ----------
-    function rateCurrentCard(rating) {
-      if (busy) return;
-      const item = currentCard();
+    // Ex 2b: Rate card and STAY on the same card
+    function rateCard(index, rating) {
+      const item = deck[index];
       if (!item) return;
 
-      busy = true; // lock immediately so a second click can't queue up during the feedback pause
-
       saveRating(item.id, rating);
-      updateRatingPills(item); // visible right away — this was the actual bug being fixed
-      updateProgressBar();
+      updateCounts();
 
-      const filterMap = { 1: 'filterEasy', 2: 'filterMedium', 3: 'filterHard' };
-      const stillVisible = document.getElementById(filterMap[rating]).checked;
-
-      // Give the student a moment to actually see the pill light up on the
-      // current card before it slides away to the back of the deck.
-      const RATING_FEEDBACK_DELAY = 450;
-
-      setTimeout(() => {
-        if (!stillVisible) {
-          // The new rating excludes this card from the active filters —
-          // rebuild the deck rather than just moving to the next index.
-          buildDeck();
-          busy = false;
-        } else if (currentIndex < deck.length - 1) {
-          animateToCard(currentIndex + 1, () => { busy = false; });
-        } else {
-          busy = false; // last card: nothing to advance to, stay put
-        }
-      }, RATING_FEEDBACK_DELAY);
+      // Update pill active states on current card in-place
+      const slide = document.querySelectorAll('.carousel-slide')[index];
+      if (slide) {
+        slide.querySelector('.rating-pill.easy').classList.toggle('active', rating === 1);
+        slide.querySelector('.rating-pill.medium').classList.toggle('active', rating === 2);
+        slide.querySelector('.rating-pill.hard').classList.toggle('active', rating === 3);
+      }
     }
 
-    // ---------- Progress bar (same logic/markup pattern as index.html) ----------
-    function updateProgressBar() {
-      const total = fullUnitVocabulary.length;
-      if (total === 0) return;
+    // Touch Swipe Logic (Ex 2b)
+    const carouselEl = document.getElementById('carouselContainer');
+    carouselEl.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
 
-      let easy = 0, medium = 0, hard = 0;
-      fullUnitVocabulary.forEach(item => {
-        const r = ratingsMap[item.id] || 0;
-        if (r === 1) easy++;
-        else if (r === 2) medium++;
-        else if (r === 3) hard++;
-      });
-      const unrated = total - easy - medium - hard;
-      const pct = n => (n / total * 100).toFixed(2) + '%';
+    carouselEl.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, { passive: true });
 
-      document.getElementById('progressFraction').textContent = `${easy}/${total}`;
-      document.getElementById('progEasy').style.width = pct(easy);
-      document.getElementById('progMedium').style.width = pct(medium);
-      document.getElementById('progHard').style.width = pct(hard);
-      document.getElementById('progUnrated').style.width = pct(unrated);
-
-      document.getElementById('progEasy').dataset.tip = `${easy} easy`;
-      document.getElementById('progMedium').dataset.tip = `${medium} medium`;
-      document.getElementById('progHard').dataset.tip = `${hard} hard`;
-      document.getElementById('progUnrated').dataset.tip = `${unrated} unrated`;
+    function handleSwipe() {
+      const diff = touchStartX - touchEndX;
+      const swipeThreshold = 40;
+      if (diff > swipeThreshold) {
+        // Swipe left -> Next card
+        goToCard(currentIndex + 1);
+      } else if (diff < -swipeThreshold) {
+        // Swipe right -> Prev card
+        goToCard(currentIndex - 1);
+      }
     }
 
-    function bindProgressTooltips() {
-      ['progEasy', 'progMedium', 'progHard', 'progUnrated'].forEach(id => {
-        const el = document.getElementById(id);
-        el.addEventListener('mouseenter', () => {
-          const tip = document.getElementById('studyProgTooltip');
-          if (!el.dataset.tip) return;
-          tip.textContent = el.dataset.tip;
-          tip.style.left = (el.offsetLeft + el.offsetWidth / 2) + 'px';
-          tip.style.display = 'block';
-        });
-        el.addEventListener('mouseleave', () => {
-          document.getElementById('studyProgTooltip').style.display = 'none';
-        });
-      });
-    }
-
-    // ---------- Keyboard shortcuts ----------
+    // Ex 2a Fix: Unrestricted arrow keys navigation even if menu buttons were clicked
     document.addEventListener('keydown', (e) => {
       const tag = document.activeElement ? document.activeElement.tagName : '';
-      if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'BUTTON') return; // don't hijack form controls
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
 
-      if (e.code === 'ArrowUp' || e.code === 'ArrowDown') { e.preventDefault(); flipCard(); }
+      if (e.code === 'ArrowUp' || e.code === 'ArrowDown') { e.preventDefault(); flipCard(currentIndex); }
       else if (e.code === 'ArrowLeft') { e.preventDefault(); goToCard(currentIndex - 1); }
       else if (e.code === 'ArrowRight') { e.preventDefault(); goToCard(currentIndex + 1); }
-      else if (e.key === '1') { rateCurrentCard(1); }
-      else if (e.key === '2') { rateCurrentCard(2); }
-      else if (e.key === '3') { rateCurrentCard(3); }
+      else if (e.key === '1') { rateCard(currentIndex, 1); }
+      else if (e.key === '2') { rateCard(currentIndex, 2); }
+      else if (e.key === '3') { rateCard(currentIndex, 3); }
     });
 
-    bindProgressTooltips();
     loadUnitFromUrl();
   </script>
 </body>
