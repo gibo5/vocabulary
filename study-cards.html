@@ -242,6 +242,7 @@
       inset: 0;
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
+      transform-style: preserve-3d;
       border-radius: 1.25rem;
       border: 1px solid var(--border-color);
       display: flex;
@@ -252,6 +253,12 @@
       text-align: center;
       background: var(--card-bg);
       box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Empêche absolument tous les enfants de la face cachée de traverser en 3D */
+    .face * {
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
     }
 
     .face.back { transform: rotateX(180deg); }
@@ -265,15 +272,15 @@
       letter-spacing: 0.05em;
       color: var(--text-muted);
       text-transform: uppercase;
+      transform: translateZ(1px);
     }
 
-    .face .word { font-size: 1.6rem; font-weight: 700; line-height: 1.25; }
-    .face .ipa { font-size: 0.9rem; font-family: 'Courier New', monospace; color: var(--accent-blue); margin-top: 0.4rem; }
+    .face .word { font-size: 1.6rem; font-weight: 700; line-height: 1.25; transform: translateZ(1px); }
+    .face .ipa { font-size: 0.9rem; font-family: 'Courier New', monospace; color: var(--accent-blue); margin-top: 0.4rem; transform: translateZ(1px); }
 
-    /* Listen Button (Inside .face) */
+    /* Listen Button (Plaqué sur la surface de chaque face) */
     .listen-icon-btn {
       position: absolute;
-      z-index: 5;
       top: 14px;
       left: 14px;
       width: 38px;
@@ -288,16 +295,16 @@
       align-items: center;
       justify-content: center;
       transition: all 0.15s ease;
+      transform: translateZ(1px);
     }
     .listen-icon-btn:hover { background: rgba(56, 189, 248, 0.25); border-color: var(--accent-blue); }
 
-    /* Rating Pills (Inside .face) */
+    /* Rating Pills (Plaquées sur la surface de chaque face) */
     .rating-row {
       position: absolute;
-      z-index: 5;
       left: 50%;
       bottom: 14px;
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateZ(1px);
       display: flex;
       gap: 0.6rem;
     }
@@ -656,7 +663,6 @@
       navControls.style.display = 'flex';
       emptyState.style.display = 'none';
 
-      // Helper to generate controls HTML inside each face
       const getControlsHTML = (index, rating) => `
         <button class="listen-icon-btn" onclick="event.stopPropagation(); playCardAudio(${index});" title="Listen">🔊</button>
         <div class="rating-row">
@@ -666,7 +672,6 @@
         </div>
       `;
 
-      // Build cards + End Slide
       deck.forEach((item, index) => {
         const slide = document.createElement('div');
         slide.className = `carousel-slide ${index === currentIndex ? 'active' : ''}`;
@@ -698,7 +703,6 @@
         track.appendChild(slide);
       });
 
-      // End Slide
       const endSlide = document.createElement('div');
       endSlide.className = `carousel-slide ${currentIndex === deck.length ? 'active' : ''}`;
       endSlide.innerHTML = `
@@ -822,7 +826,6 @@
       saveRating(item.id, rating);
       updateCounts();
 
-      // Update pills on both faces (front & back)
       const slides = document.querySelectorAll('.carousel-slide');
       const slide = slides[index];
       if (slide) {
