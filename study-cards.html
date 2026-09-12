@@ -202,6 +202,13 @@
       transform: scale(1);
     }
 
+    /* Disappearance Animation when a rated card is removed from active filter */
+    .carousel-slide.removing {
+      opacity: 0 !important;
+      transform: scale(0.6) translateY(-35px) !important;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease-out !important;
+    }
+
     /* Hide text content on side peeking cards */
     .carousel-slide:not(.active) .word,
     .carousel-slide:not(.active) .ipa,
@@ -263,7 +270,7 @@
     .face .word { font-size: 1.6rem; font-weight: 700; line-height: 1.25; }
     .face .ipa { font-size: 0.9rem; font-family: 'Courier New', monospace; color: var(--accent-blue); margin-top: 0.4rem; }
 
-    /* Ex 5: Listen icon top-left */
+    /* Top Left Listen Button */
     .listen-icon-btn {
       position: absolute;
       z-index: 5;
@@ -312,7 +319,7 @@
     .rating-pill.medium.active { background: rgba(245, 158, 11, 0.3); border-color: var(--accent-amber); }
     .rating-pill.hard.active { background: rgba(248, 113, 113, 0.3); border-color: var(--accent-red); }
 
-    /* Ex 1: End slide styling */
+    /* End slide styling */
     .end-card {
       background: rgba(30, 41, 59, 0.9);
       border: 2px dashed var(--accent-purple);
@@ -343,7 +350,7 @@
     .btn-action:hover { transform: translateY(-2px); filter: brightness(1.1); }
     .btn-action.secondary { background: rgba(255, 255, 255, 0.1); color: var(--text-main); }
 
-    /* Ex 2a: Nav Controls placing arrows on either side of counter below card */
+    /* Nav Controls placing arrows on either side of counter below card */
     .nav-controls {
       display: flex;
       align-items: center;
@@ -371,7 +378,7 @@
 
     .card-counter { color: var(--text-muted); font-size: 0.9rem; font-weight: 700; min-width: 100px; text-align: center; }
 
-    /* Ex 6: Shortcuts hint (hidden on mobile) */
+    /* Shortcuts hint (hidden on mobile) */
     .shortcuts-hint {
       text-align: center;
       color: var(--text-muted);
@@ -400,7 +407,7 @@
 
     @media (max-width: 640px) {
       .top-left-nav { position: static; margin-bottom: 1rem; display: flex; }
-      .shortcuts-hint { display: none; } /* Ex 6 */
+      .shortcuts-hint { display: none; }
       .carousel-slide { flex: 0 0 90%; margin: 0 0.5%; }
     }
   </style>
@@ -408,7 +415,7 @@
 <body>
 
   <div class="top-left-nav">
-    <a id="back-btn" href="index.html" class="home-btn">← Back to Lists</a>
+    <a id="back-btn" href="index.html" class="home-btn">← Back to List</a>
   </div>
 
   <div class="container">
@@ -430,7 +437,7 @@
         </div>
       </div>
 
-      <!-- Ex 3: Merged Filter & Card Counts -->
+      <!-- Filter & Card Counts -->
       <div class="filter-pills">
         <button id="filterEasy" class="filter-btn easy active" onclick="toggleFilter('easy')">
           🟢 Easy <span id="countEasy" class="filter-count">0</span>
@@ -456,14 +463,13 @@
       No cards match the selected filters.
     </div>
 
-    <!-- Ex 2a: Navigation arrows below card -->
+    <!-- Navigation arrows below card -->
     <div id="navControls" class="nav-controls">
       <button id="prevBtn" class="nav-arrow" onclick="goToCard(currentIndex - 1)" title="Previous (←)">‹</button>
       <div id="cardCounter" class="card-counter">0 / 0</div>
       <button id="nextBtn" class="nav-arrow" onclick="goToCard(currentIndex + 1)" title="Next (→)">›</button>
     </div>
 
-    <!-- Ex 6: Hidden on mobile via CSS -->
     <p class="shortcuts-hint">
       <kbd>↑</kbd> <kbd>↓</kbd> Flip &nbsp; <kbd>←</kbd> <kbd>→</kbd> Navigate &nbsp; <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> Rate Easy/Medium/Hard
     </p>
@@ -489,6 +495,7 @@
 
     // Active filters state
     let activeFilters = { easy: true, medium: true, hard: true, unrated: true };
+    let isRatingBusy = false;
 
     // Touch swipe variables
     let touchStartX = 0;
@@ -560,19 +567,17 @@
       updateCounts();
     }
 
-    // Ex 3: Toggle filter
     function toggleFilter(type) {
+      if (isRatingBusy) return;
       activeFilters[type] = !activeFilters[type];
       const btn = document.getElementById('filter' + type.charAt(0).toUpperCase() + type.slice(1));
       btn.classList.toggle('active', activeFilters[type]);
       
-      // Ex 4: Fade transition when filters change deck
       triggerFadeChange(() => {
         buildDeck(true);
       });
     }
 
-    // Ex 4: Fade effect helper
     function triggerFadeChange(callback) {
       const container = document.getElementById('carouselContainer');
       container.classList.add('fading');
@@ -601,7 +606,6 @@
       updateCounts();
     }
 
-    // Ex 3: Counts merged into buttons
     function updateCounts() {
       let easy = 0, medium = 0, hard = 0, unrated = 0;
       fullUnitVocabulary.forEach(item => {
@@ -633,7 +637,6 @@
       document.getElementById('frontFrBtn').classList.toggle('active', defaultFace === 'fr');
     }
 
-    // Carousel Rendering & Carousel Effect (Ex 2b, Ex 1)
     function renderCarousel() {
       const track = document.getElementById('carouselTrack');
       const emptyState = document.getElementById('emptyState');
@@ -678,10 +681,8 @@
               </div>
             </div>
 
-            <!-- Ex 5: Top Left Listen Button -->
             <button class="listen-icon-btn" onclick="event.stopPropagation(); playCardAudio(${index});" title="Listen">🔊</button>
 
-            <!-- Rating Pills -->
             <div class="rating-row">
               <div class="rating-pill easy ${rating === 1 ? 'active' : ''}" onclick="event.stopPropagation(); rateCard(${index}, 1);" title="Easy (1)">🟢</div>
               <div class="rating-pill medium ${rating === 2 ? 'active' : ''}" onclick="event.stopPropagation(); rateCard(${index}, 2);" title="Medium (2)">🟡</div>
@@ -692,7 +693,7 @@
         track.appendChild(slide);
       });
 
-      // Ex 1: End Slide (as extra slide in carousel)
+      // End Slide
       const endSlide = document.createElement('div');
       endSlide.className = `carousel-slide ${currentIndex === deck.length ? 'active' : ''}`;
       endSlide.innerHTML = `
@@ -721,13 +722,11 @@
         slide.classList.toggle('active', idx === currentIndex);
       });
 
-      // 88% width + 2% margins = 90% offset per slide
       const offset = 5 - (currentIndex * 90);
       track.style.transform = `translateX(${offset}%)`;
     }
 
     function updateNavControls() {
-      const totalSlides = deck.length + 1; // deck + end slide
       document.getElementById('prevBtn').disabled = currentIndex === 0;
       document.getElementById('nextBtn').disabled = currentIndex >= deck.length;
 
@@ -739,19 +738,19 @@
     }
 
     function goToCard(index) {
+      if (isRatingBusy) return;
       if (index < 0 || index > deck.length) return;
       currentIndex = index;
       updateCarouselPosition();
       updateNavControls();
 
-      // Auto-play audio when navigating to an active English card face
       if (currentIndex < deck.length && !cardFlippedStates[currentIndex] && defaultFace === 'en') {
         speakWord(deck[currentIndex].spoken || deck[currentIndex].en, 'en-GB');
       }
     }
 
-    // Ex 1: Deck restart actions
     function shuffleAndRestart() {
+      if (isRatingBusy) return;
       deck.sort(() => Math.random() - 0.5);
       currentIndex = 0;
       cardFlippedStates = new Array(deck.length).fill(false);
@@ -761,6 +760,7 @@
     }
 
     function restartDeck() {
+      if (isRatingBusy) return;
       currentIndex = 0;
       cardFlippedStates = new Array(deck.length).fill(false);
       triggerFadeChange(() => {
@@ -768,8 +768,8 @@
       });
     }
 
-    // Flip card action
     function flipCard(index) {
+      if (isRatingBusy) return;
       if (index !== currentIndex || index >= deck.length) return;
       cardFlippedStates[index] = !cardFlippedStates[index];
       const cardInner = document.getElementById(`cardInner_${index}`);
@@ -783,7 +783,6 @@
       }
     }
 
-    // Audio helper
     function speakWord(text, lang) {
       if (!('speechSynthesis' in window) || !text) return;
       window.speechSynthesis.cancel();
@@ -797,6 +796,7 @@
     }
 
     function playCardAudio(index) {
+      if (isRatingBusy) return;
       const item = deck[index];
       if (!item) return;
       const isFlipped = cardFlippedStates[index];
@@ -809,24 +809,65 @@
       }
     }
 
-    // Ex 2b: Rate card and STAY on the same card
+    /* Rate card: Updates pill state immediately, then triggers shrinking/disappearing animation if rated category is filter-excluded */
     function rateCard(index, rating) {
+      if (isRatingBusy) return;
       const item = deck[index];
       if (!item) return;
 
       saveRating(item.id, rating);
       updateCounts();
 
-      // Update pill active states on current card in-place
-      const slide = document.querySelectorAll('.carousel-slide')[index];
+      // Highlight rating pill immediately
+      const slides = document.querySelectorAll('.carousel-slide');
+      const slide = slides[index];
       if (slide) {
         slide.querySelector('.rating-pill.easy').classList.toggle('active', rating === 1);
         slide.querySelector('.rating-pill.medium').classList.toggle('active', rating === 2);
         slide.querySelector('.rating-pill.hard').classList.toggle('active', rating === 3);
       }
+
+      const categoryMap = { 1: 'easy', 2: 'medium', 3: 'hard' };
+      const isCategoryActive = activeFilters[categoryMap[rating]];
+
+      // If the rated category is currently unchecked in menu -> trigger removal animation
+      if (!isCategoryActive) {
+        isRatingBusy = true;
+        
+        // 1) Pause to let the user see the pill selection (450ms)
+        setTimeout(() => {
+          if (slide) {
+            slide.classList.add('removing');
+          }
+
+          // 2) Disappearance animation duration (400ms)
+          setTimeout(() => {
+            // Re-filter deck
+            deck = fullUnitVocabulary.filter(w => {
+              if (isStarredOnly && !starredMap[w.id]) return false;
+              const r = ratingsMap[w.id] || 0;
+              if (r === 1) return activeFilters.easy;
+              if (r === 2) return activeFilters.medium;
+              if (r === 3) return activeFilters.hard;
+              return activeFilters.unrated;
+            });
+
+            if (currentIndex >= deck.length && deck.length > 0) {
+              currentIndex = deck.length - 1;
+            }
+            if (deck.length === 0) {
+              currentIndex = 0;
+            }
+
+            cardFlippedStates = new Array(deck.length).fill(false);
+            renderCarousel();
+            isRatingBusy = false;
+          }, 400);
+        }, 450);
+      }
     }
 
-    // Touch Swipe Logic (Ex 2b)
+    // Touch Swipe Logic
     const carouselEl = document.getElementById('carouselContainer');
     carouselEl.addEventListener('touchstart', e => {
       touchStartX = e.changedTouches[0].screenX;
@@ -838,18 +879,17 @@
     }, { passive: true });
 
     function handleSwipe() {
+      if (isRatingBusy) return;
       const diff = touchStartX - touchEndX;
       const swipeThreshold = 40;
       if (diff > swipeThreshold) {
-        // Swipe left -> Next card
         goToCard(currentIndex + 1);
       } else if (diff < -swipeThreshold) {
-        // Swipe right -> Prev card
         goToCard(currentIndex - 1);
       }
     }
 
-    // Ex 2a Fix: Unrestricted arrow keys navigation even if menu buttons were clicked
+    // Keyboard navigation
     document.addEventListener('keydown', (e) => {
       const tag = document.activeElement ? document.activeElement.tagName : '';
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
