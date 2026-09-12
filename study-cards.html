@@ -230,6 +230,25 @@
 
     .perspective { position: relative; z-index: 2; perspective: 1200px; }
 
+    /* Groups the card + its attached controls (listen icon, rating pills) so
+       they all move together during the deck transition — only the card
+       itself (#cardInner) ever rotates for a flip; this wrapper only ever
+       translates/scales/fades, so the pills visibly stay "glued" to the card. */
+    .card-travel {
+      position: relative;
+      transition: transform 0.26s cubic-bezier(0.22, 0.68, 0.32, 1), opacity 0.26s ease-out;
+    }
+    .card-travel.exiting {
+      transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease;
+      transform: translateY(18px) scale(0.82);
+      opacity: 0;
+    }
+    .card-travel.entering {
+      transition: none;
+      transform: translateY(-14px) scale(0.9);
+      opacity: 0;
+    }
+
     #cardInner {
       position: relative;
       width: 100%;
@@ -238,23 +257,7 @@
       transform-style: preserve-3d;
       transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
     }
-    #cardInner.flipped { transform: rotateY(180deg); }
-
-    /* "Deck" transition: the current card recedes to the back, then the next
-       one pops in from a slightly-shrunk state. Higher specificity than the
-       base rule above, so it fully takes over the transform/transition during
-       the swap, then normal flip behaviour resumes afterwards. */
-    #cardInner.exiting {
-      transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease;
-      transform: translateY(18px) scale(0.82);
-      opacity: 0;
-    }
-    #cardInner.exiting.flipped { transform: translateY(18px) scale(0.82) rotateY(180deg); }
-    #cardInner.entering {
-      transition: none;
-      transform: translateY(-14px) scale(0.9);
-      opacity: 0;
-    }
+    #cardInner.flipped { transform: rotateX(180deg); }
 
     .face {
       position: absolute;
@@ -272,7 +275,7 @@
       background: #1e293b; /* fully opaque — a translucent bg let the back face's text bleed through mid-flip */
       box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.45);
     }
-    .face.back { transform: rotateY(180deg); }
+    .face.back { transform: rotateX(180deg); }
 
     .face .lang-badge {
       position: absolute;
@@ -432,27 +435,29 @@
         <div class="stack-card stack-2"></div>
         <div class="stack-card stack-1"></div>
 
-        <div class="perspective">
-          <div id="cardInner" onclick="flipCard()">
-            <div class="face front">
-              <span id="frontBadge" class="lang-badge">[En]</span>
-              <div id="frontWord" class="word">…</div>
-              <div id="frontIpa" class="ipa"></div>
-            </div>
-            <div class="face back">
-              <span id="backBadge" class="lang-badge">[Fr]</span>
-              <div id="backWord" class="word">…</div>
-              <div id="backIpa" class="ipa"></div>
+        <div id="cardTravel" class="card-travel">
+          <div class="perspective">
+            <div id="cardInner" onclick="flipCard()">
+              <div class="face front">
+                <span id="frontBadge" class="lang-badge">[En]</span>
+                <div id="frontWord" class="word">…</div>
+                <div id="frontIpa" class="ipa"></div>
+              </div>
+              <div class="face back">
+                <span id="backBadge" class="lang-badge">[Fr]</span>
+                <div id="backWord" class="word">…</div>
+                <div id="backIpa" class="ipa"></div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <button id="listenBtn" class="listen-icon-btn" onclick="event.stopPropagation(); playCurrentFace();" title="Listen">🔊</button>
+          <button id="listenBtn" class="listen-icon-btn" onclick="event.stopPropagation(); playCurrentFace();" title="Listen">🔊</button>
 
-        <div class="rating-row">
-          <div id="pillEasy" class="rating-pill easy" onclick="event.stopPropagation(); rateCurrentCard(1);" title="Easy (1)">🟢</div>
-          <div id="pillMedium" class="rating-pill medium" onclick="event.stopPropagation(); rateCurrentCard(2);" title="Medium (2)">🟡</div>
-          <div id="pillHard" class="rating-pill hard" onclick="event.stopPropagation(); rateCurrentCard(3);" title="Hard (3)">🔴</div>
+          <div class="rating-row">
+            <div id="pillEasy" class="rating-pill easy" onclick="event.stopPropagation(); rateCurrentCard(1);" title="Easy (1)">🟢</div>
+            <div id="pillMedium" class="rating-pill medium" onclick="event.stopPropagation(); rateCurrentCard(2);" title="Medium (2)">🟡</div>
+            <div id="pillHard" class="rating-pill hard" onclick="event.stopPropagation(); rateCurrentCard(3);" title="Hard (3)">🔴</div>
+          </div>
         </div>
       </div>
 
@@ -466,7 +471,7 @@
     </div>
 
     <p class="shortcuts-hint">
-      <kbd>␣</kbd> Flip &nbsp; <kbd>←</kbd> <kbd>→</kbd> Navigate &nbsp; <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> Rate Easy/Medium/Hard
+      <kbd>↑</kbd> <kbd>↓</kbd> Flip &nbsp; <kbd>←</kbd> <kbd>→</kbd> Navigate &nbsp; <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> Rate Easy/Medium/Hard
     </p>
   </div>
 
@@ -655,16 +660,16 @@
     const TRANSITION_IN_MS = 260;
 
     function animateToCard(newIndex, onDone) {
-      const card = getCardInner();
-      card.classList.add('exiting');
+      const travel = document.getElementById('cardTravel');
+      travel.classList.add('exiting');
       setTimeout(() => {
         currentIndex = newIndex;
         renderCardImmediate();
-        card.classList.remove('exiting');
-        card.classList.add('entering');
-        void card.offsetWidth; // force reflow so the "entering" start state is committed
+        travel.classList.remove('exiting');
+        travel.classList.add('entering');
+        void travel.offsetWidth; // force reflow so the "entering" start state is committed
         requestAnimationFrame(() => {
-          card.classList.remove('entering');
+          travel.classList.remove('entering');
           setTimeout(() => { if (onDone) onDone(); }, TRANSITION_IN_MS);
         });
       }, TRANSITION_OUT_MS);
@@ -800,7 +805,7 @@
       const tag = document.activeElement ? document.activeElement.tagName : '';
       if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'BUTTON') return; // don't hijack form controls
 
-      if (e.code === 'Space') { e.preventDefault(); flipCard(); }
+      if (e.code === 'ArrowUp' || e.code === 'ArrowDown') { e.preventDefault(); flipCard(); }
       else if (e.code === 'ArrowLeft') { e.preventDefault(); goToCard(currentIndex - 1); }
       else if (e.code === 'ArrowRight') { e.preventDefault(); goToCard(currentIndex + 1); }
       else if (e.key === '1') { rateCurrentCard(1); }
