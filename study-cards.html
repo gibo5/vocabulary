@@ -202,14 +202,14 @@
       transform: scale(1);
     }
 
-    /* Disappearance Animation when a rated card is removed from active filter */
+    /* Disappearance Animation */
     .carousel-slide.removing {
       opacity: 0 !important;
       transform: scale(0.6) translateY(-35px) !important;
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease-out !important;
     }
 
-    /* Hide text content on side peeking cards */
+    /* Hide content on side peeking cards */
     .carousel-slide:not(.active) .word,
     .carousel-slide:not(.active) .ipa,
     .carousel-slide:not(.active) .lang-badge,
@@ -270,7 +270,7 @@
     .face .word { font-size: 1.6rem; font-weight: 700; line-height: 1.25; }
     .face .ipa { font-size: 0.9rem; font-family: 'Courier New', monospace; color: var(--accent-blue); margin-top: 0.4rem; }
 
-    /* Top Left Listen Button */
+    /* Listen Button (Inside .face) */
     .listen-icon-btn {
       position: absolute;
       z-index: 5;
@@ -291,7 +291,7 @@
     }
     .listen-icon-btn:hover { background: rgba(56, 189, 248, 0.25); border-color: var(--accent-blue); }
 
-    /* Rating pills */
+    /* Rating Pills (Inside .face) */
     .rating-row {
       position: absolute;
       z-index: 5;
@@ -350,7 +350,7 @@
     .btn-action:hover { transform: translateY(-2px); filter: brightness(1.1); }
     .btn-action.secondary { background: rgba(255, 255, 255, 0.1); color: var(--text-main); }
 
-    /* Nav Controls placing arrows on either side of counter below card */
+    /* Nav Controls */
     .nav-controls {
       display: flex;
       align-items: center;
@@ -378,7 +378,7 @@
 
     .card-counter { color: var(--text-muted); font-size: 0.9rem; font-weight: 700; min-width: 100px; text-align: center; }
 
-    /* Shortcuts hint (hidden on mobile) */
+    /* Shortcuts hint */
     .shortcuts-hint {
       text-align: center;
       color: var(--text-muted);
@@ -415,7 +415,7 @@
 <body>
 
   <div class="top-left-nav">
-    <a id="back-btn" href="index.html" class="home-btn">← Back to List</a>
+    <a id="back-btn" href="index.html" class="home-btn">← Back to Lists</a>
   </div>
 
   <div class="container">
@@ -656,6 +656,16 @@
       navControls.style.display = 'flex';
       emptyState.style.display = 'none';
 
+      // Helper to generate controls HTML inside each face
+      const getControlsHTML = (index, rating) => `
+        <button class="listen-icon-btn" onclick="event.stopPropagation(); playCardAudio(${index});" title="Listen">🔊</button>
+        <div class="rating-row">
+          <div class="rating-pill easy ${rating === 1 ? 'active' : ''}" onclick="event.stopPropagation(); rateCard(${index}, 1);" title="Easy (1)">🟢</div>
+          <div class="rating-pill medium ${rating === 2 ? 'active' : ''}" onclick="event.stopPropagation(); rateCard(${index}, 2);" title="Medium (2)">🟡</div>
+          <div class="rating-pill hard ${rating === 3 ? 'active' : ''}" onclick="event.stopPropagation(); rateCard(${index}, 3);" title="Hard (3)">🔴</div>
+        </div>
+      `;
+
       // Build cards + End Slide
       deck.forEach((item, index) => {
         const slide = document.createElement('div');
@@ -665,6 +675,7 @@
         const frontText = frontIsEnglish ? item.en : item.fr;
         const backText = frontIsEnglish ? item.fr : item.en;
         const rating = ratingsMap[item.id] || 0;
+        const controlsMarkup = getControlsHTML(index, rating);
 
         slide.innerHTML = `
           <div class="card-wrapper">
@@ -673,20 +684,14 @@
                 <span class="lang-badge">${frontIsEnglish ? '[En]' : '[Fr]'}</span>
                 <div class="word">${frontText}</div>
                 <div class="ipa">${frontIsEnglish && item.ipa ? '/' + item.ipa + '/' : ''}</div>
+                ${controlsMarkup}
               </div>
               <div class="face back">
                 <span class="lang-badge">${frontIsEnglish ? '[Fr]' : '[En]'}</span>
                 <div class="word">${backText}</div>
                 <div class="ipa">${!frontIsEnglish && item.ipa ? '/' + item.ipa + '/' : ''}</div>
+                ${controlsMarkup}
               </div>
-            </div>
-
-            <button class="listen-icon-btn" onclick="event.stopPropagation(); playCardAudio(${index});" title="Listen">🔊</button>
-
-            <div class="rating-row">
-              <div class="rating-pill easy ${rating === 1 ? 'active' : ''}" onclick="event.stopPropagation(); rateCard(${index}, 1);" title="Easy (1)">🟢</div>
-              <div class="rating-pill medium ${rating === 2 ? 'active' : ''}" onclick="event.stopPropagation(); rateCard(${index}, 2);" title="Medium (2)">🟡</div>
-              <div class="rating-pill hard ${rating === 3 ? 'active' : ''}" onclick="event.stopPropagation(); rateCard(${index}, 3);" title="Hard (3)">🔴</div>
             </div>
           </div>
         `;
@@ -809,7 +814,6 @@
       }
     }
 
-    /* Rate card: Updates pill state immediately, then triggers shrinking/disappearing animation if rated category is filter-excluded */
     function rateCard(index, rating) {
       if (isRatingBusy) return;
       const item = deck[index];
@@ -818,31 +822,27 @@
       saveRating(item.id, rating);
       updateCounts();
 
-      // Highlight rating pill immediately
+      // Update pills on both faces (front & back)
       const slides = document.querySelectorAll('.carousel-slide');
       const slide = slides[index];
       if (slide) {
-        slide.querySelector('.rating-pill.easy').classList.toggle('active', rating === 1);
-        slide.querySelector('.rating-pill.medium').classList.toggle('active', rating === 2);
-        slide.querySelector('.rating-pill.hard').classList.toggle('active', rating === 3);
+        slide.querySelectorAll('.rating-pill.easy').forEach(el => el.classList.toggle('active', rating === 1));
+        slide.querySelectorAll('.rating-pill.medium').forEach(el => el.classList.toggle('active', rating === 2));
+        slide.querySelectorAll('.rating-pill.hard').forEach(el => el.classList.toggle('active', rating === 3));
       }
 
       const categoryMap = { 1: 'easy', 2: 'medium', 3: 'hard' };
       const isCategoryActive = activeFilters[categoryMap[rating]];
 
-      // If the rated category is currently unchecked in menu -> trigger removal animation
       if (!isCategoryActive) {
         isRatingBusy = true;
         
-        // 1) Pause to let the user see the pill selection (450ms)
         setTimeout(() => {
           if (slide) {
             slide.classList.add('removing');
           }
 
-          // 2) Disappearance animation duration (400ms)
           setTimeout(() => {
-            // Re-filter deck
             deck = fullUnitVocabulary.filter(w => {
               if (isStarredOnly && !starredMap[w.id]) return false;
               const r = ratingsMap[w.id] || 0;
