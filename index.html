@@ -131,6 +131,7 @@
 
         <!-- Quick Action Buttons: sibling of the title/unit block so justify-between pushes it to the right -->
         <div class="flex items-center gap-2">
+          <a id="studyCardsBtn" href="study-cards.html?unit=eim9_u1.json" class="nav-btn">📇 Study Cards</a>
           <a id="playGameBtn" href="listen-and-point.html?unit=eim9_u1.json" class="nav-btn">🎮 Play Game</a>
         </div>
 
@@ -459,6 +460,7 @@
 
     function updatePlayGameLink() {
       const file = document.getElementById('unitSelect').value;
+
       const playGameBtn = document.getElementById('playGameBtn');
       if (playGameBtn) {
         let href = `listen-and-point.html?unit=${encodeURIComponent(file)}`;
@@ -469,6 +471,18 @@
           playGameBtn.innerHTML = '🎮 Play Game';
         }
         playGameBtn.href = href;
+      }
+
+      const studyCardsBtn = document.getElementById('studyCardsBtn');
+      if (studyCardsBtn) {
+        let href = `study-cards.html?unit=${encodeURIComponent(file)}`;
+        if (starFilter === 'starred') {
+          href += '&starred=true';
+          studyCardsBtn.innerHTML = '📇 Study Cards ⭐';
+        } else {
+          studyCardsBtn.innerHTML = '📇 Study Cards';
+        }
+        studyCardsBtn.href = href;
       }
     }
 
