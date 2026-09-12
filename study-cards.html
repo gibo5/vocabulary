@@ -32,7 +32,7 @@
       overflow-x: hidden;
     }
 
-    .container { width: 100%; max-width: 680px; margin: 0 auto; }
+    .container { width: 100%; max-width: 680px; margin: 1.5rem auto 0; }
 
     .top-left-nav { position: absolute; top: 1.5rem; left: 1.5rem; }
 
@@ -52,19 +52,6 @@
       transition: all 0.2s ease;
     }
     a.home-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent-blue); transform: translateY(-1px); }
-
-    header { text-align: center; margin-top: 2rem; margin-bottom: 1.25rem; }
-
-    h1 {
-      font-size: 2.2rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 0.4rem;
-    }
-
-    p.subtitle { color: var(--text-muted); font-size: 0.95rem; }
 
     /* ---------- Controls & Merged Filter/Progress Bar ---------- */
     .controls {
@@ -255,7 +242,6 @@
       box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.45);
     }
 
-    /* Empêche absolument tous les enfants de la face cachée de traverser en 3D */
     .face * {
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
@@ -278,7 +264,6 @@
     .face .word { font-size: 1.6rem; font-weight: 700; line-height: 1.25; transform: translateZ(1px); }
     .face .ipa { font-size: 0.9rem; font-family: 'Courier New', monospace; color: var(--accent-blue); margin-top: 0.4rem; transform: translateZ(1px); }
 
-    /* Listen Button (Plaqué sur la surface de chaque face) */
     .listen-icon-btn {
       position: absolute;
       top: 14px;
@@ -299,7 +284,6 @@
     }
     .listen-icon-btn:hover { background: rgba(56, 189, 248, 0.25); border-color: var(--accent-blue); }
 
-    /* Rating Pills (Plaquées sur la surface de chaque face) */
     .rating-row {
       position: absolute;
       left: 50%;
@@ -414,8 +398,8 @@
 
     @media (max-width: 640px) {
       .top-left-nav { position: static; margin-bottom: 1rem; display: flex; }
+      .container { margin-top: 0; }
       .shortcuts-hint { display: none; }
-      .carousel-slide { flex: 0 0 90%; margin: 0 0.5%; }
     }
   </style>
 </head>
@@ -426,11 +410,6 @@
   </div>
 
   <div class="container">
-    <header>
-      <h1>📇 Study Cards</h1>
-      <p class="subtitle">Flip, listen, and rate one card at a time</p>
-    </header>
-
     <div class="controls">
       <div id="starredBadge" class="starred-badge"><span>⭐</span> Starred Words Only</div>
 
