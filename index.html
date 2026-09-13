@@ -225,10 +225,12 @@
             <option value="alpha-asc">Alphabetical (A ➔ Z)</option>
             <option value="diff-desc">Difficulty (Hardest First)</option>
             <option value="diff-asc">Difficulty (Easiest First)</option>
+            <option value="random">Random order</option>
           </select>
-          <button onclick="shuffleCards()" title="Shuffle cards" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium text-xs rounded-xl transition-colors flex items-center justify-center gap-1 shrink-0">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-            Shuffle
+          <button id="shuffleBtn" onclick="shuffleCards()" title="Reshuffle cards" class="hidden p-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium text-xs rounded-xl transition-colors flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
           </button>
         </div>
 
@@ -447,6 +449,7 @@
     const searchInput = document.getElementById('searchInput');
     const clearSearchBtn = document.getElementById('clearSearchBtn');
     const sortSelect = document.getElementById('sortSelect');
+    const shuffleBtn = document.getElementById('shuffleBtn');
     const accentSelect = document.getElementById('accentSelect');
     const showIpaCheckbox = document.getElementById('showIpaCheckbox');
     const cardCounter = document.getElementById('cardCounter');
@@ -924,6 +927,13 @@
         clearSearchBtn.classList.add('hidden');
       }
 
+      // Gestion de la visibilité du bouton de mélange (Shuffle)
+      if (sortVal === 'random') {
+        shuffleBtn.classList.remove('hidden');
+      } else {
+        shuffleBtn.classList.add('hidden');
+      }
+
       let filtered = rawVocabularyData.filter(item => {
         const matchesSearch = item.english.toLowerCase().includes(query) ||
                               item.french.toLowerCase().includes(query) ||
@@ -931,6 +941,12 @@
         const matchesStarred = starFilter === 'all' || !!starredMap[item.id];
         return matchesSearch && matchesStarred;
       });
+
+      if (sortVal === 'random') {
+        currentCards = filtered;
+        shuffleCards();
+        return;
+      }
 
       filtered.sort((a, b) => {
         const ratingA = ratingsMap[a.id] || 0;
@@ -960,6 +976,7 @@
         [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
       }
       renderCards();
+      updateProgressBar();
     }
 
     function clearSearch() {
